@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1b1035">
+<title>Сходи в небо</title>
+
+<!-- Піксельний шрифт (має кирилицю) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#1b1035;        /* фон нижньої панелі */
+    --card:#2c1f5c;       /* кнопка покращення */
+    --edge:#5b47b0;
+    --edge-dark:#241a52;
+    --gold:#ffd23f;
+    --paper:#fff6dc;
+    --dim:#9d90cf;
+    --pixel:'Press Start 2P','Courier New',monospace;
+    --o2:2px 0 var(--ink),-2px 0 var(--ink),0 2px var(--ink),0 -2px var(--ink),2px 2px var(--ink),-2px -2px var(--ink),2px -2px var(--ink),-2px 2px var(--ink);
+    --o3:3px 0 var(--ink),-3px 0 var(--ink),0 3px var(--ink),0 -3px var(--ink),3px 3px var(--ink),-3px -3px var(--ink),3px -3px var(--ink),-3px 3px var(--ink);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);overscroll-behavior:none}
+  body{font-family:var(--pixel);color:var(--paper)}
+
+  #app{
+    position:fixed;top:0;left:50%;transform:translateX(-50%);
+    width:100%;max-width:560px;
+    height:100vh;height:100dvh;
+    display:flex;flex-direction:column;background:var(--ink);
+  }
+
+  html.in-tg #app{max-height:var(--tg-viewport-stable-height,100dvh)}
+  #err{display:none;position:fixed;left:0;right:0;top:0;z-index:99;max-height:45%;overflow:auto;padding:8px 10px;
+       background:#a82d34;color:#fff;font:11px/1.35 monospace;white-space:pre-wrap;-webkit-user-select:text;user-select:text}
+
+  /* ---------- сцена ---------- */
+  #stage{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;touch-action:none;cursor:pointer;background:#4aa8ff}
+  #game{position:absolute;left:0;top:0;display:block;image-rendering:pixelated}
+
+  #hud{
+    position:absolute;left:0;right:0;top:0;
+    padding:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 16px) 12px 0;
+    display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:none;
+  }
+  #score-row{display:flex;align-items:center;gap:10px}
+  #score-star{width:27px;height:27px;image-rendering:pixelated}
+  #score{font-size:28px;line-height:1;color:var(--gold);text-shadow:var(--o3),0 5px 0 var(--ink)}
+  #per-click{font-size:9px;line-height:1.4;color:var(--paper);text-shadow:var(--o2)}
+
+  #floaters{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+  .floater{position:absolute;font-size:14px;color:var(--gold);text-shadow:var(--o2);white-space:nowrap;will-change:transform,opacity}
+
+  #hint{
+    position:absolute;left:0;right:0;bottom:18px;text-align:center;
+    font-size:11px;color:var(--gold);text-shadow:var(--o2);pointer-events:none;
+    animation:blink 1.2s steps(1) infinite;
+  }
+  #hint.off{display:none}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:.25}}
+
+  /* ---------- панель покращень ---------- */
+  #panel{
+    flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;
+    padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px));
+    background:var(--ink);border-top:4px solid #4b3a8f;
+  }
+  .up{
+    --edge:#5b47b0;--edge-dark:#241a52;
+    position:relative;display:flex;flex-direction:column;gap:8px;
+    padding:12px 12px 16px;border:0;margin:0;background:var(--card);
+    font-family:var(--pixel);color:var(--dim);text-align:left;cursor:pointer;touch-action:manipulation;
+    box-shadow:inset 0 0 0 3px var(--edge),inset 0 -8px 0 0 var(--edge-dark);
+    clip-path:polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px));
+  }
+  .up.can{--edge:var(--gold);--edge-dark:#8a5a0a;background:#3d2a7a}
+  .up:active{transform:translateY(2px)}
+  .up:focus-visible{--edge:var(--paper)}
+  .up-head{display:flex;align-items:center;gap:8px}
+  .up-head img{width:27px;height:27px;flex:none;image-rendering:pixelated}
+  .up-name{font-size:10px;line-height:1.35;color:var(--paper)}
+  .up-eff{font-size:8px;line-height:1.5;color:var(--dim)}
+  .up-foot{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:2px}
+  .cost{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--dim)}
+  .cost img{width:18px;height:18px;image-rendering:pixelated;filter:grayscale(1) opacity(.55)}
+  .up.can .cost{color:var(--gold)}
+  .up.can .cost img{filter:none}
+  .lvl{font-size:8px;color:var(--dim);white-space:nowrap}
+
+  @media (prefers-reduced-motion:reduce){#hint{animation:none}}
+</style>
+</head>
+
+<body>
+<div id="err"></div>
+<noscript><div style="position:fixed;left:0;right:0;top:0;z-index:99;padding:10px;background:#a82d34;color:#fff;font:12px monospace">JavaScript вимкнено в цьому браузері — гра не запуститься.</div></noscript>
+<script>
+window.__showErr = function (m) {
+  var e = document.getElementById('err');
+  if (!e || e.textContent.length > 1500) return;
+  e.style.display = 'block';
+  e.textContent += String(m).slice(0, 400) + '\n';
+};
+window.addEventListener('error', function (ev) { window.__showErr('JS: ' + ev.message + (ev.lineno ? ' (рядок ' + ev.lineno + ')' : '')); });
+document.addEventListener('DOMContentLoaded', function () {
+  var h = document.getElementById('hint'); if (h) h.textContent += ' · v3';
+});
+setTimeout(function () { if (!window.__started) window.__showErr('Гра не запустилась: скрипт не дійшов до кінця (версія v3)'); }, 2500);
+window.addEventListener('unhandledrejection', function (ev) { window.__showErr('Promise: ' + (ev.reason && ev.reason.message || ev.reason)); });
+</script>
+<div id="app">
+  <div id="stage">
+    <canvas id="game"></canvas>
+
+    <div id="hud">
+      <div id="score-row"><img id="score-star" data-icon="star" alt=""><span id="score">0</span></div>
+      <div id="per-click">+1 за клік</div>
+    </div>
+
+    <div id="floaters"></div>
+    <div id="hint">Тапай по екрану!</div>
+  </div>
+
+  <div id="panel">
+    <button class="up" id="up-power" type="button">
+      <div class="up-head"><img data-icon="arrow" alt=""><span class="up-name">Сила кліку</span></div>
+      <div class="up-eff" id="eff-power"></div>
+      <div class="up-foot">
+        <span class="cost"><img data-icon="star" alt=""><b id="cost-power">10</b></span>
+        <span class="lvl" id="lvl-power"></span>
+      </div>
+    </button>
+
+    <button class="up" id="up-auto" type="button">
+      <div class="up-head"><img data-icon="bolt" alt=""><span class="up-name">Автоклік</span></div>
+      <div class="up-eff" id="eff-auto"></div>
+      <div class="up-foot">
+        <span class="cost"><img data-icon="star" alt=""><b id="cost-auto">50</b></span>
+        <span class="lvl" id="lvl-auto"></span>
+      </div>
+    </button>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+try { if (!document.createElement('canvas').getContext('2d')) window.__showErr('Цей браузер не дає створити canvas 2D'); } catch (e) { window.__showErr('canvas: ' + e); }
+
+/* ==========================================================================
+   1. НАЛАШТУВАННЯ ГРИ — міняй цифри тут
+   ========================================================================== */
+const CFG = {
+  POWER_BASE_COST: 10,    // ціна першого покращення кліку
+  POWER_GROWTH:    1.5,   // у скільки разів дорожчає кожне наступне (1.5 = +50%)
+  AUTO_BASE_COST:  50,    // ціна першого автокліку
+  AUTO_GROWTH:     1.6,   // подорожчання автокліку
+  DAY_LENGTH:      240,   // за скільки сходинок небо проходить повне коло день → ніч → день
+  STAIR_DEPTH:     3,     // товщина сходів у блоках (більше = більше каменю, менше неба; 99 = суцільна стіна)
+  SAVE_KEY:        'stairs-to-sky-v1'
+};
+
+/* ==========================================================================
+   2. СВОЇ СПРАЙТИ (необов'язково)
+   Усі спрайти вже намальовані нижче в коді. Якщо хочеш свої PNG — поклади
+   файли поруч з index.html і впиши шляхи. Що не вписано — лишається вбудоване.
+   Герой: краще 12×17 px (обличчям вправо), сходинка: 16×16 px.
+   ========================================================================== */
+const CUSTOM = {
+  hero: { idle: '', a: '', b: '' },   // напр. 'img/hero_idle.png', 'img/hero_step1.png', 'img/hero_step2.png'
+  stairTop:  '',                      // верхня сходинка (з травою), напр. 'img/stair_top.png'
+  stairBody: ''                       // «тіло» сходів під нею, напр. 'img/stair_body.png'
+};
+
+/* ==========================================================================
+   3. TELEGRAM
+   ========================================================================== */
+let tg = null;
+function initTelegram() {
+  try { tg = window.Telegram && window.Telegram.WebApp; } catch (e) { tg = null; }
+  if (!tg) return;
+  try { if (tg.initData || (tg.platform && tg.platform !== 'unknown')) document.documentElement.classList.add('in-tg'); } catch (e) {}
+  try { tg.ready(); tg.expand(); } catch (e) {}
+  try { tg.setHeaderColor('#1b1035'); tg.setBackgroundColor('#1b1035'); } catch (e) {}
+  try { tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch (e) {}
+  try { tg.onEvent('viewportChanged', resize); } catch (e) {}
+}
+const haptic     = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(k || 'light'); } catch (e) {} };
+const hapticNote = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k); } catch (e) {} };
+
+/* ==========================================================================
+   4. ДОПОМІЖНЕ
+   ========================================================================== */
+const $   = id => document.getElementById(id);
+const mk  = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+const mod = (a, n) => ((a % n) + n) % n;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const mix3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+const rgb  = c => `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})`;
+function rng(seed) { let s = seed >>> 0; return () => (s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296; }
+function hash2(a, b) {
+  let h = (Math.imul(a, 374761393) + Math.imul(b, 668265263)) | 0;
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  return (h ^ (h >>> 16)) >>> 0;
+}
+function fmt(n) {
+  n = Math.floor(n);
+  if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+  if (n >= 1e7) return (n / 1e6).toFixed(2) + 'M';
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+/* ==========================================================================
+   5. СПРАЙТИ (піксель-арт, малюється з текстових масивів)
+   ========================================================================== */
+const PAL = {
+  k:'#2a1b3d',            // контур
+  r:'#e4453f', R:'#a82d34',   // кепка
+  s:'#f5c9a0', w:'#ffffff',   // шкіра, білок ока
+  b:'#3f8be0', B:'#2b64ad',   // футболка
+  p:'#5a4a8a',                // штани
+  o:'#8a5a35',                // взуття
+  y:'#ffd23f', Y:'#e8a317',   // золото
+  g:'#7be0a4', G:'#3fae74'    // м'ята
+};
+function fromRows(rows, pal = PAL) {
+  const c = mk(rows[0].length, rows.length), g = c.getContext('2d');
+  rows.forEach((row, y) => [...row].forEach((ch, x) => {
+    if (ch !== '.' && pal[ch]) { g.fillStyle = pal[ch]; g.fillRect(x, y, 1, 1); }
+  }));
+  return c;
+}
+
+/* --- Герой 12×17, дивиться вправо: тіло + 3 пози ніг --- */
+const HERO_BODY = [
+  '....kkkk....',
+  '...krrrrk...',
+  '..krrrrrrk..',
+  '..krrrrrrrk.',
+  '..kRRRRRRRRk',
+  '..ksssssssk.',
+  '..ksssswksk.',
+  '..ksssssssk.',
+  '...ksssssk..',
+  '..kbbbbbbk..',
+  '.kbbbbbbbbk.',
+  '.ksbbBBbbsk.',
+  '..kkbbbbkk..',
+  '...kppppk...'
+];
+const HERO_LEGS = {
+  idle: ['...kppkppk..', '...kppkppk..', '..koookoook.'],
+  a:    ['...kppkppk..', '..kppk.kppk.', '..kook.kook.'],
+  b:    ['...kppkppk..', '...kppkoook.', '..koook.....']
+};
+const HERO = {};
+for (const k in HERO_LEGS) HERO[k] = fromRows(HERO_BODY.concat(HERO_LEGS[k]));
+
+/* --- Іконки інтерфейсу --- */
+const ICONS = {
+  star: fromRows([
+    '....y....',
+    '...yyy...',
+    '...yyy...',
+    'yyyyyyyyY',
+    '.yyyyyyY.',
+    '..yyyyY..',
+    '..yyyyY..',
+    '.yyyYyyY.',
+    '.yy...YY.'
+  ]),
+  arrow: fromRows([
+    '....g....',
+    '...ggg...',
+    '..ggggg..',
+    '.ggggggg.',
+    'ggggggggg',
+    '...ggG...',
+    '...ggG...',
+    '...ggG...',
+    '...ggG...'
+  ]),
+  bolt: fromRows([
+    '.....yy..',
+    '....yyY..',
+    '...yyY...',
+    '..yyyyyy.',
+    '.....yY..',
+    '....yY...',
+    '...yY....',
+    '..yY.....',
+    '..Y......'
+  ])
+};
+
+/* --- Блоки сходів 16×16: цегла + трава зверху --- */
+const STONE = { base:'#8a7fb0', light:'#a99fd0', shade:'#6d6392', mortar:'#4f4673' };
+const GRASS = { hi:'#9be564', mid:'#5cbf3d', dark:'#3a8f33' };
+function makeBlock(kind, variant) {   // kind: 'top' | 'body' | 'bottom'
+  const c = mk(16, 16), g = c.getContext('2d');
+  const r = rng(variant * 977 + (kind === 'top' ? 13 : kind === 'bottom' ? 41 : 71));
+  const px = (x, y, col) => { g.fillStyle = col; g.fillRect(x, y, 1, 1); };
+  for (let y = 0; y < 16; y++) {
+    const course = y >> 2, row = y & 3, off = (course & 1) ? 4 : 0;
+    for (let x = 0; x < 16; x++) {
+      const xx = (x + off) & 7;
+      let col;
+      if (row === 3 || xx === 7) col = STONE.mortar;
+      else if (row === 0)        col = STONE.light;
+      else if (xx === 6)         col = STONE.shade;
+      else                       col = STONE.base;
+      px(x, y, col);
+    }
+  }
+  for (let i = 0; i < 6; i++) px((r() * 16) | 0, (r() * 16) | 0, r() < .5 ? STONE.shade : STONE.light);
+  if (kind === 'bottom') {                       // темний низ, щоб сходи мали об'єм
+    for (let x = 0; x < 16; x++) { px(x, 13, STONE.shade); px(x, 14, STONE.mortar); px(x, 15, '#3a3159'); }
+  }
+  if (kind === 'top') {
+    for (let x = 0; x < 16; x++) {
+      const d = (x * 7 + variant * 5) % 5;
+      px(x, 0, GRASS.hi); px(x, 1, GRASS.mid); px(x, 2, GRASS.mid);
+      if (d < 4) px(x, 3, GRASS.dark);
+      if (d % 2 === 0) px(x, 4, GRASS.dark);
+      if (d === 1 && variant === 2) px(x, 0, '#ffe66d');   // жовта квіточка
+    }
+  }
+  return c;
+}
+function tint(src, m) {
+  const c = mk(src.width, src.height), g = c.getContext('2d');
+  g.drawImage(src, 0, 0);
+  try {
+    const d = g.getImageData(0, 0, c.width, c.height), a = d.data;
+    for (let i = 0; i < a.length; i += 4) { a[i] *= m[0]; a[i + 1] *= m[1]; a[i + 2] *= m[2]; }
+    g.putImageData(d, 0, 0);
+  } catch (e) { return src; }
+  return c;
+}
+const NIGHT_TINT = [0.55, 0.6, 0.95];
+const TILES = { day: { top: [], body: [], bottom: [] }, night: { top: [], body: [], bottom: [] } };
+for (let v = 0; v < 3; v++) {
+  TILES.day.top.push(makeBlock('top', v));
+  TILES.day.body.push(makeBlock('body', v));
+  TILES.day.bottom.push(makeBlock('bottom', v));
+}
+for (const k of ['top', 'body', 'bottom']) TILES.night[k] = TILES.day[k].map(t => tint(t, NIGHT_TINT));
+
+/* --- Хмари, сонце, місяць --- */
+function makeCloud(w, h, blobs) {
+  const c = mk(w, h), g = c.getContext('2d');
+  for (let y = 0; y < h - 1; y++) for (let x = 0; x < w; x++) {
+    let inside = false;
+    for (const [bx, by, br] of blobs) { const dx = x - bx, dy = y - by; if (dx * dx + dy * dy <= br * br) { inside = true; break; } }
+    if (inside) { g.fillStyle = y >= h - 4 ? '#c9dcff' : (y <= 2 ? '#ffffff' : '#f2f7ff'); g.fillRect(x, y, 1, 1); }
+  }
+  return c;
+}
+const CLOUDS = [
+  makeCloud(24, 10, [[6,7,4],[12,5,5],[18,7,4]]),
+  makeCloud(34, 12, [[8,9,5],[16,6,6],[25,8,6],[30,9,3]]),
+  makeCloud(46, 15, [[9,11,7],[20,7,8],[32,9,8],[40,11,5]])
+];
+function makeDisc(kind) {
+  const c = mk(15, 15), g = c.getContext('2d');
+  for (let y = 0; y < 15; y++) for (let x = 0; x < 15; x++) {
+    const d = Math.hypot(x - 7, y - 7);
+    if (d > 7) continue;
+    if (kind === 'sun') { g.fillStyle = d > 5.4 ? '#ffb833' : '#ffe66d'; }
+    else {
+      if (Math.hypot(x - 10, y - 5) <= 6.2) continue;               // вирізаємо серп
+      g.fillStyle = (x + y) % 5 === 0 ? '#d8d3a0' : '#f3efc6';
+    }
+    g.fillRect(x, y, 1, 1);
+  }
+  return c;
+}
+const SUN = makeDisc('sun'), MOON = makeDisc('moon');
+
+/* --- Гори (паралакс) --- */
+function makeMountains(w, h, peaks, c) {
+  const cv = mk(w, h), g = cv.getContext('2d');
+  for (let x = 0; x < w; x++) {
+    let top = 3, px = 0;
+    for (const [p, ph] of peaks) {
+      const d = Math.min(Math.abs(x - p), w - Math.abs(x - p)), v = ph - d;
+      if (v > top) { top = v; px = p; }
+    }
+    let dx = x - px; if (dx > w / 2) dx -= w; if (dx < -w / 2) dx += w;
+    const right = dx > 0;
+    for (let y = h - top; y < h; y++) {
+      const depth = y - (h - top);
+      let col = right ? c.dark : c.light;
+      if (c.snow && top >= c.snowMin && depth < Math.min(6, top - c.snowMin + 1)) col = right ? c.snowD : c.snow;
+      g.fillStyle = col; g.fillRect(x, y, 1, 1);
+    }
+  }
+  return cv;
+}
+const MTN = {
+  far: {
+    w: 200, h: 48, base: 0.74, k: 0.15,
+    peaks: [[22,30],[62,42],[112,34],[150,46],[186,32]],
+    day:   { light:'#a7b8ea', dark:'#8c9dd8', snow:'#ffffff', snowD:'#dde5ff', snowMin:38 },
+    night: { light:'#3b3f86', dark:'#2d3175', snow:'#aab1ea', snowD:'#8188cc', snowMin:38 }
+  },
+  near: {
+    w: 200, h: 32, base: 0.84, k: 0.30,
+    peaks: [[10,20],[52,30],[95,22],[138,32],[178,24]],
+    day:   { light:'#7f93d0', dark:'#6a7dc0' },
+    night: { light:'#272b66', dark:'#1e2154' }
+  }
+};
+for (const key in MTN) {
+  const m = MTN[key];
+  m.dayC   = makeMountains(m.w, m.h, m.peaks, m.day);
+  m.nightC = makeMountains(m.w, m.h, m.peaks, m.night);
+}
+
+/* --- Підміна на свої PNG (див. розділ 2) --- */
+function loadImg(url, cb) { if (!url) return; const im = new Image(); im.onload = () => cb(im); im.src = url; }
+loadImg(CUSTOM.hero.idle, im => HERO.idle = im);
+loadImg(CUSTOM.hero.a,    im => HERO.a = im);
+loadImg(CUSTOM.hero.b,    im => HERO.b = im);
+loadImg(CUSTOM.stairTop,  im => { TILES.day.top  = [im]; TILES.night.top  = [tint(im, NIGHT_TINT)]; });
+loadImg(CUSTOM.stairBody, im => {
+  for (const k of ['body', 'bottom']) { TILES.day[k] = [im]; TILES.night[k] = [tint(im, NIGHT_TINT)]; }
+});
+
+/* Іконки в DOM */
+document.querySelectorAll('img[data-icon]').forEach(im => { im.src = ICONS[im.dataset.icon].toDataURL(); });
+
+/* ==========================================================================
+   6. СТАН ГРИ + ЗБЕРЕЖЕННЯ
+   ========================================================================== */
+function load() {
+  const d = { score: 0, steps: 0, powerLvl: 1, autoLvl: 0 };
+  try {
+    const raw = localStorage.getItem(CFG.SAVE_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      for (const k in d) { const v = Number(s[k]); if (Number.isFinite(v) && v >= 0) d[k] = Math.floor(v); }
+      if (d.powerLvl < 1) d.powerLvl = 1;
+    }
+  } catch (e) {}
+  return d;
+}
+const state = load();     // score — бали, steps — скільки сходинок пройдено, powerLvl — бали за клік, autoLvl — автокроків/сек
+let pos = state.steps;    // плавна позиція героя (для анімації)
+let autoAcc = 0, dirty = false, uiDirty = true, bump = false, lastSave = 0;
+
+function save() { try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {} dirty = false; lastSave = performance.now(); }
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+window.addEventListener('pagehide', save);
+
+const costPower = () => Math.ceil(CFG.POWER_BASE_COST * Math.pow(CFG.POWER_GROWTH, state.powerLvl - 1));
+const costAuto  = () => Math.ceil(CFG.AUTO_BASE_COST  * Math.pow(CFG.AUTO_GROWTH,  state.autoLvl));
+
+/* ==========================================================================
+   7. ЕКРАН, КАМЕРА, СЦЕНА
+   ==================================
