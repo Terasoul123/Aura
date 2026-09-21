@@ -6,6 +6,9 @@
 <meta name="theme-color" content="#1b1035">
 <title>Сходи в небо</title>
 
+<!-- Telegram Mini App SDK -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <!-- Піксельний шрифт (має кирилицю) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,16 +34,12 @@
   #app{
     position:fixed;top:0;left:50%;transform:translateX(-50%);
     width:100%;max-width:560px;
-    height:100vh;height:100dvh;
+    height:100vh;height:100dvh;max-height:var(--tg-viewport-stable-height,100dvh);
     display:flex;flex-direction:column;background:var(--ink);
   }
 
-  html.in-tg #app{max-height:var(--tg-viewport-stable-height,100dvh)}
-  #err{display:none;position:fixed;left:0;right:0;top:0;z-index:99;max-height:45%;overflow:auto;padding:8px 10px;
-       background:#a82d34;color:#fff;font:11px/1.35 monospace;white-space:pre-wrap;-webkit-user-select:text;user-select:text}
-
   /* ---------- сцена ---------- */
-  #stage{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;touch-action:none;cursor:pointer;background:#4aa8ff}
+  #stage{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;touch-action:none;cursor:pointer;background:#0a1420}
   #game{position:absolute;left:0;top:0;display:block;image-rendering:pixelated}
 
   #hud{
@@ -51,7 +50,57 @@
   #score-row{display:flex;align-items:center;gap:10px}
   #score-star{width:27px;height:27px;image-rendering:pixelated}
   #score{font-size:28px;line-height:1;color:var(--gold);text-shadow:var(--o3),0 5px 0 var(--ink)}
+  #score-diamond{width:22px;height:22px;image-rendering:pixelated;margin-left:6px}
+  #diamonds{font-size:20px;line-height:1;color:#7ee3ff;text-shadow:var(--o2),0 4px 0 var(--ink)}
   #per-click{font-size:9px;line-height:1.4;color:var(--paper);text-shadow:var(--o2)}
+
+  /* ---------- бій ---------- */
+  #combat-hud{
+    position:absolute;left:10px;right:10px;bottom:14px;display:flex;flex-direction:column;gap:6px;
+    pointer-events:none;
+  }
+  #combat-hud.off{display:none}
+  .hp-row{display:flex;align-items:center;gap:8px}
+  .hp-lbl{font-size:14px;text-shadow:var(--o2)}
+  .hp-bar{flex:1 1 auto;height:12px;background:#1a1030;border:2px solid #000;box-shadow:inset 0 0 0 1px #4b3a8f}
+  .hp-fill{height:100%;width:100%}
+  .hp-fill.mons{background:linear-gradient(#ff6b6b,#c62d2d)}
+  .hp-fill.hero{background:linear-gradient(#8fe06a,#4ea83a)}
+  .hp-num{font-size:8px;color:var(--paper);text-shadow:var(--o2);min-width:44px;text-align:right}
+
+  /* ---------- вкладки ---------- */
+  #tabs{flex:0 0 auto;display:flex;gap:8px;padding:10px 12px 0;background:var(--ink)}
+  .tab{
+    flex:1 1 auto;padding:8px;border:0;background:#2c1f5c;color:var(--dim);font-family:var(--pixel);
+    font-size:10px;box-shadow:inset 0 0 0 2px #4b3a8f;cursor:pointer;touch-action:manipulation;
+  }
+  .tab.active{background:#3d2a7a;color:var(--paper);box-shadow:inset 0 0 0 2px var(--gold)}
+
+  /* ---------- зброя ---------- */
+  #panel-wpn{
+    flex:0 0 auto;max-height:34vh;overflow-y:auto;
+    padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));
+    background:var(--ink);border-top:4px solid #4b3a8f;display:flex;flex-direction:column;gap:8px;
+  }
+  #panel-wpn.off{display:none}
+  .wpn{
+    display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--card);
+    box-shadow:inset 0 0 0 3px var(--edge),inset 0 -6px 0 0 var(--edge-dark);
+  }
+  .wpn.owned{--edge:#4ea83a;--edge-dark:#215c1e}
+  .wpn.can{--edge:var(--gold);--edge-dark:#8a5a0a}
+  .wpn-ic{font-size:20px;flex:none}
+  .wpn-info{flex:1 1 auto;min-width:0}
+  .wpn-name{font-size:10px;color:var(--paper)}
+  .wpn-dmg{font-size:8px;color:var(--dim);margin-top:3px}
+  .wpn-btn{
+    flex:none;border:0;padding:8px 10px;background:#4b3a8f;color:var(--paper);font-family:var(--pixel);
+    font-size:9px;display:flex;align-items:center;gap:5px;cursor:pointer;touch-action:manipulation;
+  }
+  .wpn-btn img{width:14px;height:14px;image-rendering:pixelated}
+  .wpn-btn.can{background:var(--gold);color:#3a2400}
+  .wpn-btn.owned{background:#215c1e;color:#bdf5b0}
+  .wpn-btn:disabled{opacity:.7}
 
   #floaters{position:absolute;inset:0;overflow:hidden;pointer-events:none}
   .floater{position:absolute;font-size:14px;color:var(--gold);text-shadow:var(--o2);white-space:nowrap;will-change:transform,opacity}
@@ -97,33 +146,30 @@
 </head>
 
 <body>
-<div id="err"></div>
-<noscript><div style="position:fixed;left:0;right:0;top:0;z-index:99;padding:10px;background:#a82d34;color:#fff;font:12px monospace">JavaScript вимкнено в цьому браузері — гра не запуститься.</div></noscript>
-<script>
-window.__showErr = function (m) {
-  var e = document.getElementById('err');
-  if (!e || e.textContent.length > 1500) return;
-  e.style.display = 'block';
-  e.textContent += String(m).slice(0, 400) + '\n';
-};
-window.addEventListener('error', function (ev) { window.__showErr('JS: ' + ev.message + (ev.lineno ? ' (рядок ' + ev.lineno + ')' : '')); });
-document.addEventListener('DOMContentLoaded', function () {
-  var h = document.getElementById('hint'); if (h) h.textContent += ' · v3';
-});
-setTimeout(function () { if (!window.__started) window.__showErr('Гра не запустилась: скрипт не дійшов до кінця (версія v3)'); }, 2500);
-window.addEventListener('unhandledrejection', function (ev) { window.__showErr('Promise: ' + (ev.reason && ev.reason.message || ev.reason)); });
-</script>
 <div id="app">
   <div id="stage">
     <canvas id="game"></canvas>
 
     <div id="hud">
-      <div id="score-row"><img id="score-star" data-icon="star" alt=""><span id="score">0</span></div>
+      <div id="score-row">
+        <img id="score-star" data-icon="star" alt=""><span id="score">0</span>
+        <img id="score-diamond" data-icon="diamond" alt=""><span id="diamonds">0</span>
+      </div>
       <div id="per-click">+1 за клік</div>
+    </div>
+
+    <div id="combat-hud" class="off">
+      <div class="hp-row"><span class="hp-lbl">👹</span><div class="hp-bar"><div class="hp-fill mons" id="mhp-fill"></div></div><span class="hp-num" id="mhp-num"></span></div>
+      <div class="hp-row"><span class="hp-lbl">❤</span><div class="hp-bar"><div class="hp-fill hero" id="php-fill"></div></div><span class="hp-num" id="php-num"></span></div>
     </div>
 
     <div id="floaters"></div>
     <div id="hint">Тапай по екрану!</div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" id="tab-upg" type="button">Прокачка</button>
+    <button class="tab" id="tab-wpn" type="button">⚔ Зброя</button>
   </div>
 
   <div id="panel">
@@ -145,12 +191,13 @@ window.addEventListener('unhandledrejection', function (ev) { window.__showErr('
       </div>
     </button>
   </div>
+
+  <div id="panel-wpn" class="off"></div>
 </div>
 
 <script>
 (() => {
 'use strict';
-try { if (!document.createElement('canvas').getContext('2d')) window.__showErr('Цей браузер не дає створити canvas 2D'); } catch (e) { window.__showErr('canvas: ' + e); }
 
 /* ==========================================================================
    1. НАЛАШТУВАННЯ ГРИ — міняй цифри тут
@@ -162,7 +209,12 @@ const CFG = {
   AUTO_GROWTH:     1.6,   // подорожчання автокліку
   DAY_LENGTH:      240,   // за скільки сходинок небо проходить повне коло день → ніч → день
   STAIR_DEPTH:     3,     // товщина сходів у блоках (більше = більше каменю, менше неба; 99 = суцільна стіна)
-  SAVE_KEY:        'stairs-to-sky-v1'
+  SAVE_KEY:        'stairs-to-sky-v1',
+  HP_MAX:          100,   // максимум ХП гравця у бою
+  ENC_MIN_GAP:     30,    // мін. сходинок між зустрічами з монстром
+  ENC_MAX_GAP:     70,    // макс. сходинок між зустрічами з монстром
+  ENC_ATK_EVERY:   1.1,   // як часто монстр б'є гравця (сек)
+  DEATH_LOSS:      0.2    // частка зірок, яку гравець втрачає, якщо програє бій
 };
 
 /* ==========================================================================
@@ -172,23 +224,23 @@ const CFG = {
    Герой: краще 12×17 px (обличчям вправо), сходинка: 16×16 px.
    ========================================================================== */
 const CUSTOM = {
-  hero: { idle: '', a: '', b: '' },   // напр. 'img/hero_idle.png', 'img/hero_step1.png', 'img/hero_step2.png'
-  stairTop:  '',                      // верхня сходинка (з травою), напр. 'img/stair_top.png'
-  stairBody: ''                       // «тіло» сходів під нею, напр. 'img/stair_body.png'
+  hero: {
+    idle: 'data:image/png;base64,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',
+    a: 'data:image/png;base64,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',
+    b: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAiCAYAAABStIn6AAAHDklEQVR4nF1UW4ydVRX+1tp7//s/9zNn5kzn1kKnTq+kkVaiEGIbFCSlmtj4IImaqBFQK+HByJPwgBeMiSYSH4gxfREkkjYxBeUFsQZaGyAiF9tCqS29zHRunTlzzn/+/9//3suHXpi43tbLt7611vd9hI+LADAAf61Xpjz8lBDfB1AKgJmQMuNnkiXHsmz5LP6vaBUIMDFRikrDX4pqIy+VWxNFc2wyNMY+4ZvjG/3A2s0+bo5lpfrY2VpzbO/jjz/OADQAplVAVG2NbOyn8oDS+hFbLUFpLoJ4ITAUa7BSIFZAEO53V5R4t7+3cOG314EYgLS3tiv9mfjJvAgP6dgkWmvDirUngWaNSBnI1bkCwEsI2iXJopLih1r6hzQAAUBzJ+a6lcZYTylFRFDMrAiABsMqRZHREFYCVpxnDlFsvI1Ma+ny5d/0nb/CABSAUGmN3+Vc8R1S5JhZhSDwIgAzbFSCDwJiRdYYVKkgxUTOeyUi/71tx7Z/sgh8a2JqPE3cL1nrBrEIIAwJMCZCXKpQQUBWFOikOXmX0WN7tlNvaYHT3Lkotltff/Odh3j37l02WV75aqkc14kkD0EYCNBGk9IGPnjJsgxJ5skiYN/2Nta2q7RnYxsWXnwg61zxKf3+++9zrRG/q429tLxCk0LiiiKQIEcgAiRgpZNg80hT7t7aoiIrANYYL5eo6M4QWyvWRst85/R0dseGxvGVTlITMiBlIQGIXIYizeC6HYybDNU4w1/ePSdJFpDnXg5NL0l9rGlCmlyYumXjU/z8rl305yPNbinWh4P3XDgvZQXcu309KpFG2u3Sk1+7B0/+9Cvo3MHY//AXpD5cxU1fngiTO4bQX5x/9t/Hj72hceQIAXA6TJwfsTkuLnv0FONsT6RWqdBdt2/DUHsUtXoJj+zbgsnN66lbqeEn8ZAclv/Q36T/uhRCTAQHYHBdG4/s/XRNbm4FzpIER984RVJktPuTU4iVQivr4f4Nt2L64jkZHDDFrfW15vypxTNRhPcAQBMBIlFrbJAndmzR/txlC2IBK0Gv38ETz72CR/ftQlZrY3zNJnBdyduX5qNf/+55PH/41R/kOU4Skdbeg4hqM7Nd9dr5mfxeBooH97TU5IhGvUX414fA0y+8hu7hgLXrj0u9XqZyJT758t/ffCbrdV4iIgbgCYAB4Mpjm75136bk94sd31/0RrdqEU2NE31+ZwOSezx98KzM5cZ/eF5sJbZPLC/NPJZmTl+LHblh2pGpqc2b69lzJy/k2+Z9rRholJTLUko6Pdx/V4xNgyvy1kLN/+PEUJQsTr91y1Rp79Gjpy5dSw65blrMnTl9Yt4OntGVge1Dg9UitgaZOERDDRx6y6JtgU5fyBtPIogrYovVocbXGd20acs6a/WOUikKbEoEZZCnhehSFYPtOrp6EOXhCfLJYpH2uiMfLLjbVwXj1VTcufMBM3PxyqMUVdapOM69F+4sLAGKqSgCup0uIsOUp33KeiueTTxweXrxe8yE6xsxAH/y9AufBZtva2szCCkfAlySQEDwhQMRUDgP7xyJiIrKdW9rA7cNT27Zeg2IeSdgRKn9phRbhkBrReI9yEaA1vDBQ5EgMgq2FENHMUDkotrAwOLlpT3XT8QnG+M/NnF8j7JxRhoswSFZmEUoMnBkMFwjbBkGbm4S2q2GrFm3Dmk/YXF9WTs29HUAFQAFC+hzo6NtPTpki8lhDr3ZS5L2lqFNBKMVRFucWxR8MJ1i/kqCviMMlg3+sP8ObBq2EwCqigksEp65MjvbHaxWCd7mznlfqtU9dCTeiyz3Gb0QIXdBIIQgIiCEV985jxPn5k4BcCHI1dfB1L5pbfXniin2Qlxq1I0uxRyVyqxNhH6nAxDDVioSvJPZD0+nRW/lXdMc+K5buvg2AGYATEX3gMA/6MW/GLwzWdITgMDGSJYkvre0LESEEIKID4YZnW3b1n+jWL4KAkAYAIkIRjeMHiGlh0ylbJS1RFqJSFCd2VkrhVMh+FC4VPKkS0qpv17odhdEdprVypZG46bmpdOXD4jIPQCnploDaa26c3NXfJE/VWTp2bzX0y7tS7K0KFqpFzoffbSEXVVZLcjQ7Sd3k+IvKqOXfZ6L6yXcnZ3Lu/PzD+bLFx/2WbJQpD0u8syLIOS5vz1ujd+Gt89XVjMCCB1AvIgAJOgtLPRcsvJ9n84dBKCg+FmXpX2X9BUxp6zpIe/8scgld99QNgB152e2vuyd+6N3RcNY62059oF4Gle/GkLOB8BmmomImZhYNYMPMxKKM9cIyces2u0qxQO/so3RtNScEI5aj91wd3loVMfDF21jTExlzYqy7T+ZyppbVrtfAwgACHNzXQF+5DAwI4JxxeqVcH1aHHqhj1+Eftok4D2fLx702Y3TBAD4H3/cj3I5YDaUAAAAAElFTkSuQmCC'
+  },
+  stairTop:  '',
+  stairBody: ''
 };
 
 /* ==========================================================================
    3. TELEGRAM
    ========================================================================== */
-let tg = null;
-function initTelegram() {
-  try { tg = window.Telegram && window.Telegram.WebApp; } catch (e) { tg = null; }
-  if (!tg) return;
-  try { if (tg.initData || (tg.platform && tg.platform !== 'unknown')) document.documentElement.classList.add('in-tg'); } catch (e) {}
+const tg = window.Telegram && window.Telegram.WebApp;
+if (tg) {
   try { tg.ready(); tg.expand(); } catch (e) {}
   try { tg.setHeaderColor('#1b1035'); tg.setBackgroundColor('#1b1035'); } catch (e) {}
   try { tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch (e) {}
-  try { tg.onEvent('viewportChanged', resize); } catch (e) {}
 }
 const haptic     = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(k || 'light'); } catch (e) {} };
 const hapticNote = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k); } catch (e) {} };
@@ -220,13 +272,13 @@ function fmt(n) {
    5. СПРАЙТИ (піксель-арт, малюється з текстових масивів)
    ========================================================================== */
 const PAL = {
-  k:'#2a1b3d',            // контур
-  r:'#e4453f', R:'#a82d34',   // кепка
-  s:'#f5c9a0', w:'#ffffff',   // шкіра, білок ока
-  b:'#3f8be0', B:'#2b64ad',   // футболка
-  p:'#5a4a8a',                // штани
-  o:'#8a5a35',                // взуття
-  y:'#ffd23f', Y:'#e8a317',   // золото
+  k:'#140f1c',            // контур
+  r:'#2b2338', R:'#171220',   // волосся/капюшон
+  s:'#e8c7a6', w:'#ffffff',   // шкіра, білок ока
+  b:'#33463f', B:'#1f2e29',   // плащ
+  p:'#201d1f',                // штани
+  o:'#121011',                // взуття
+  y:'#dcb44e', Y:'#a8842c',   // золото (шарф)
   g:'#7be0a4', G:'#3fae74'    // м'ята
 };
 function fromRows(rows, pal = PAL) {
@@ -296,12 +348,33 @@ const ICONS = {
     '...yY....',
     '..yY.....',
     '..Y......'
-  ])
+  ]),
+  diamond: fromRows([
+    '..dDDd...',
+    '.dccccD..',
+    'dccccccD.',
+    'DccccccD.',
+    '.DccccD..',
+    '..DccD...',
+    '...Dd....',
+    '....d....'
+  ], { d:'#7ee3ff', D:'#1e9fd6', c:'#c8f6ff' }),
+  sword: fromRows([
+    '.......k.',
+    '......kyk',
+    '.....kyk.',
+    '....kyk..',
+    '...kyk...',
+    '..kyk....',
+    '.kyk.....',
+    'kYk......',
+    'kk.......'
+  ], { k:'#2a2233', y:'#dcdcec', Y:'#8a8aa0' })
 };
 
 /* --- Блоки сходів 16×16: цегла + трава зверху --- */
-const STONE = { base:'#8a7fb0', light:'#a99fd0', shade:'#6d6392', mortar:'#4f4673' };
-const GRASS = { hi:'#9be564', mid:'#5cbf3d', dark:'#3a8f33' };
+const STONE = { base:'#4d4568', light:'#655c86', shade:'#332c4a', mortar:'#211c33' };
+const GRASS = { hi:'#8fe06a', mid:'#4ea83a', dark:'#256b24' };
 function makeBlock(kind, variant) {   // kind: 'top' | 'body' | 'bottom'
   const c = mk(16, 16), g = c.getContext('2d');
   const r = rng(variant * 977 + (kind === 'top' ? 13 : kind === 'bottom' ? 41 : 71));
@@ -330,6 +403,17 @@ function makeBlock(kind, variant) {   // kind: 'top' | 'body' | 'bottom'
       if (d % 2 === 0) px(x, 4, GRASS.dark);
       if (d === 1 && variant === 2) px(x, 0, '#ffe66d');   // жовта квіточка
     }
+    const rd = rng(variant * 401 + 17);
+    for (let x = 0; x < 16; x++) {
+      if (rd() < 0.8) {
+        const len = 4 + ((rd() * 8) | 0);
+        for (let dy = 0; dy < len && 5 + dy < 16; dy++) {
+          const tip = dy >= len - 2;
+          px(x, 5 + dy, tip ? '#1a3f1a' : GRASS.dark);
+        }
+        if (rd() < 0.3) px(x, Math.min(15, 5 + len - 1), '#c8ffb0');   // світлячок-іскра на кінці моху
+      }
+    }
   }
   return c;
 }
@@ -343,7 +427,7 @@ function tint(src, m) {
   } catch (e) { return src; }
   return c;
 }
-const NIGHT_TINT = [0.55, 0.6, 0.95];
+const NIGHT_TINT = [0.6, 0.8, 0.72];
 const TILES = { day: { top: [], body: [], bottom: [] }, night: { top: [], body: [], bottom: [] } };
 for (let v = 0; v < 3; v++) {
   TILES.day.top.push(makeBlock('top', v));
@@ -358,7 +442,7 @@ function makeCloud(w, h, blobs) {
   for (let y = 0; y < h - 1; y++) for (let x = 0; x < w; x++) {
     let inside = false;
     for (const [bx, by, br] of blobs) { const dx = x - bx, dy = y - by; if (dx * dx + dy * dy <= br * br) { inside = true; break; } }
-    if (inside) { g.fillStyle = y >= h - 4 ? '#c9dcff' : (y <= 2 ? '#ffffff' : '#f2f7ff'); g.fillRect(x, y, 1, 1); }
+    if (inside) { g.fillStyle = y >= h - 4 ? '#3f5a54' : (y <= 2 ? '#b9d6bf' : '#7fa294'); g.fillRect(x, y, 1, 1); }
   }
   return c;
 }
@@ -382,6 +466,20 @@ function makeDisc(kind) {
   return c;
 }
 const SUN = makeDisc('sun'), MOON = makeDisc('moon');
+function makeFullMoon() {
+  const c = mk(15, 15), g = c.getContext('2d');
+  for (let y = 0; y < 15; y++) for (let x = 0; x < 15; x++) {
+    const d = Math.hypot(x - 7, y - 7);
+    if (d > 7) continue;
+    let col;
+    if (d > 5.6) col = '#bfe6ad';
+    else if ((x * 3 + y * 7) % 11 === 0) col = '#a8d99a';
+    else col = '#e9f6d8';
+    g.fillStyle = col; g.fillRect(x, y, 1, 1);
+  }
+  return c;
+}
+const MOON_FULL = makeFullMoon();
 
 /* --- Гори (паралакс) --- */
 function makeMountains(w, h, peaks, c) {
@@ -407,20 +505,76 @@ const MTN = {
   far: {
     w: 200, h: 48, base: 0.74, k: 0.15,
     peaks: [[22,30],[62,42],[112,34],[150,46],[186,32]],
-    day:   { light:'#a7b8ea', dark:'#8c9dd8', snow:'#ffffff', snowD:'#dde5ff', snowMin:38 },
-    night: { light:'#3b3f86', dark:'#2d3175', snow:'#aab1ea', snowD:'#8188cc', snowMin:38 }
+    day:   { light:'#2c4a44', dark:'#1c332f', snow:'#6fae7f', snowD:'#4a7d5c', snowMin:38 },
+    night: { light:'#2c4a44', dark:'#1c332f', snow:'#6fae7f', snowD:'#4a7d5c', snowMin:38 }
   },
   near: {
     w: 200, h: 32, base: 0.84, k: 0.30,
     peaks: [[10,20],[52,30],[95,22],[138,32],[178,24]],
-    day:   { light:'#7f93d0', dark:'#6a7dc0' },
-    night: { light:'#272b66', dark:'#1e2154' }
+    day:   { light:'#182f2b', dark:'#0f201d' },
+    night: { light:'#182f2b', dark:'#0f201d' }
   }
 };
 for (const key in MTN) {
   const m = MTN[key];
   m.dayC   = makeMountains(m.w, m.h, m.peaks, m.day);
   m.nightC = makeMountains(m.w, m.h, m.peaks, m.night);
+}
+
+/* --- Локації (кожен поверх/поріг — нова місцевість) --- */
+const LOCATIONS = [
+  { name: 'Місячний замок',
+    sky: [[9,20,26],[33,63,58]],
+    far: { light:'#2c4a44', dark:'#1c332f' }, near: { light:'#182f2b', dark:'#0f201d' },
+    moss: [0.6,0.8,0.72] },
+  { name: 'Криваве урочище',
+    sky: [[24,8,14],[74,26,30]],
+    far: { light:'#4a2430', dark:'#2c1420' }, near: { light:'#2a141e', dark:'#180a12' },
+    moss: [1.05,0.5,0.46] },
+  { name: 'Крижані вершини',
+    sky: [[8,16,30],[58,92,120]],
+    far: { light:'#2c4460', dark:'#1a2c44' }, near: { light:'#16283c', dark:'#0c1826' },
+    moss: [0.62,0.82,1.05] },
+  { name: 'Отруйні нетрі',
+    sky: [[9,22,12],[48,84,28]],
+    far: { light:'#2e4a1e', dark:'#1c3010' }, near: { light:'#1a2c10', dark:'#101c08' },
+    moss: [0.55,1.05,0.5] },
+  { name: 'Небесний храм',
+    sky: [[15,9,34],[92,58,145]],
+    far: { light:'#3a2c5a', dark:'#241a3c' }, near: { light:'#241a3c', dark:'#150e26' },
+    moss: [0.85,0.62,1.05] }
+];
+for (const loc of LOCATIONS) {
+  loc.farC  = makeMountains(MTN.far.w,  MTN.far.h,  MTN.far.peaks,  loc.far);
+  loc.nearC = makeMountains(MTN.near.w, MTN.near.h, MTN.near.peaks, loc.near);
+  loc.tiles = {
+    top:    TILES.day.top.map(t => tint(t, loc.moss)),
+    body:   TILES.day.body.map(t => tint(t, loc.moss)),
+    bottom: TILES.day.bottom.map(t => tint(t, loc.moss))
+  };
+}
+function locFor(tier) { return LOCATIONS[Math.min(tier, LOCATIONS.length - 1)]; }
+
+/* --- Пороги зірок → нагорода діамантами + нова локація --- */
+const TIERS = [
+  { at: 2000,   dMin: 5,   dMax: 10  },
+  { at: 15000,  dMin: 15,  dMax: 30  },
+  { at: 40000,  dMin: 30,  dMax: 55  },
+  { at: 200000, dMin: 100, dMax: 200 }
+];
+
+/* --- Зброя: більший урон по монстрах, купується за зірки або діаманти --- */
+const WEAPONS = [
+  { id:'fists',  name:'Кулаки',          dmg:1,   cost:0,    cur:'star'    },
+  { id:'wood',   name:'Дерев’яний меч',  dmg:4,   cost:150,  cur:'star'    },
+  { id:'iron',   name:'Залізний меч',    dmg:10,  cost:1200, cur:'star'    },
+  { id:'magic',  name:'Магічний клинок', dmg:22,  cost:20,   cur:'diamond' },
+  { id:'dragon', name:'Клинок дракона',  dmg:50,  cost:80,   cur:'diamond' }
+];
+function weaponDmg() {
+  let best = 1;
+  for (const w of WEAPONS) if (state.weapons.includes(w.id) && w.dmg > best) best = w.dmg;
+  return best;
 }
 
 /* --- Підміна на свої PNG (див. розділ 2) --- */
@@ -435,18 +589,31 @@ loadImg(CUSTOM.stairBody, im => {
 
 /* Іконки в DOM */
 document.querySelectorAll('img[data-icon]').forEach(im => { im.src = ICONS[im.dataset.icon].toDataURL(); });
-
-/* ==========================================================================
+  /* ==========================================================================
    6. СТАН ГРИ + ЗБЕРЕЖЕННЯ
    ========================================================================== */
 function load() {
-  const d = { score: 0, steps: 0, powerLvl: 1, autoLvl: 0 };
+  const d = {
+    score: 0, steps: 0, powerLvl: 1, autoLvl: 0,
+    diamonds: 0, totalStars: 0, floorTier: 0,
+    hp: CFG.HP_MAX, weapons: ['fists']
+  };
   try {
     const raw = localStorage.getItem(CFG.SAVE_KEY);
     if (raw) {
       const s = JSON.parse(raw);
-      for (const k in d) { const v = Number(s[k]); if (Number.isFinite(v) && v >= 0) d[k] = Math.floor(v); }
+      for (const k in d) {
+        if (k === 'weapons') continue;
+        const v = Number(s[k]); if (Number.isFinite(v) && v >= 0) d[k] = Math.floor(v);
+      }
+      if (Array.isArray(s.weapons)) {
+        const ids = new Set(WEAPONS.map(w => w.id));
+        const owned = s.weapons.filter(id => ids.has(id));
+        d.weapons = owned.includes('fists') ? owned : ['fists', ...owned];
+      }
       if (d.powerLvl < 1) d.powerLvl = 1;
+      if (d.floorTier > TIERS.length) d.floorTier = TIERS.length;
+      if (d.hp <= 0 || d.hp > CFG.HP_MAX) d.hp = CFG.HP_MAX;
     }
   } catch (e) {}
   return d;
@@ -454,6 +621,8 @@ function load() {
 const state = load();     // score — бали, steps — скільки сходинок пройдено, powerLvl — бали за клік, autoLvl — автокроків/сек
 let pos = state.steps;    // плавна позиція героя (для анімації)
 let autoAcc = 0, dirty = false, uiDirty = true, bump = false, lastSave = 0;
+let combat = null;                                    // {hp,hpMax,dmg,reward,atkAcc,hitFlash}
+let nextEncounter = state.steps + CFG.ENC_MIN_GAP + Math.random() * (CFG.ENC_MAX_GAP - CFG.ENC_MIN_GAP);
 
 function save() { try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {} dirty = false; lastSave = performance.now(); }
 document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
@@ -464,8 +633,8 @@ const costAuto  = () => Math.ceil(CFG.AUTO_BASE_COST  * Math.pow(CFG.AUTO_GROWTH
 
 /* ==========================================================================
    7. ЕКРАН, КАМЕРА, СЦЕНА
-   ================================== */
-   const stage = $('stage'), cv = $('game'), ctx = cv.getContext('2d');
+   ========================================================================== */
+const stage = $('stage'), cv = $('game'), ctx = cv.getContext('2d');
 const floatersEl = $('floaters');
 const STEP = 16;
 let W = 0, H = 0, S = 3, cx = 0, cy = 0;    // логічний розмір, масштаб, позиція героя (ноги)
@@ -489,46 +658,33 @@ function resize() {
 }
 if ('ResizeObserver' in window) new ResizeObserver(resize).observe(stage);
 window.addEventListener('resize', resize);
+if (tg) { try { tg.onEvent('viewportChanged', resize); } catch (e) {} }
 
-/* --- небо: день → захід → ніч → світанок --- */
-const SKY = [
-  { t: 0.00, top: [ 78,170,255], bot: [196,232,255] },
-  { t: 0.20, top: [ 96,160,240], bot: [255,224,160] },
-  { t: 0.34, top: [120, 90,180], bot: [255,150, 90] },
-  { t: 0.48, top: [ 44, 36,110], bot: [140, 80,140] },
-  { t: 0.58, top: [ 12, 14, 46], bot: [ 40, 40,100] },
-  { t: 0.72, top: [ 30, 30, 90], bot: [110, 70,140] },
-  { t: 0.85, top: [110,120,210], bot: [255,170,150] },
-  { t: 1.00, top: [ 78,170,255], bot: [196,232,255] }
-];
-function skyAt(ph) {
-  for (let i = 0; i < SKY.length - 1; i++) {
-    const a = SKY[i], b = SKY[i + 1];
-    if (ph <= b.t) { const t = (ph - a.t) / (b.t - a.t); return [mix3(a.top, b.top, t), mix3(a.bot, b.bot, t)]; }
-  }
-  return [SKY[0].top, SKY[0].bot];
-}
-
-function drawSky(ph) {
-  const [top, bot] = skyAt(ph), bands = 18, bh = Math.ceil(H / bands);
+/* --- небо: колір залежить від поточної локації (поверху) --- */
+function drawSky(loc) {
+  const bands = 18, bh = Math.ceil(H / bands);
   for (let i = 0; i < bands; i++) {
-    ctx.fillStyle = rgb(mix3(top, bot, i / (bands - 1)));
+    ctx.fillStyle = rgb(mix3(loc.sky[0], loc.sky[1], i / (bands - 1)));
     ctx.fillRect(0, i * bh, W, bh);
   }
 }
-function drawSunMoon(n) {
-  const x = Math.round(W * 0.14), y = 40;
-  const sunA = clamp(1 - n * 2.2, 0, 1);
-  if (sunA > 0.01) { ctx.globalAlpha = sunA; ctx.drawImage(SUN, x, y); }
-  if (n > 0.15)    { ctx.globalAlpha = clamp((n - 0.15) * 1.5, 0, 1); ctx.drawImage(MOON, x, y); }
-  ctx.globalAlpha = 1;
+function drawSunMoon() {
+  const size = Math.round(Math.min(W, H) * 0.24);
+  const x = Math.round(W * 0.16), y = Math.round(H * 0.1);
+  const mx = x + size / 2, my = y + size / 2, r = size * 1.7;
+  const grad = ctx.createRadialGradient(mx, my, size * 0.3, mx, my, r);
+  grad.addColorStop(0, 'rgba(170,235,170,0.45)');
+  grad.addColorStop(1, 'rgba(170,235,170,0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(mx, my, r, 0, Math.PI * 2); ctx.fill();
+  ctx.drawImage(MOON_FULL, x, y, size, size);
 }
 function drawStars(n, climb, t) {
   if (n < 0.02) return;
   for (const s of stars) {
     const x = Math.round(mod(s.x - climb * 0.04, W)), y = Math.round(mod(s.y + climb * 0.04, H));
     ctx.globalAlpha = n * (0.55 + 0.45 * Math.sin(t * 3 + s.ph));
-    ctx.fillStyle = '#fffbe0';
+    ctx.fillStyle = s.big ? '#baffb0' : '#eafbe0';
     ctx.fillRect(x, y, 1, 1);
     if (s.big) { ctx.fillRect(x - 1, y, 3, 1); ctx.fillRect(x, y - 1, 1, 3); }
   }
@@ -544,17 +700,13 @@ function drawClouds(n, climb, t) {
   }
   ctx.globalAlpha = 1;
 }
-function drawMountains(key, n, climb) {
+function drawMountains(key, loc, climb) {
   const m = MTN[key], bottom = Math.round(H * m.base + climb * m.k);
   if (bottom - m.h > H) return;
   const off = Math.round(mod(climb * m.k, m.w));
-  for (const [img, alpha, col] of [[m.dayC, 1, m.day.dark], [m.nightC, n, m.night.dark]]) {
-    if (alpha < 0.01) continue;
-    ctx.globalAlpha = alpha;
-    for (let x = -off; x < W; x += m.w) ctx.drawImage(img, x, bottom - m.h);
-    if (bottom < H) { ctx.fillStyle = col; ctx.fillRect(0, bottom, W, H - bottom); }
-  }
-  ctx.globalAlpha = 1;
+  const img = loc[key + 'C'], col = loc[key].dark;
+  for (let x = -off; x < W; x += m.w) ctx.drawImage(img, x, bottom - m.h);
+  if (bottom < H) { ctx.fillStyle = col; ctx.fillRect(0, bottom, W, H - bottom); }
 }
 
 /* --- сходи: кожна сходинка — стовпчик із кількох блоків (трава, камінь, темний низ) --- */
@@ -590,6 +742,26 @@ function drawHero(t) {
   ctx.drawImage(spr, Math.round(cx - spr.width / 2), Math.round(cy - spr.height - lift));
 }
 
+/* --- монстр (бій) --- */
+const MONSTER_ROWS_W = [2, 5, 6, 7, 7, 7, 6, 6, 5, 4, 3];
+function drawMonster(m, gx, groundY) {
+  const flash = m.hitFlash > 0;
+  const body = flash ? '#ffffff' : '#241030';
+  const dark = flash ? '#eeeeee' : '#150820';
+  const h = MONSTER_ROWS_W.length * 2;
+  let y = Math.round(groundY - h);
+  for (let i = 0; i < MONSTER_ROWS_W.length; i++) {
+    const rw = MONSTER_ROWS_W[i];
+    ctx.fillStyle = (i % 3 === 0) ? dark : body;
+    ctx.fillRect(Math.round(gx - rw), y, rw * 2, 2);
+    y += 2;
+  }
+  const eyeCol = flash ? '#ff9a9a' : '#ff4d4d';
+  ctx.fillStyle = eyeCol;
+  ctx.fillRect(Math.round(gx - 5), Math.round(groundY - h + 6), 2, 2);
+  ctx.fillRect(Math.round(gx + 3), Math.round(groundY - h + 6), 2, 2);
+}
+
 /* --- часточки --- */
 const parts = [];
 function burst(x, y, n, spd, cols) {
@@ -621,17 +793,17 @@ let time = 0;
 function draw() {
   if (!W) return;
   const climb = pos * STEP;
-  const ph = mod(pos / CFG.DAY_LENGTH, 1);
-  const n = clamp(1 - Math.abs(ph - 0.58) / 0.2, 0, 1);     // «нічність» 0..1
+  const n = 1;
+  const loc = locFor(state.floorTier);
 
-  drawSky(ph);
-  drawSunMoon(n);
+  drawSky(loc);
+  drawSunMoon();
   drawStars(n, climb, time);
   drawClouds(n, climb, time);
-  drawMountains('far', n, climb);
-  drawMountains('near', n, climb);
-  drawStairs(TILES.day, 1);
-  if (n > 0.02) drawStairs(TILES.night, n * 0.65);
+  drawMountains('far', loc, climb);
+  drawMountains('near', loc, climb);
+  drawStairs(loc.tiles, 1);
+  if (combat) drawMonster(combat, cx + 24, cy);
   drawHero(time);
   drawParts();
 }
@@ -658,9 +830,12 @@ function floater(text, x, y) {
 
 /* Один «крок» — і від кліку, і від автокліку: +бали, +сходинка */
 function climbStep(auto) {
+  if (combat) return;
   state.score += state.powerLvl;
+  state.totalStars += state.powerLvl;
   state.steps += 1;
   dirty = true; uiDirty = true;
+  checkTierReward();
   const now = performance.now();
   if (now - lastFloater > (auto ? 260 : 50)) {
     lastFloater = now;
@@ -672,11 +847,74 @@ function climbStep(auto) {
     hintEl.classList.add('off');
     if (now - lastHaptic > 70) { lastHaptic = now; haptic('light'); }
   }
+  if (state.steps >= nextEncounter) startEncounter();
 }
 
-stage.addEventListener('pointerdown', e => { e.preventDefault(); climbStep(false); });
+function checkTierReward() {
+  while (state.floorTier < TIERS.length && state.totalStars >= TIERS[state.floorTier].at) {
+    const t = TIERS[state.floorTier];
+    const reward = t.dMin + Math.floor(Math.random() * (t.dMax - t.dMin + 1));
+    state.diamonds += reward;
+    state.floorTier += 1;
+    dirty = true; uiDirty = true;
+    floater('💎 +' + reward, cx * S, (cy - 70) * S);
+    floater(locFor(state.floorTier).name, cx * S, (cy - 92) * S);
+    hapticNote('success');
+  }
+}
+
+/* --- бій з монстром --- */
+function startEncounter() {
+  const lvl = state.floorTier;
+  const hpMax = Math.round(18 + state.steps * 0.35 + lvl * 55 + Math.random() * 20);
+  const dmg = Math.round(4 + lvl * 3 + Math.random() * 3);
+  combat = { hp: hpMax, hpMax, dmg, reward: Math.round(hpMax * 0.7), atkAcc: 0, hitFlash: 0 };
+  uiDirty = true;
+  hapticNote('warning');
+  $('combat-hud').classList.remove('off');
+  hintEl.classList.add('off');
+}
+function hitMonster() {
+  if (!combat) return;
+  const dmg = Math.max(1, Math.round(weaponDmg() * (0.85 + Math.random() * 0.3)));
+  combat.hp -= dmg;
+  combat.hitFlash = 0.12;
+  floater('-' + fmt(dmg), (cx + 24 + Math.random() * 8 - 4) * S, (cy - 34) * S);
+  burst(cx + 24, cy - 14, 6, 60, ['#ffffff', '#ff8a8a']);
+  haptic('rigid');
+  uiDirty = true;
+  if (combat.hp <= 0) onMonsterDefeated();
+}
+function onMonsterDefeated() {
+  const reward = combat.reward;
+  state.score += reward; state.totalStars += reward;
+  const diaBonus = Math.random() < 0.18 ? 1 + ((Math.random() * 3) | 0) : 0;
+  if (diaBonus) state.diamonds += diaBonus;
+  floater('+' + fmt(reward), cx * S, (cy - 26) * S);
+  if (diaBonus) floater('💎 +' + diaBonus, cx * S, (cy - 50) * S);
+  burst(cx + 24, cy - 14, 20, 90, SPARK);
+  combat = null;
+  nextEncounter = state.steps + CFG.ENC_MIN_GAP + Math.random() * (CFG.ENC_MAX_GAP - CFG.ENC_MIN_GAP);
+  $('combat-hud').classList.add('off');
+  dirty = true; uiDirty = true;
+  checkTierReward();
+  hapticNote('success');
+}
+function onPlayerDeath() {
+  const loss = Math.round(state.score * CFG.DEATH_LOSS);
+  state.score = Math.max(0, state.score - loss);
+  state.hp = CFG.HP_MAX;
+  combat = null;
+  nextEncounter = state.steps + CFG.ENC_MIN_GAP + Math.random() * (CFG.ENC_MAX_GAP - CFG.ENC_MIN_GAP);
+  $('combat-hud').classList.add('off');
+  floater('−' + fmt(loss), cx * S, (cy - 26) * S);
+  dirty = true; uiDirty = true;
+  hapticNote('error');
+}
+
+stage.addEventListener('pointerdown', e => { e.preventDefault(); if (combat) hitMonster(); else climbStep(false); });
 document.addEventListener('keydown', e => {
-  if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); if (!e.repeat) climbStep(false); }
+  if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); if (!e.repeat) { if (combat) hitMonster(); else climbStep(false); } }
 });
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('gesturestart', e => e.preventDefault());
@@ -705,10 +943,53 @@ btnAuto.addEventListener('click', () => {
   dirty = true; uiDirty = true; celebrate(btnAuto);
 });
 
+/* --- вкладки прокачка / зброя --- */
+const tabUpg = $('tab-upg'), tabWpn = $('tab-wpn'), panelUpg = $('panel'), panelWpn = $('panel-wpn');
+tabUpg.addEventListener('click', () => {
+  tabUpg.classList.add('active'); tabWpn.classList.remove('active');
+  panelUpg.classList.remove('off'); panelWpn.classList.add('off');
+});
+tabWpn.addEventListener('click', () => {
+  tabWpn.classList.add('active'); tabUpg.classList.remove('active');
+  panelWpn.classList.remove('off'); panelUpg.classList.add('off');
+});
+
+/* --- крамниця зброї --- */
+const curIcon = { star: ICONS.star.toDataURL(), diamond: ICONS.diamond.toDataURL() };
+function renderWeapons() {
+  const bestOwnedDmg = weaponDmg();
+  panelWpn.innerHTML = WEAPONS.map(w => {
+    const owned = state.weapons.includes(w.id);
+    const equipped = owned && w.dmg === bestOwnedDmg;
+    const balance = w.cur === 'star' ? state.score : state.diamonds;
+    const can = !owned && balance >= w.cost;
+    const cls = ['wpn']; if (owned) cls.push('owned'); if (can) cls.push('can');
+    let btn;
+    if (owned) btn = `<button class="wpn-btn owned" disabled>${equipped ? '★ У бою' : 'Куплено'}</button>`;
+    else btn = `<button class="wpn-btn${can ? ' can' : ''}" data-buy="${w.id}"><img src="${curIcon[w.cur]}" alt="">${fmt(w.cost)}</button>`;
+    return `<div class="${cls.join(' ')}"><div class="wpn-ic">⚔</div><div class="wpn-info"><div class="wpn-name">${w.name}</div><div class="wpn-dmg">Урон: ${w.dmg}</div></div>${btn}</div>`;
+  }).join('');
+  panelWpn.querySelectorAll('[data-buy]').forEach(b => {
+    b.addEventListener('click', () => buyWeapon(b.dataset.buy));
+  });
+}
+function buyWeapon(id) {
+  const w = WEAPONS.find(x => x.id === id);
+  if (!w || state.weapons.includes(id)) return;
+  const balance = w.cur === 'star' ? state.score : state.diamonds;
+  if (balance < w.cost) { hapticNote('error'); return; }
+  if (w.cur === 'star') state.score -= w.cost; else state.diamonds -= w.cost;
+  state.weapons.push(id);
+  dirty = true; uiDirty = true;
+  hapticNote('success');
+  burst(cx, cy - 10, 18, 70, SPARK);
+}
+
 /* --- інтерфейс --- */
-const scoreEl = $('score');
+const scoreEl = $('score'), diamondsEl = $('diamonds');
 function renderUI() {
   scoreEl.textContent = fmt(state.score);
+  diamondsEl.textContent = fmt(state.diamonds);
   $('per-click').textContent = `+${fmt(state.powerLvl)} за клік` + (state.autoLvl ? ` · авто ${state.autoLvl}/с` : '');
 
   const cp = costPower(), ca = costAuto();
@@ -721,6 +1002,15 @@ function renderUI() {
   btnPower.classList.toggle('can', state.score >= cp);
   btnAuto.classList.toggle('can',  state.score >= ca);
 
+  if (combat) {
+    $('mhp-fill').style.width = clamp(combat.hp / combat.hpMax, 0, 1) * 100 + '%';
+    $('mhp-num').textContent = Math.max(0, Math.ceil(combat.hp)) + '/' + combat.hpMax;
+  }
+  $('php-fill').style.width = clamp(state.hp / CFG.HP_MAX, 0, 1) * 100 + '%';
+  $('php-num').textContent = Math.max(0, Math.ceil(state.hp)) + '/' + CFG.HP_MAX;
+
+  renderWeapons();
+
   if (bump && scoreEl.animate) {
     scoreEl.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.1)' }, { transform: 'scale(1)' }], { duration: 110 });
   }
@@ -731,7 +1021,7 @@ function renderUI() {
    9. ГОЛОВНИЙ ЦИКЛ
    ========================================================================== */
 function update(dt) {
-  if (state.autoLvl > 0) {                              // автоклікер
+  if (!combat && state.autoLvl > 0) {                   // автоклікер (стоїть під час бою)
     autoAcc += dt * state.autoLvl;
     let guard = 0;
     while (autoAcc >= 1 && guard++ < 8) { autoAcc -= 1; climbStep(true); }
@@ -743,38 +1033,35 @@ function update(dt) {
     pos += diff * (1 - Math.exp(-dt * 20));
     if (state.steps - pos < 0.02) pos = state.steps;
   }
+  if (combat) {
+    combat.hitFlash = Math.max(0, combat.hitFlash - dt);
+    combat.atkAcc += dt;
+    if (combat.atkAcc >= CFG.ENC_ATK_EVERY) {
+      combat.atkAcc = 0;
+      state.hp -= combat.dmg;
+      dirty = true; uiDirty = true;
+      burst(cx, cy - 20, 5, 50, ['#ff6b6b', '#ffffff']);
+      if (state.hp <= 0) onPlayerDeath();
+    }
+  }
   updateParts(dt);
 }
 
 let last = performance.now();
 function frame(now) {
-  requestAnimationFrame(frame);
   const dt = Math.min(0.05, (now - last) / 1000); last = now; time += dt;
-  try {
-    if (!W) resize();
-    update(dt);
-    draw();
-    if (uiDirty) renderUI();
-    if (dirty && now - lastSave > 1500) save();
-  } catch (e) { window.__showErr && window.__showErr('Кадр: ' + (e && e.stack || e)); }
+  update(dt);
+  draw();
+  if (uiDirty) renderUI();
+  if (dirty && now - lastSave > 1500) save();
+  requestAnimationFrame(frame);
 }
 
 resize();
 if (state.steps > 0) hintEl.classList.add('off');
 renderUI();
 requestAnimationFrame(frame);
-window.addEventListener('load', resize);
-window.__started = true;
-
-/* Telegram SDK вантажимо після старту гри — якщо він недоступний, гра все одно працює */
-try {
-  const sdk = document.createElement('script');
-  sdk.src = 'https://telegram.org/js/telegram-web-app.js';
-  sdk.async = true; sdk.onload = initTelegram;
-  document.head.appendChild(sdk);
-} catch (e) {}
 })();
 </script>
 </body>
 </html>
-
