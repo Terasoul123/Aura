@@ -1661,7 +1661,11 @@ function drawHero(t) {
   const h = isPngSkin ? Math.round(34 * CFG.HERO_SCALE * gameplayScale) : Math.round(spr.height * CFG.HERO_SCALE * gameplayScale);
   const w = isPngSkin ? Math.round((spr.width / spr.height) * h) : Math.round(spr.width * CFG.HERO_SCALE * gameplayScale);
   const remDrop = state.skin === 'rz_rem' ? 2 : (state.skin === 'rz_ram' ? 2 : 0);
+  // PNG-скіни малюємо зі згладжуванням, щоб після масштабування вони не ставали зайво піксельними/зубчастими.
+  const oldSmoothing = ctx.imageSmoothingEnabled;
+  if (isPngSkin) ctx.imageSmoothingEnabled = true;
   ctx.drawImage(spr, Math.round(cx - w / 2), Math.round(cy - h - lift + remDrop), w, h);
+  ctx.imageSmoothingEnabled = oldSmoothing;
 }
 
 /* --- позиція монстра: на сходинці попереду й вище гравця, обличчям до нас --- */
