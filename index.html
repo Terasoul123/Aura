@@ -893,7 +893,7 @@ const SKINS = [
     fx:{ back:[...rzBack(-3, 9, 6, 19, '#2d2c72', '#1b1a4c'), ...rzTail('#5a2ea0', '#3a1a78')],
          front:[[10,12,1,2,'#3b6be0'],[13,13,1,1,'#e0405a']] } },
 
-  { id:'rz_crusch', name:'Краш', cost:800, cur:'diamond', buff:{ guard:0.12, hp:0.10 },                      // Лицарка честі
+  { id:'rz_crusch', name:'Круш', cost:800, cur:'diamond', buff:{ guard:0.12, hp:0.10 },                      // Лицарка честі
     look:{ hair:[142,.7,1.7,.1], body:[220,.55,1.55,.03], acc:[46,1.1,1.4,.12], eye:[48,1.6,1.4,.2], legs:[220,.4,1.2,.02] },
     fx:{ back:[...rzBack(-3, 9, 6, 18, '#2fa85e', '#1c7444'), ...rzTail('#2a3f80', '#18285a')],
          front:[[0,17,3,2,'#f2c430'],[12,17,3,2,'#f2c430'],[0,19,3,1,'#b8901c'],[12,19,3,1,'#b8901c'],[9,20,1,1,'#f2c430'],[9,23,1,1,'#f2c430']] } },
@@ -1300,6 +1300,24 @@ ECHIDNA_PNG.onload = () => {
 };
 ECHIDNA_PNG.src = 'Echidna.png';
 
+// Круш використовує готовий PNG з GitHub.
+const KRUSH_PNG = new Image();
+KRUSH_PNG.onload = () => {
+  delete SKIN_CACHE.rz_crusch;
+  uiDirty = true;
+  dirty = true;
+};
+KRUSH_PNG.src = 'kruh.png';
+
+// Юліус використовує готовий PNG з GitHub.
+const JULIUS_PNG = new Image();
+JULIUS_PNG.onload = () => {
+  delete SKIN_CACHE.rz_julius;
+  uiDirty = true;
+  dirty = true;
+};
+JULIUS_PNG.src = 'julius.png';
+
 function skinSprites(id) {
   const sk = skinById(id);
   let c = SKIN_CACHE[sk.id];
@@ -1362,6 +1380,38 @@ function skinSprites(id) {
         a: ECHIDNA_PNG,
         b: ECHIDNA_PNG,
         url: 'Echidna.png'
+      };
+      SKIN_CACHE[sk.id] = c;
+    }
+    return c;
+  }
+
+  // Для Юліуса беремо готовий PNG, а не намальований rzSprite().
+  if (sk.id === 'rz_julius') {
+    if (!c || c.img !== JULIUS_PNG) {
+      c = {
+        key: 'rz_julius-png',
+        img: JULIUS_PNG,
+        idle: JULIUS_PNG,
+        a: JULIUS_PNG,
+        b: JULIUS_PNG,
+        url: 'julius.png'
+      };
+      SKIN_CACHE[sk.id] = c;
+    }
+    return c;
+  }
+
+  // Для Круш беремо готовий PNG, а не намальований rzSprite().
+  if (sk.id === 'rz_crusch') {
+    if (!c || c.img !== KRUSH_PNG) {
+      c = {
+        key: 'rz_crusch-png',
+        img: KRUSH_PNG,
+        idle: KRUSH_PNG,
+        a: KRUSH_PNG,
+        b: KRUSH_PNG,
+        url: 'kruh.png'
       };
       SKIN_CACHE[sk.id] = c;
     }
