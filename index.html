@@ -1656,17 +1656,14 @@ function drawHero(t) {
   // PNG-персонажі на сходах мають однакову базову висоту, щоб не ставати кривими через різні розміри PNG.
   // Рем трохи менша та трохи нижче, щоб краще стояла на сходинці.
   // Емілія залишається у своєму базовому розмірі.
-  const gameplayScale = state.skin === 'rz_emilia' ? 1 : (state.skin === 'rz_rem' ? 1.1 : (state.skin === 'rz_ram' ? 1.04 : (state.skin === 'rz_echidna' ? 1.0 : ((state.skin === 'rz_julius' || state.skin === 'rz_crusch' || state.skin === 'rz_beatrice') ? 1.0 : 1.2))));
+  const gameplayScale = state.skin === 'rz_emilia' ? 1.25 : (state.skin === 'rz_rem' ? 1.35 : (state.skin === 'rz_ram' ? 1.28 : (state.skin === 'rz_beatrice' ? 1.28 : (state.skin === 'rz_crusch' ? 1.25 : (state.skin === 'rz_julius' ? 1.25 : (state.skin === 'rz_echidna' ? 1.25 : 1.2))))));
   const isPngSkin = ['rz_emilia','rz_rem','rz_ram','rz_echidna','rz_julius','rz_crusch','rz_beatrice'].includes(state.skin);
   const h = isPngSkin ? Math.round(34 * CFG.HERO_SCALE * gameplayScale) : Math.round(spr.height * CFG.HERO_SCALE * gameplayScale);
   const w = isPngSkin ? Math.round((spr.width / spr.height) * h) : Math.round(spr.width * CFG.HERO_SCALE * gameplayScale);
   const remDrop = state.skin === 'rz_rem' ? 2 : (state.skin === 'rz_ram' ? 2 : 0);
-  // Малюємо героя зі згладжуванням для БУДЬ-ЯКОГО скіна: при нецілому масштабі
-  // (HERO_SCALE * gameplayScale) без згладжування nearest-neighbor "з'їдає"
-  // пікселі нерівномірно і персонаж виглядає зжатим/кривим під час анімації.
+  // PNG-скіни малюємо зі згладжуванням, щоб після масштабування вони не ставали зайво піксельними/зубчастими.
   const oldSmoothing = ctx.imageSmoothingEnabled;
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
+  if (isPngSkin) ctx.imageSmoothingEnabled = true;
   ctx.drawImage(spr, Math.round(cx - w / 2), Math.round(cy - h - lift + remDrop), w, h);
   ctx.imageSmoothingEnabled = oldSmoothing;
 }
