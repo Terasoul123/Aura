@@ -1282,6 +1282,15 @@ REM_PNG.onload = () => {
 };
 REM_PNG.src = 'Rem.png';
 
+// Рам використовує готовий PNG з GitHub.
+const RAM_PNG = new Image();
+RAM_PNG.onload = () => {
+  delete SKIN_CACHE.rz_ram;
+  uiDirty = true;
+  dirty = true;
+};
+RAM_PNG.src = 'Ram.png';
+
 function skinSprites(id) {
   const sk = skinById(id);
   let c = SKIN_CACHE[sk.id];
@@ -1312,6 +1321,22 @@ function skinSprites(id) {
         a: REM_PNG,
         b: REM_PNG,
         url: 'Rem.png'
+      };
+      SKIN_CACHE[sk.id] = c;
+    }
+    return c;
+  }
+
+  // Для Рам беремо реальний PNG, а не намальований rzSprite().
+  if (sk.id === 'rz_ram') {
+    if (!c || c.img !== RAM_PNG) {
+      c = {
+        key: 'rz_ram-png',
+        img: RAM_PNG,
+        idle: RAM_PNG,
+        a: RAM_PNG,
+        b: RAM_PNG,
+        url: 'Ram.png'
       };
       SKIN_CACHE[sk.id] = c;
     }
@@ -1554,7 +1579,7 @@ function drawHero(t) {
   const gameplayScale = state.skin === 'rz_emilia' ? 1 : (state.skin === 'rz_rem' ? 1.1 : 1.2);
   const w = Math.round(spr.width * CFG.HERO_SCALE * gameplayScale);
   const h = Math.round(spr.height * CFG.HERO_SCALE * gameplayScale);
-  const remDrop = state.skin === 'rz_rem' ? 4 : 0;
+  const remDrop = state.skin === 'rz_rem' ? 2 : 0;
   ctx.drawImage(spr, Math.round(cx - w / 2), Math.round(cy - h - lift + remDrop), w, h);
 }
 
