@@ -1823,11 +1823,16 @@ async function claimReferralBonus() {
 }
 claimReferralBonus();
 
-/* Посилання-запрошення для кнопки "Запросити друга". */
+/* Посилання-запрошення для кнопки "Запросити друга".
+   Формат для Mini App з прямим посиланням (t.me/БОТ/APP): параметр
+   startapp, а НЕ start — інакше Telegram просто відкриє чат з ботом
+   замість самої гри. Значення startapp Telegram сам підставляє в
+   initDataUnsafe.start_param, який читає getReferrerId(). */
 function shareReferralLink() {
   if (!telegramId) return;
-  const botUsername = 'ІМ\'Я_ТВОГО_БОТА'; // заміни на юзернейм бота (без @)
-  const refLink = `https://t.me/${botUsername}?start=ref_${telegramId}`;
+  const botUsername = 'aura_up_bot';   // юзернейм бота (без @)
+  const appShortName = 'game';         // short name Mini App з Direct Links у BotFather
+  const refLink = `https://t.me/${botUsername}/${appShortName}?startapp=ref_${telegramId}`;
   const shareText = 'Заходь у гру та отримуй бонуси! 🏯';
   try {
     tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`);
