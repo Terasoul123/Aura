@@ -1530,7 +1530,8 @@ function defaultState() {
     diamonds: 0, totalStars: 0, floorTier: 0,
     hp: CFG.HP_MAX, weapons: ['fists'],
     hpLvl: 0, armor: ['cloth'], viewMode: 'sky', skins: ['default'], skin: 'default', ups: {},
-    monstersKilled: 0, questsClaimed: [], kills: { slime: 0, goblin: 0, skeleton: 0, bat: 0, spider: 0, lava: 0, ghost: 0, demon: 0, boss: 0 }
+    monstersKilled: 0, questsClaimed: [], kills: { slime: 0, goblin: 0, skeleton: 0, bat: 0, spider: 0, lava: 0, ghost: 0, demon: 0, boss: 0 },
+    referredBy: null, refRewardGiven: false, invitesCount: 0   // реферальна система
   };
 }
 /* Перетворює довільний "сирий" об'єкт збереження (з localStorage або з хмари)
@@ -1539,9 +1540,14 @@ function sanitizeState(s) {
   const d = defaultState();
   if (!s || typeof s !== 'object') return d;
   for (const k in d) {
-    if (k === 'weapons' || k === 'armor' || k === 'viewMode' || k === 'skins' || k === 'skin' || k === 'ups' || k === 'questsClaimed' || k === 'kills') continue;
+    if (k === 'weapons' || k === 'armor' || k === 'viewMode' || k === 'skins' || k === 'skin' || k === 'ups' || k === 'questsClaimed' || k === 'kills' || k === 'referredBy' || k === 'refRewardGiven') continue;
     const v = Number(s[k]); if (Number.isFinite(v) && v >= 0) d[k] = Math.floor(v);
   }
+  if (s.referredBy !== undefined && s.referredBy !== null) {
+    const rb = Math.floor(Number(s.referredBy));
+    if (Number.isFinite(rb) && rb > 0) d.referredBy = rb;
+  }
+  d.refRewardGiven = !!s.refRewardGiven;
   if (Array.isArray(s.questsClaimed)) d.questsClaimed = s.questsClaimed.filter(id => typeof id === 'string');
   if (s.kills && typeof s.kills === 'object') {
     for (const k of ['slime','goblin','skeleton','bat','spider','lava','ghost','demon','boss']) {
@@ -1722,6 +1728,112 @@ async function loadProgressFromCloud() {
 }
 loadProgressFromCloud();
 
+/* ==========================================================================
+   6c. РЕФЕРАЛЬНА СИСТЕМА
+   Посилання виду https://t.me/БОТ?start=ref_<telegram_id>. Новий гравець,
+   що зайшов по такому посиланню, прив'язується до того, хто запросив
+   (поле referred_by у Supabase). Коли цей новий гравець сам уперше
+   досягає 3-го поверху вежі (floorTier === REFERRAL_TOWER_INDEX),
+   нагорода нараховується тому, хто його запросив — через atomic RPC
+   у базі (щоб не залежати від того, чи той онлайн зараз, і щоб не
+   загубити нагороду через паралельний авто-сейв прогресу).
+   Потрібні SQL-функції в Supabase — див. інструкцію, яку я надав окремо.
+   ========================================================================== */
+const REFERRAL_TOWER_INDEX     = 2;     // floorTier===2 → саме "Третій поверх" (як у квесті q_floor3)
+const REFERRAL_REWARD_DIAMONDS = 300;   // нагорода тому, хто запросив
+const REFERRAL_REWARD_SCORE    = 0;     // за бажання можна додати ще й бали (★)
+
+function getReferrerId() {
+  try {
+    const sp = tg?.initDataUnsafe?.start_param;
+    if (sp && sp.startsWith('ref_')) {
+      const id = parseInt(sp.slice(4), 10);
+      if (Number.isFinite(id) && id > 0) return id;
+    }
+  } catch (e) {}
+  return null;
+}
+
+/* Викликається один раз при старті. Прив'язує нового гравця до того,
+   хто його запросив — тільки якщо це справді "чистий" локальний прогрес
+   (гравець ще нічого не встиг зробити), інакше вже граючих не чіпаємо. */
+async function registerReferralIfNew() {
+  if (!keyReady() || !telegramId) return;
+  const referrerId = getReferrerId();
+  if (!referrerId || referrerId === telegramId) return;
+  if (state.referredBy || state.steps > 0 || state.totalStars > 0) return;
+  state.referredBy = referrerId;
+  dirty = true; save();
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/rpc/register_referral`, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_new_id: telegramId, p_referrer_id: referrerId, p_username: playerName })
+    });
+  } catch (e) {}
+}
+registerReferralIfNew();
+
+/* Викликається, коли гравець, якого запросили, вперше досяг 3-го поверху.
+   Локальний флаг ставимо одразу (щоб не викликати вдруге навіть без мережі),
+   а серверна RPC-функція сама додатково захищена від повторного нарахування. */
+async function grantReferralRewardIfEligible() {
+  if (!state.referredBy || state.refRewardGiven) return;
+  state.refRewardGiven = true;
+  dirty = true; save();
+  if (!keyReady() || !telegramId) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/rpc/grant_referral_reward`, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_referred_id: telegramId, p_diamonds: REFERRAL_REWARD_DIAMONDS, p_score: REFERRAL_REWARD_SCORE })
+    });
+  } catch (e) {}
+}
+
+/* Забирає нараховану реферальну нагороду (якщо когось запросив і той
+   дійшов до 3-го поверху) і одразу зараховує її у свій локальний прогрес.
+   Викликається при кожному старті гри — так нагорода "дожене" гравця
+   навіть якщо в момент нарахування він був офлайн. */
+async function claimReferralBonus() {
+  if (!keyReady() || !telegramId) return;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/claim_referral_bonus`, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_telegram_id: telegramId })
+    });
+    if (!r.ok) return;
+    const rows = await r.json();
+    const row = rows && rows[0];
+    if (!row) return;
+    const bd = Math.floor(Number(row.diamonds) || 0);
+    const bs = Math.floor(Number(row.score) || 0);
+    state.invitesCount = Math.floor(Number(row.invites) || 0);
+    if (bd > 0 || bs > 0) {
+      state.diamonds += bd;
+      state.score += bs;
+      state.totalStars += bs;
+      dirty = true; uiDirty = true;
+      floater('🎁 +' + fmt(bd) + '💎', cx * S, (cy - 70) * S);
+      hapticNote('success');
+      save();
+    }
+  } catch (e) {}
+}
+claimReferralBonus();
+
+/* Посилання-запрошення для кнопки "Запросити друга". */
+function shareReferralLink() {
+  if (!telegramId) return;
+  const botUsername = 'ІМ\'Я_ТВОГО_БОТА'; // заміни на юзернейм бота (без @)
+  const refLink = `https://t.me/${botUsername}?start=ref_${telegramId}`;
+  const shareText = 'Заходь у гру та отримуй бонуси! 🏯';
+  try {
+    tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`);
+  } catch (e) {}
+}
+
 function awardFor(rank) {
   if (rank === 1) return '🥇';
   if (rank === 2) return '🥈';
@@ -1732,8 +1844,12 @@ function awardFor(rank) {
   return '';
 }
 
+const inviteBtnHtml = '<button class="lb-refresh" id="lb-invite-btn" type="button">👥 Запросити друга (' + fmt(state.invitesCount || 0) + ')</button>';
+function bindInviteBtn() { const b = $('lb-invite-btn'); if (b) b.addEventListener('click', shareReferralLink); }
+
 async function renderLeaderboard() {
-  panelLb.innerHTML = '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 Оновити</button><div class="lb-empty">Завантаження…</div>';
+  panelLb.innerHTML = inviteBtnHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 Оновити</button><div class="lb-empty">Завантаження…</div>';
+  bindInviteBtn();
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
 
   if (!keyReady()) {
@@ -1753,7 +1869,8 @@ async function renderLeaderboard() {
     const name = escapeHtml(String(p.username || 'Анонім')).slice(0, 20);
     return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-name">${name}</span><span class="lb-score">${fmt(p.score || 0)}</span></div>`;
   }).join('');
-  panelLb.innerHTML = '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 Оновити</button>' + rowsHtml;
+  panelLb.innerHTML = inviteBtnHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 Оновити</button>' + rowsHtml;
+  bindInviteBtn();
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
 }
 
@@ -2111,6 +2228,7 @@ function checkTierReward() {
     floater('💎 +' + reward, cx * S, (cy - 70) * S);
     floater(locFor(state.floorTier).name, cx * S, (cy - 92) * S);
     hapticNote('success');
+    if (state.floorTier === REFERRAL_TOWER_INDEX) grantReferralRewardIfEligible();
   }
 }
 
