@@ -372,10 +372,7 @@ const $   = id => document.getElementById(id);
    бот, самописний "клон" сторінки без реального Telegram) — гра взагалі
    не запускається.
    Це відсікає найпростіший спосіб накрутки (відкрити сайт напряму і
-   слати запити з консолі), АЛЕ саме по собі не є криптографічним
-   доказом: остаточну перевірку підпису initData робить сервер (Supabase
-   Edge Function) перед кожним записом у таблицю лідерів — див. окремий
-   файл supabase-verify-function.ts, який я підготував поруч.
+   слати запити з консолі) — без цього гра взагалі не стартує.
    ========================================================================== */
 function showAuthBlock(text) {
   const blockEl = $('auth-block');
@@ -1599,7 +1596,7 @@ let spawnAcc = 0;                                      // секунд нако�
 function save() {
   try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {}
   dirty = false; lastSave = performance.now();
-  if (lastSave - lastCloudSave > 20000) { lastCloudSave = lastSave; syncProgressToCloud(); }
+  if (lastSave - lastCloudSave > 5000) { lastCloudSave = lastSave; syncProgressToCloud(); }
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
 window.addEventListener('pagehide', save);
@@ -1607,22 +1604,26 @@ window.addEventListener('pagehide', save);
 /* ==========================================================================
    6b. ТАБЛИЦЯ ЛІДЕРІВ (Supabase)
 
-   ЧИТАННЯ рейтингу (fetchLeaderboard) йде напряму через публічний
-   ANON_KEY — це просто список, нічого секретного.
+   Просто і без зайвого: клієнт напряму читає і пише в таблицю
+   public.leaderboard через публічний ANON_KEY. Кожен гравець — це один
+   рядок, знайдений по telegram_id (унікальний id Telegram-акаунта).
+   Кожні 5 секунд (і при виході з гри) клієнт робить upsert свого рядка:
+   якщо рядка з таким telegram_id ще нема — Supabase створює новий,
+   якщо є — оновлює score і progress.
 
-   ЗАПИС результату (saveProgress/loadProgress) НЕ йде напряму в таблицю
-   з клієнта — інакше будь-хто з консолі браузера міг би вписати собі
-   довільний рахунок. Замість цього клієнт шле tgInitData (підписаний
-   Telegram рядок) на серверну Edge Function EDGE_FN_URL, а вже ФУНКЦІЯ,
-   перевіривши підпис (і що це справжній Telegram-акаунт), сама пише в
-   базу через service_role ключ, якого клієнт взагалі не знає.
-   Код цієї функції — у файлі supabase-verify-function.ts, який я додав
-   поруч. Її треба задеплоїти в Supabase (Edge Functions), інакше запис
-   у таблицю лідерів не працюватиме, поки EDGE_FN_URL порожній нижче.
+   Щоб це працювало, в таблиці public.leaderboard має бути:
+   1) унікальний індекс на telegram_id:
+        alter table public.leaderboard
+        add constraint leaderboard_telegram_id_key unique (telegram_id);
+   2) RLS-політики, що дозволяють анонімному ключу читати, а також
+      створювати/оновлювати рядки (SELECT / INSERT / UPDATE for anon).
+
+   Керувати гравцями (в т.ч. видаляти) можна прямо в Table Editor —
+   Supabase Dashboard → Table Editor → leaderboard → виділити рядок(и) →
+   Delete.
    ========================================================================== */
 const SUPABASE_URL = "https://rcipyqyufblsgzobmlyp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_NqzRCYR6V7tj9H0nmagVJg_JqPXLWhq";
-const EDGE_FN_URL = "https://rcipyqyufblsgzobmlyp.supabase.co/functions/v1/progress";
 
 function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
@@ -1643,7 +1644,17 @@ const playerName = getDisplayName();
 let lastCloudSave = 0, cloudSaving = false;
 
 function keyReady() { return SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith('ТВІЙ'); }
-function edgeReady() { return !!EDGE_FN_URL; }
+
+/* telegram_id гравця — беремо з підписаних Telegram-даних (initDataUnsafe.user.id).
+   Це і є первинний ключ рядка гравця в таблиці leaderboard. */
+function getTelegramId() {
+  try {
+    const u = tg?.initDataUnsafe?.user;
+    if (u && u.id) return u.id;
+  } catch (e) {}
+  return null;
+}
+const telegramId = getTelegramId();
 
 async function fetchLeaderboard(limit) {
   if (!keyReady()) return null; // ключ ще не вставлено
@@ -1656,45 +1667,41 @@ async function fetchLeaderboard(limit) {
   } catch (e) { return []; }
 }
 
-/* Якщо Edge Function відповідає 403 — це означає, що гравця заблоковано
-   (banned=true у таблиці players). Показуємо той самий екран блокування,
-   що й для неавторизованих, але з причиною бану, якщо функція її повернула. */
-async function handleBannedResponse(r) {
-  if (r.status !== 403) return false;
-  let reason = '';
-  try { const d = await r.json(); reason = d && d.reason ? d.reason : ''; } catch (e) {}
-  showAuthBlock(
-    'Вас заблоковано в цій грі.' + (reason ? '<br><br>' + escapeHtml(reason) : '')
-  );
-  return true;
-}
-
+/* Раз на 5 секунд (і при виході з гри) відправляємо свій рахунок і
+   прогрес у Supabase — upsert по telegram_id: якщо рядка гравця ще нема,
+   Supabase створить новий, якщо є — оновить score і progress. */
 async function syncProgressToCloud() {
-  if (!edgeReady() || cloudSaving) return;
+  if (!keyReady() || cloudSaving || !telegramId) return;
   cloudSaving = true;
   try {
-    const r = await fetch(EDGE_FN_URL, {
+    await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?on_conflict=telegram_id`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ initData: tgInitData, score: Math.floor(state.totalStars), progress: state })
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify({
+        telegram_id: telegramId,
+        username: playerName,
+        score: Math.floor(state.totalStars),
+        progress: state
+      })
     });
-    await handleBannedResponse(r);
   } catch (e) {}
   cloudSaving = false;
 }
 
 async function fetchCloudProgress() {
-  if (!edgeReady()) return null;
+  if (!keyReady() || !telegramId) return null;
   try {
-    const r = await fetch(EDGE_FN_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ initData: tgInitData }) // без "progress" → функція розуміє це як запит на ЗАВАНТАЖЕННЯ
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?telegram_id=eq.${telegramId}&select=progress&limit=1`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
     });
-    if (await handleBannedResponse(r)) return null;
     if (!r.ok) return null;
     const data = await r.json();
-    return data && data.row ? data.row : null;
+    return data && data[0] ? data[0] : null;
   } catch (e) { return null; }
 }
 
