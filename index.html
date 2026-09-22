@@ -1576,10 +1576,10 @@ function drawHero(t) {
   // На сходах усі персонажі, крім Емілії, на 20% більші.
   // Рем трохи менша та трохи нижче, щоб краще стояла на сходинці.
   // Емілія залишається у своєму базовому розмірі.
-  const gameplayScale = state.skin === 'rz_emilia' ? 1 : (state.skin === 'rz_rem' ? 1.1 : (state.skin === 'rz_ram' ? 1.1 : 1.2));
+  const gameplayScale = state.skin === 'rz_emilia' ? 1 : (state.skin === 'rz_rem' ? 1.1 : (state.skin === 'rz_ram' ? 1.04 : 1.2));
   const w = Math.round(spr.width * CFG.HERO_SCALE * gameplayScale);
   const h = Math.round(spr.height * CFG.HERO_SCALE * gameplayScale);
-  const remDrop = state.skin === 'rz_rem' ? 2 : 0;
+  const remDrop = state.skin === 'rz_rem' ? 2 : (state.skin === 'rz_ram' ? 2 : 0);
   ctx.drawImage(spr, Math.round(cx - w / 2), Math.round(cy - h - lift + remDrop), w, h);
 }
 
