@@ -108,6 +108,18 @@
   .tab.active{background:#3d2a7a;color:var(--paper);box-shadow:inset 0 0 0 2px var(--gold)}
 
   /* ---------- зброя ---------- */
+  /* ---------- блокування без Telegram-авторизації ---------- */
+  #auth-block{
+    position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+    background:var(--ink);padding:24px;
+  }
+  #auth-block.off{display:none}
+  .auth-box{max-width:420px;text-align:center;background:var(--card);padding:28px 20px;
+    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -6px 0 0 #241a52;}
+  .auth-icon{font-size:40px;margin-bottom:14px}
+  .auth-title{font-family:var(--pixel);font-size:15px;color:#ff8a8a;text-shadow:var(--o2);margin-bottom:14px}
+  .auth-text{font-family:var(--pixel);font-size:9px;line-height:2;color:var(--paper)}
+
   #panel-wpn,#panel-arm,#panel-skn,#panel-qst,#panel-lb{
     flex:0 0 auto;max-height:34vh;overflow-y:auto;
     padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));
@@ -214,6 +226,16 @@
 </head>
 
 <body>
+<div id="auth-block" class="off">
+  <div class="auth-box">
+    <div class="auth-icon">🚫</div>
+    <div class="auth-title">Доступ заблоковано</div>
+    <div class="auth-text" id="auth-text">
+      Цю гру можна проходити лише через офіційний Telegram-бот.<br>
+      Прогрес і таблиця лідерів доступні тільки авторизованим гравцям.
+    </div>
+  </div>
+</div>
 <div id="app">
   <div id="stage">
     <canvas id="game"></canvas>
@@ -341,6 +363,28 @@ const hapticNote = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.not
    4. ДОПОМІЖНЕ
    ========================================================================== */
 const $   = id => document.getElementById(id);
+
+/* ==========================================================================
+   4b. ГЕЙТ АВТОРИЗАЦІЇ TELEGRAM
+   window.Telegram.WebApp.initData — рядок, підписаний Telegram, що
+   з'являється ТІЛЬКИ коли сторінку відкрито як Mini App всередині
+   Telegram-клієнта. Якщо його нема (звичайний браузер, автоматизований
+   бот, самописний "клон" сторінки без реального Telegram) — гра взагалі
+   не запускається.
+   Це відсікає найпростіший спосіб накрутки (відкрити сайт напряму і
+   слати запити з консолі), АЛЕ саме по собі не є криптографічним
+   доказом: остаточну перевірку підпису initData робить сервер (Supabase
+   Edge Function) перед кожним записом у таблицю лідерів — див. окремий
+   файл supabase-verify-function.ts, який я підготував поруч.
+   ========================================================================== */
+const tgInitData = (tg && typeof tg.initData === 'string') ? tg.initData : '';
+if (!tgInitData) {
+  const blockEl = $('auth-block');
+  if (blockEl) blockEl.classList.remove('off');
+  document.title = 'Доступ заблоковано';
+  return; // гра далі не ініціалізується — жодних обробників, жодного циклу
+}
+
 const mk  = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
 const mod = (a, n) => ((a % n) + n) % n;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -1556,28 +1600,44 @@ window.addEventListener('pagehide', save);
 
 /* ==========================================================================
    6b. ТАБЛИЦЯ ЛІДЕРІВ (Supabase)
-   Встав свій справжній ANON_KEY з налаштувань проєкту Supabase (Settings →
-   API → Project API keys → anon public), інакше таблиця лідерів працюватиме
-   лише локально (не буде зберігати/показувати чужі результати).
+
+   ЧИТАННЯ рейтингу (fetchLeaderboard) йде напряму через публічний
+   ANON_KEY — це просто список, нічого секретного.
+
+   ЗАПИС результату (saveProgress/loadProgress) НЕ йде напряму в таблицю
+   з клієнта — інакше будь-хто з консолі браузера міг би вписати собі
+   довільний рахунок. Замість цього клієнт шле tgInitData (підписаний
+   Telegram рядок) на серверну Edge Function EDGE_FN_URL, а вже ФУНКЦІЯ,
+   перевіривши підпис (і що це справжній Telegram-акаунт), сама пише в
+   базу через service_role ключ, якого клієнт взагалі не знає.
+   Код цієї функції — у файлі supabase-verify-function.ts, який я додав
+   поруч. Її треба задеплоїти в Supabase (Edge Functions), інакше запис
+   у таблицю лідерів не працюватиме, поки EDGE_FN_URL порожній нижче.
    ========================================================================== */
 const SUPABASE_URL = "https://rcipyqyufblsgzobmlyp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_NqzRCYR6V7tj9H0nmagVJg_JqPXLWhq";
+const EDGE_FN_URL = ""; // <-- встав сюди посилання на задеплоєну функцію, напр. "https://rcipyqyufblsgzobmlyp.supabase.co/functions/v1/progress"
 
 function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
-function getPlayerName() {
+/* Тільки для підсвітки "твого" рядка в таблиці лідерів (косметика).
+   Реальний запис у базу прив'язаний до перевіреного tg id на сервері,
+   а не до цього імені — підробити цю змінну в консолі нічого не дасть. */
+function getDisplayName() {
   try {
-    const u = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    const u = tg?.initDataUnsafe?.user;
     if (u) return u.username ? '@' + u.username : (u.first_name || 'Анонім');
   } catch (e) {}
   return 'Анонім';
 }
-const playerName = getPlayerName();
+const playerName = getDisplayName();
+
 let lastCloudSave = 0, cloudSaving = false;
 
 function keyReady() { return SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith('ТВІЙ'); }
+function edgeReady() { return !!EDGE_FN_URL; }
 
 async function fetchLeaderboard(limit) {
   if (!keyReady()) return null; // ключ ще не вставлено
@@ -1591,32 +1651,29 @@ async function fetchLeaderboard(limit) {
 }
 
 async function syncProgressToCloud() {
-  if (!keyReady() || cloudSaving) return;
+  if (!edgeReady() || cloudSaving) return;
   cloudSaving = true;
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?on_conflict=username`, {
+    await fetch(EDGE_FN_URL, {
       method: 'POST',
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        Prefer: 'resolution=merge-duplicates'
-      },
-      body: JSON.stringify({ username: playerName, score: Math.floor(state.totalStars), progress: state })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tgInitData, score: Math.floor(state.totalStars), progress: state })
     });
   } catch (e) {}
   cloudSaving = false;
 }
 
 async function fetchCloudProgress() {
-  if (!keyReady()) return null;
+  if (!edgeReady()) return null;
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?username=eq.${encodeURIComponent(playerName)}&select=score,progress`, {
-      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+    const r = await fetch(EDGE_FN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tgInitData }) // без "progress" → функція розуміє це як запит на ЗАВАНТАЖЕННЯ
     });
     if (!r.ok) return null;
     const data = await r.json();
-    return (data && data.length) ? data[0] : null;
+    return data && data.row ? data.row : null;
   } catch (e) { return null; }
 }
 
