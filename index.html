@@ -1542,7 +1542,7 @@ let spawnAcc = 0;                                      // секунд нако�
 function save() {
   try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {}
   dirty = false; lastSave = performance.now();
-  if (lastSave - lastCloudSave > 20000) { lastCloudSave = lastSave; saveScoreToCloud(state.score); }
+  if (lastSave - lastCloudSave > 20000) { lastCloudSave = lastSave; saveScoreToCloud(state.totalStars); }
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
 window.addEventListener('pagehide', save);
