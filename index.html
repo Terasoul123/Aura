@@ -1658,8 +1658,8 @@ function drawHero(t) {
   // Емілія залишається у своєму базовому розмірі.
   const gameplayScale = state.skin === 'rz_emilia' ? 1.25 : (state.skin === 'rz_rem' ? 1.35 : (state.skin === 'rz_ram' ? 1.28 : (state.skin === 'rz_beatrice' ? 1.28 : (state.skin === 'rz_crusch' ? 1.25 : (state.skin === 'rz_julius' ? 1.25 : (state.skin === 'rz_echidna' ? 1.25 : 1.2))))));
   const isPngSkin = ['rz_emilia','rz_rem','rz_ram','rz_echidna','rz_julius','rz_crusch','rz_beatrice'].includes(state.skin);
-  const h = Math.round((isPngSkin ? 34 : spr.height) * CFG.HERO_SCALE * gameplayScale * 1.05);
-  const w = isPngSkin ? Math.round((spr.width / spr.height) * h) : Math.round(spr.width * CFG.HERO_SCALE * gameplayScale * 1.05);
+  const h = Math.round((isPngSkin ? 34 : spr.height) * CFG.HERO_SCALE * gameplayScale * 1.10);
+  const w = isPngSkin ? Math.round((spr.width / spr.height) * h) : Math.round(spr.width * CFG.HERO_SCALE * gameplayScale * 1.10);
   const remDrop = state.skin === 'rz_rem' ? 2 : (state.skin === 'rz_ram' ? 2 : 0);
   // PNG-скіни малюємо зі згладжуванням, щоб після масштабування вони не ставали зайво піксельними/зубчастими.
   const oldSmoothing = ctx.imageSmoothingEnabled;
