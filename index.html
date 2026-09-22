@@ -126,6 +126,7 @@
   .ref-box{max-width:340px;text-align:center;background:var(--card);padding:26px 20px;
     box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -6px 0 0 #241a52;}
   .ref-icon{font-size:38px;margin-bottom:12px}
+  .ref-avatar{width:44px;height:44px;border-radius:7px;image-rendering:pixelated;box-shadow:inset 0 0 0 2px var(--edge);background:#2c1f5c;object-fit:cover;margin:0 auto 12px;display:block}
   .ref-title{font-family:var(--pixel);font-size:12px;color:var(--gold);text-shadow:var(--o2);line-height:1.8;margin-bottom:14px}
   .ref-amount{font-family:var(--pixel);font-size:17px;color:#7ee3ff;text-shadow:var(--o2);margin-bottom:20px}
   .ref-ok{width:100%;border:0;padding:11px;background:#2c1f5c;color:var(--paper);
@@ -158,6 +159,7 @@
   .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55}
   .lb-rank{width:18px;flex:none;font-size:8px;color:var(--dim);text-align:center}
   .lb-award{width:16px;flex:none;font-size:13px;text-align:center;line-height:1}
+  .lb-avatar{width:18px;height:18px;flex:none;border-radius:3px;image-rendering:pixelated;box-shadow:inset 0 0 0 1px var(--edge-dark);background:#2c1f5c;object-fit:cover}
   .lb-name{flex:1 1 auto;min-width:0;font-size:9px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .lb-score{flex:none;font-size:9px;color:var(--gold);text-shadow:var(--o2);min-width:40px;text-align:right}
   .lb-empty{font-size:8px;color:var(--dim);text-align:center;line-height:1.8;padding:20px 8px}
@@ -291,7 +293,7 @@
 
   <div id="ref-modal" class="off">
     <div class="ref-box">
-      <div class="ref-icon">🎁</div>
+      <img class="ref-avatar" id="ref-modal-avatar" alt="">
       <div class="ref-title" id="ref-modal-text">Твій друг дійшов<br>до 3-го поверху!</div>
       <div class="ref-amount" id="ref-modal-amount">+0💎</div>
       <button class="ref-ok" id="ref-modal-ok" type="button">OK</button>
@@ -1669,6 +1671,26 @@ function getDisplayName() {
 }
 const playerName = getDisplayName();
 
+/* Пікселізована іконка-заглушка, коли в людини немає фото профілю
+   в Telegram (або воно не завантажилось). Ніякі фото нікуди не
+   зберігаються — тільки посилання (photo_url), саму картинку браузер
+   щоразу вантажить напряму із серверів Telegram через <img src>. */
+const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">'
+  + '<rect width="16" height="16" fill="#2c1f5c"/>'
+  + '<circle cx="8" cy="6.2" r="3" fill="#7669c2"/>'
+  + '<rect x="2.5" y="10.5" width="11" height="5" fill="#7669c2"/>'
+  + '</svg>'
+);
+function getMyPhotoUrl() {
+  try { return tg?.initDataUnsafe?.user?.photo_url || ''; } catch (e) { return ''; }
+}
+const myPhotoUrl = getMyPhotoUrl();
+function avatarImg(url, cls) {
+  const src = escapeHtml(url || DEFAULT_AVATAR);
+  return `<img class="${cls}" src="${src}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">`;
+}
+
 let lastCloudSave = 0, cloudSaving = false;
 
 function keyReady() { return SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith('ТВІЙ'); }
@@ -1687,7 +1709,7 @@ const telegramId = getTelegramId();
 async function fetchLeaderboard(limit) {
   if (!keyReady()) return null; // ключ ще не вставлено
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score&order=score.desc&limit=${limit}`, {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score,photo_url&order=score.desc&limit=${limit}`, {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
     });
     if (!r.ok) return [];
@@ -1713,6 +1735,7 @@ async function syncProgressToCloud() {
       body: JSON.stringify({
         telegram_id: telegramId,
         username: playerName,
+        photo_url: myPhotoUrl,
         score: Math.floor(state.totalStars),
         progress: state
       })
@@ -1762,7 +1785,7 @@ loadProgressFromCloud();
    Потрібні SQL-функції в Supabase — див. інструкцію, яку я надав окремо.
    ========================================================================== */
 const REFERRAL_TOWER_INDEX     = 2;     // floorTier===2 → саме "Третій поверх" (як у квесті q_floor3)
-const REFERRAL_REWARD_DIAMONDS = 300;   // нагорода тому, хто запросив
+const REFERRAL_REWARD_DIAMONDS = 20;    // нагорода тому, хто запросив
 const REFERRAL_REWARD_SCORE    = 0;     // за бажання можна додати ще й бали (★)
 
 function getReferrerId() {
@@ -1817,7 +1840,11 @@ async function grantReferralRewardIfEligible() {
    дійшов до 3-го поверху) і одразу зараховує її у свій локальний прогрес.
    Викликається при кожному старті гри — так нагорода "дожене" гравця
    навіть якщо в момент нарахування він був офлайн. */
-function showRefRewardModal(diamonds, score) {
+function showRefRewardModal(diamonds, score, names, photo) {
+  $('ref-modal-text').innerHTML = names
+    ? escapeHtml(names) + ' дійшов(ла)<br>до 3-го поверху!'
+    : 'Твій друг дійшов<br>до 3-го поверху!';
+  $('ref-modal-avatar').src = photo || DEFAULT_AVATAR;
   const parts = [];
   if (diamonds > 0) parts.push('+' + fmt(diamonds) + '💎');
   if (score > 0) parts.push('+' + fmt(score) + '★');
@@ -1841,18 +1868,20 @@ async function claimReferralBonus() {
     if (!row) return;
     const bd = Math.floor(Number(row.diamonds) || 0);
     const bs = Math.floor(Number(row.score) || 0);
+    const names = row.friend_names || '';
+    const photo = row.friend_photo || '';
     const invitesBefore = state.invitesCount || 0;
     state.invitesCount = Math.floor(Number(row.invites) || 0);
     if (state.invitesCount !== invitesBefore) refreshInviteBtn();
-    if (bd > 0 || bs > 0) {
+    if (bd > 0 || bs > 0 || names) {
       state.diamonds += bd;
       state.score += bs;
       state.totalStars += bs;
       dirty = true; uiDirty = true;
-      floater('🎁 +' + fmt(bd) + '💎', cx * S, (cy - 70) * S);
+      if (bd > 0) floater('🎁 +' + fmt(bd) + '💎', cx * S, (cy - 70) * S);
       hapticNote('success');
       save();
-      showRefRewardModal(bd, bs);
+      showRefRewardModal(bd, bs, names, photo);
     }
   } catch (e) {}
 }
@@ -1912,7 +1941,7 @@ async function renderLeaderboard() {
     const isMe = (p.username || '') === playerName;
     const cls = ['lb-row']; if (rank <= 3) cls.push('top' + rank); if (isMe) cls.push('me');
     const name = escapeHtml(String(p.username || 'Анонім')).slice(0, 20);
-    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-name">${name}</span><span class="lb-score">${fmt(p.score || 0)}</span></div>`;
+    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span>${avatarImg(p.photo_url, 'lb-avatar')}<span class="lb-name">${name}</span><span class="lb-score">${fmt(p.score || 0)}</span></div>`;
   }).join('');
   panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 Оновити</button>' + rowsHtml;
   bindInviteBtn();
