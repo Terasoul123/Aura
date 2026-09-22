@@ -1291,6 +1291,15 @@ RAM_PNG.onload = () => {
 };
 RAM_PNG.src = 'Ram.png';
 
+// Ехидна використовує готовий PNG з GitHub.
+const ECHIDNA_PNG = new Image();
+ECHIDNA_PNG.onload = () => {
+  delete SKIN_CACHE.rz_echidna;
+  uiDirty = true;
+  dirty = true;
+};
+ECHIDNA_PNG.src = 'echidna.png';
+
 function skinSprites(id) {
   const sk = skinById(id);
   let c = SKIN_CACHE[sk.id];
@@ -1337,6 +1346,22 @@ function skinSprites(id) {
         a: RAM_PNG,
         b: RAM_PNG,
         url: 'Ram.png'
+      };
+      SKIN_CACHE[sk.id] = c;
+    }
+    return c;
+  }
+
+  // Для Ехидни беремо готовий PNG, а не намальований rzSprite().
+  if (sk.id === 'rz_echidna') {
+    if (!c || c.img !== ECHIDNA_PNG) {
+      c = {
+        key: 'rz_echidna-png',
+        img: ECHIDNA_PNG,
+        idle: ECHIDNA_PNG,
+        a: ECHIDNA_PNG,
+        b: ECHIDNA_PNG,
+        url: 'echidna.png'
       };
       SKIN_CACHE[sk.id] = c;
     }
