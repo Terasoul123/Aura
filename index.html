@@ -47,11 +47,11 @@
     padding:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 16px) 12px 0;
     display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:none;
   }
-  #score-row{display:flex;align-items:center;gap:10px}
-  #score-star{width:27px;height:27px;image-rendering:pixelated}
-  #score{font-size:28px;line-height:1;color:var(--gold);text-shadow:var(--o3),0 5px 0 var(--ink)}
-  #score-diamond{width:22px;height:22px;image-rendering:pixelated;margin-left:6px}
-  #diamonds{font-size:20px;line-height:1;color:#7ee3ff;text-shadow:var(--o2),0 4px 0 var(--ink)}
+  #score-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;max-width:100%}
+  #score-star{width:16px;height:16px;image-rendering:pixelated;flex:none}
+  #score{font-size:15px;line-height:1;color:var(--gold);text-shadow:var(--o2),0 3px 0 var(--ink);white-space:nowrap}
+  #score-diamond{width:14px;height:14px;image-rendering:pixelated;margin-left:4px;flex:none}
+  #diamonds{font-size:13px;line-height:1;color:#7ee3ff;text-shadow:var(--o2),0 3px 0 var(--ink);white-space:nowrap}
   #per-click{font-size:9px;line-height:1.4;color:var(--paper);text-shadow:var(--o2)}
 
   /* ---------- індикатор поверхів ---------- */
@@ -108,12 +108,34 @@
   .tab.active{background:#3d2a7a;color:var(--paper);box-shadow:inset 0 0 0 2px var(--gold)}
 
   /* ---------- зброя ---------- */
-  #panel-wpn,#panel-arm,#panel-skn,#panel-qst{
+  #panel-wpn,#panel-arm,#panel-skn,#panel-qst,#panel-lb{
     flex:0 0 auto;max-height:34vh;overflow-y:auto;
     padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));
     background:var(--ink);border-top:4px solid #4b3a8f;display:flex;flex-direction:column;gap:8px;
   }
-  #panel-wpn.off,#panel-arm.off,#panel-skn.off,#panel-qst.off{display:none}
+  #panel-wpn.off,#panel-arm.off,#panel-skn.off,#panel-qst.off,#panel-lb.off{display:none}
+
+  /* ---------- таблиця лідерів ---------- */
+  #panel-lb{gap:5px}
+  .lb-refresh{
+    width:100%;border:0;padding:9px;margin-bottom:4px;background:#2c1f5c;color:var(--paper);
+    font-family:var(--pixel);font-size:9px;cursor:pointer;touch-action:manipulation;
+    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -4px 0 0 #241a52;
+  }
+  .lb-refresh:active{transform:translateY(1px)}
+  .lb-row{
+    display:flex;align-items:center;gap:6px;padding:7px 8px;background:var(--card);
+    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -4px 0 0 #241a52;
+  }
+  .lb-row.top1{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -4px 0 0 #8a5a0a}
+  .lb-row.top2{box-shadow:inset 0 0 0 2px #c9d3e0,inset 0 -4px 0 0 #6b7684}
+  .lb-row.top3{box-shadow:inset 0 0 0 2px #d9925a,inset 0 -4px 0 0 #8a4d1f}
+  .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55}
+  .lb-rank{width:18px;flex:none;font-size:8px;color:var(--dim);text-align:center}
+  .lb-award{width:16px;flex:none;font-size:13px;text-align:center;line-height:1}
+  .lb-name{flex:1 1 auto;min-width:0;font-size:9px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lb-score{flex:none;font-size:9px;color:var(--gold);text-shadow:var(--o2);min-width:40px;text-align:right}
+  .lb-empty{font-size:8px;color:var(--dim);text-align:center;line-height:1.8;padding:20px 8px}
   .quest-bar{height:6px;background:#1a1030;border:1px solid #000;box-shadow:inset 0 0 0 1px #4b3a8f;margin-top:5px}
   .quest-bar-fill{height:100%;background:linear-gradient(#7be0a4,#4ea83a)}
   .wpn.done{--edge:#4ea83a;--edge-dark:#215c1e;opacity:.75}
@@ -229,6 +251,7 @@
     <button class="tab" id="tab-arm" type="button">🛡 Броня</button>
     <button class="tab" id="tab-skn" type="button">🎭 Образи</button>
     <button class="tab" id="tab-qst" type="button">📜 Завдання</button>
+    <button class="tab" id="tab-lb" type="button">🏆 Топ</button>
   </div>
 
   <div id="panel">
@@ -256,6 +279,7 @@
   <div id="panel-arm" class="off"></div>
   <div id="panel-skn" class="off"></div>
   <div id="panel-qst" class="off"></div>
+  <div id="panel-lb" class="off"></div>
 </div>
 
 <script>
@@ -1515,9 +1539,102 @@ let autoAcc = 0, dirty = false, uiDirty = true, bump = false, lastSave = 0, floo
 let combat = null;                                    // {kind,hp,hpMax,dmg,reward,atkAcc,hitFlash,walkFrame,walkAcc}
 let spawnAcc = 0;                                      // секунд накопичено з останньої появи монстра
 
-function save() { try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {} dirty = false; lastSave = performance.now(); }
+function save() {
+  try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {}
+  dirty = false; lastSave = performance.now();
+  if (lastSave - lastCloudSave > 20000) { lastCloudSave = lastSave; saveScoreToCloud(state.score); }
+}
 document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
 window.addEventListener('pagehide', save);
+
+/* ==========================================================================
+   6b. ТАБЛИЦЯ ЛІДЕРІВ (Supabase)
+   Встав свій справжній ANON_KEY з налаштувань проєкту Supabase (Settings →
+   API → Project API keys → anon public), інакше таблиця лідерів працюватиме
+   лише локально (не буде зберігати/показувати чужі результати).
+   ========================================================================== */
+const SUPABASE_URL = "https://rcipyqyufblsgzobmlyp.supabase.co";
+const SUPABASE_ANON_KEY = "ТВІЙ_ANON_KEY_СЮДИ"; // <-- встав сюди свій ключ
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+function getPlayerName() {
+  try {
+    const u = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    if (u) return u.username ? '@' + u.username : (u.first_name || 'Анонім');
+  } catch (e) {}
+  return 'Анонім';
+}
+const playerName = getPlayerName();
+let lastCloudSave = 0, cloudSaving = false;
+
+function keyReady() { return SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith('ТВІЙ'); }
+
+async function fetchLeaderboard(limit) {
+  if (!keyReady()) return null; // ключ ще не вставлено
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score&order=score.desc&limit=${limit}`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+    });
+    if (!r.ok) return [];
+    return await r.json();
+  } catch (e) { return []; }
+}
+
+async function saveScoreToCloud(score) {
+  if (!keyReady() || cloudSaving) return;
+  cloudSaving = true;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({ username: playerName, score: Math.floor(score) })
+    });
+  } catch (e) {}
+  cloudSaving = false;
+}
+
+function awardFor(rank) {
+  if (rank === 1) return '🥇';
+  if (rank === 2) return '🥈';
+  if (rank === 3) return '🥉';
+  if (rank <= 10) return '🏅';
+  if (rank <= 25) return '🎖';
+  if (rank <= 50) return '⭐';
+  return '';
+}
+
+async function renderLeaderboard() {
+  panelLb.innerHTML = '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 Оновити</button><div class="lb-empty">Завантаження…</div>';
+  $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
+
+  if (!keyReady()) {
+    panelLb.querySelector('.lb-empty').innerHTML = 'Таблицю лідерів ще не підключено.<br>Встав свій Supabase ANON_KEY у коді гри.';
+    return;
+  }
+  const top = await fetchLeaderboard(100);
+  if (!top || !top.length) {
+    panelLb.querySelector('.lb-empty').innerHTML = 'Поки що тут порожньо.<br>Зіграй і стань першим у рейтингу!';
+    return;
+  }
+  const rowsHtml = top.map((p, i) => {
+    const rank = i + 1;
+    const award = awardFor(rank);
+    const isMe = (p.username || '') === playerName;
+    const cls = ['lb-row']; if (rank <= 3) cls.push('top' + rank); if (isMe) cls.push('me');
+    const name = escapeHtml(String(p.username || 'Анонім')).slice(0, 20);
+    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-name">${name}</span><span class="lb-score">${fmt(p.score || 0)}</span></div>`;
+  }).join('');
+  panelLb.innerHTML = '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 Оновити</button>' + rowsHtml;
+  $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
+}
 
 const costPower = () => Math.ceil(CFG.POWER_BASE_COST * Math.pow(CFG.POWER_GROWTH, state.powerLvl - 1));
 const costAuto  = () => Math.ceil(CFG.AUTO_BASE_COST  * Math.pow(CFG.AUTO_GROWTH,  state.autoLvl));
@@ -1981,9 +2098,9 @@ btnAuto.addEventListener('click', () => {
 });
 
 /* --- вкладки: прокачка / зброя / броня / образи --- */
-const tabUpg = $('tab-upg'), tabWpn = $('tab-wpn'), tabArm = $('tab-arm'), tabSkn = $('tab-skn'), tabQst = $('tab-qst');
-const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelQst = $('panel-qst');
-const tabs = [['upg', tabUpg, panelUpg], ['wpn', tabWpn, panelWpn], ['arm', tabArm, panelArm], ['skn', tabSkn, panelSkn], ['qst', tabQst, panelQst]];
+const tabUpg = $('tab-upg'), tabWpn = $('tab-wpn'), tabArm = $('tab-arm'), tabSkn = $('tab-skn'), tabQst = $('tab-qst'), tabLb = $('tab-lb');
+const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelQst = $('panel-qst'), panelLb = $('panel-lb');
+const tabs = [['upg', tabUpg, panelUpg], ['wpn', tabWpn, panelWpn], ['arm', tabArm, panelArm], ['skn', tabSkn, panelSkn], ['qst', tabQst, panelQst], ['lb', tabLb, panelLb]];
 function selectTab(name) {
   curTab = name;
   for (const [n, tb, p] of tabs) {
@@ -1992,6 +2109,7 @@ function selectTab(name) {
     p.classList.toggle('off', !on);
   }
   uiDirty = true;
+  if (name === 'lb') renderLeaderboard();
 }
 tabs.forEach(([n, tb]) => tb.addEventListener('click', () => selectTab(n)));
 
