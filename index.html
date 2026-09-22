@@ -866,9 +866,6 @@ const SKINS = [
     look:{ hair:[185,.4,2.1,.15], body:[190,.3,2.3,.15], acc:[175,.8,1.6,.2], crown:true } },
 
   /* ===== Re:Zero — на базі спрайта героя + деталі персонажа (fx) ===== */
-  { id:'rz_subaru', name:'Субару Нацукі', cost:60, cur:'diamond', buff:{ death:0.5, click:0.10 },            // Повернення смертю
-    look:{ hair:[225,.10,.75,0], body:[225,.08,.85,0], acc:[27,1.3,1.15,.1], eye:[25,1,.7,-.03] },
-    fx:{ front:[[8,-2,2,2,'#14161e'],[11,-3,2,3,'#14161e'],[14,-1,2,2,'#14161e'],[1,19,1,6,'#f0801a'],[13,19,1,6,'#f0801a']] } },
 
   { id:'rz_emilia', name:'Емілія', cost:320, cur:'diamond', buff:{ hp:0.15, guard:0.08 },                   // Сніжна принцеса
     look:{ hair:[235,.2,3.8,.55], body:[262,.45,3.6,.55], acc:[268,.8,1.1,.18], eye:[272,1.3,1.3,.15], legs:[262,.3,3.6,.55] },
@@ -888,11 +885,6 @@ const SKINS = [
     fx:{ back:rzDrill(-3, 10, 5, 15, '#f6d86a', '#d0a53a'),
          front:[...rzSkirt('#c43a52', '#8a2036', '#f0e0d0'), ...rzDrill(15, 12, 4, 13, '#f6d86a', '#d0a53a'), ...rzBow(3, 0, '#ff7aa8', '#c43a6a'), ...rzBow(11, -1, '#ff7aa8', '#c43a6a')] } },
 
-  { id:'rz_roswaal', name:'Росваль', cost:700, cur:'diamond', buff:{ reward:0.20, click:0.08 },               // Загадковий маг
-    look:{ hair:[240,.55,1.5,.08], body:[272,.6,1.45,.04], acc:[47,1.1,1.35,.12], eye:[50,1.6,1.4,.2], legs:[275,.3,.5,0] },
-    fx:{ back:[...rzBack(-3, 9, 6, 19, '#2d2c72', '#1b1a4c'), ...rzTail('#5a2ea0', '#3a1a78')],
-         front:[[10,12,1,2,'#3b6be0'],[13,13,1,1,'#e0405a']] } },
-
   { id:'rz_crusch', name:'Круш', cost:800, cur:'diamond', buff:{ guard:0.12, hp:0.10 },                      // Лицарка честі
     look:{ hair:[142,.7,1.7,.1], body:[220,.55,1.55,.03], acc:[46,1.1,1.4,.12], eye:[48,1.6,1.4,.2], legs:[220,.4,1.2,.02] },
     fx:{ back:[...rzBack(-3, 9, 6, 18, '#2fa85e', '#1c7444'), ...rzTail('#2a3f80', '#18285a')],
@@ -907,11 +899,6 @@ const SKINS = [
     look:{ hair:[270,.08,4.0,.62], body:[275,.35,.5,-.02], acc:[0,0,1.4,.45], eye:[280,1.2,1,.1], legs:[275,.3,.4,0] },
     fx:{ back:rzBack(-3, 9, 6, 21, '#f2f0fa', '#b8b4d4'),
          front:[...rzSkirt('#1a1424', '#0c0810', '#8a5cd0'), ...rzFly(2, 0, '#b878ff', '#f0d8ff')] } },
-
-  { id:'rz_satella', name:'Сателла', cost:3000, cur:'diamond', buff:{ dmg:0.25, click:0.15, hp:0.10, death:0.3 }, // Це моя правда
-    look:{ hair:[268,.35,3.0,.45], body:[276,.55,.55,-.01], acc:[290,.9,1.1,.15], eye:[292,1.6,1.4,.25], legs:[276,.5,.45,0] },
-    fx:{ back:rzBack(-3, 9, 6, 21, '#c8c0e8', '#8478b8'),
-         front:[...rzSkirt('#2a1848', '#160a2c', '#a85cff'), ...rzFly(1, 0, '#b23cff', '#e8d0ff'), ...rzFly(12, -2, '#b23cff', '#e8d0ff')] } }
 ];
 const skinById = id => SKINS.find(s => s.id === id) || SKINS[0];
 const skinBuff = k => (skinById(state.skin).buff[k] || 0);
@@ -1239,7 +1226,7 @@ function paintChar(src, sk) {
 }
 /*RZ-END*/
 /* === FIXED RE:ZERO 18x34 SPRITES === */
-const RZ_FIXED=['rz_subaru','rz_emilia','rz_rem','rz_ram','rz_beatrice','rz_roswaal','rz_crusch','rz_julius','rz_echidna','rz_satella'];
+const RZ_FIXED=['rz_emilia','rz_rem','rz_ram','rz_beatrice','rz_crusch','rz_julius','rz_echidna'];
 function rzC(){const c=document.createElement('canvas');c.width=18;c.height=34;const g=c.getContext('2d');g.imageSmoothingEnabled=false;return[c,g]}
 function rr(g,x,y,w,h,c){g.fillStyle=c;g.fillRect(x,y,w,h)}
 function rpx(g,x,y,c){rr(g,x,y,1,1,c)}
@@ -1318,6 +1305,15 @@ JULIUS_PNG.onload = () => {
 };
 JULIUS_PNG.src = 'julius.png';
 
+// Беатріс використовує готовий PNG з GitHub.
+const BEATRICE_PNG = new Image();
+BEATRICE_PNG.onload = () => {
+  delete SKIN_CACHE.rz_beatrice;
+  uiDirty = true;
+  dirty = true;
+};
+BEATRICE_PNG.src = 'beatric.png';
+
 function skinSprites(id) {
   const sk = skinById(id);
   let c = SKIN_CACHE[sk.id];
@@ -1381,6 +1377,15 @@ function skinSprites(id) {
         b: ECHIDNA_PNG,
         url: 'Echidna.png'
       };
+      SKIN_CACHE[sk.id] = c;
+    }
+    return c;
+  }
+
+  // Для Беатріс беремо готовий PNG, а не намальований rzSprite().
+  if (sk.id === 'rz_beatrice') {
+    if (!c || c.img !== BEATRICE_PNG) {
+      c = { key:'rz_beatrice-png', img:BEATRICE_PNG, idle:BEATRICE_PNG, a:BEATRICE_PNG, b:BEATRICE_PNG, url:'beatric.png' };
       SKIN_CACHE[sk.id] = c;
     }
     return c;
@@ -1648,12 +1653,13 @@ function drawHero(t) {
   } else {
     lift = -(Math.floor(t * 2.5) % 2);                       // легке дихання
   }
-  // На сходах усі персонажі, крім Емілії, на 20% більші.
+  // PNG-персонажі на сходах мають однакову базову висоту, щоб не ставати кривими через різні розміри PNG.
   // Рем трохи менша та трохи нижче, щоб краще стояла на сходинці.
   // Емілія залишається у своєму базовому розмірі.
-  const gameplayScale = state.skin === 'rz_emilia' ? 1 : (state.skin === 'rz_rem' ? 1.1 : (state.skin === 'rz_ram' ? 1.04 : (state.skin === 'rz_echidna' ? 1.0 : ((state.skin === 'rz_julius' || state.skin === 'rz_crusch') ? 1.0 : 1.2))));
-  const w = Math.round(spr.width * CFG.HERO_SCALE * gameplayScale);
-  const h = Math.round(spr.height * CFG.HERO_SCALE * gameplayScale);
+  const gameplayScale = state.skin === 'rz_emilia' ? 1 : (state.skin === 'rz_rem' ? 1.1 : (state.skin === 'rz_ram' ? 1.04 : (state.skin === 'rz_echidna' ? 1.0 : ((state.skin === 'rz_julius' || state.skin === 'rz_crusch' || state.skin === 'rz_beatrice') ? 1.0 : 1.2))));
+  const isPngSkin = ['rz_emilia','rz_rem','rz_ram','rz_echidna','rz_julius','rz_crusch','rz_beatrice'].includes(state.skin);
+  const h = isPngSkin ? Math.round(34 * CFG.HERO_SCALE * gameplayScale) : Math.round(spr.height * CFG.HERO_SCALE * gameplayScale);
+  const w = isPngSkin ? Math.round((spr.width / spr.height) * h) : Math.round(spr.width * CFG.HERO_SCALE * gameplayScale);
   const remDrop = state.skin === 'rz_rem' ? 2 : (state.skin === 'rz_ram' ? 2 : 0);
   ctx.drawImage(spr, Math.round(cx - w / 2), Math.round(cy - h - lift + remDrop), w, h);
 }
@@ -2161,7 +2167,7 @@ function pvStyle(id) {
     const H = 51;
     return `height:${H.toFixed(1)}px;width:auto;margin:0 0px;transform:translateX(-4px)`;
   }
-  if (id === 'rz_julius' || id === 'rz_crusch') {
+  if (id === 'rz_julius' || id === 'rz_crusch' || id === 'rz_beatrice') {
     const H = 51;
     return `height:${H.toFixed(1)}px;width:auto;margin:0 0px`;
   }
