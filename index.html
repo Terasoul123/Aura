@@ -377,11 +377,17 @@ const $   = id => document.getElementById(id);
    Edge Function) перед кожним записом у таблицю лідерів — див. окремий
    файл supabase-verify-function.ts, який я підготував поруч.
    ========================================================================== */
-const tgInitData = (tg && typeof tg.initData === 'string') ? tg.initData : '';
-if (!tgInitData) {
+function showAuthBlock(text) {
   const blockEl = $('auth-block');
+  const textEl = $('auth-text');
+  if (textEl && text) textEl.innerHTML = text;
   if (blockEl) blockEl.classList.remove('off');
   document.title = 'Доступ заблоковано';
+}
+
+const tgInitData = (tg && typeof tg.initData === 'string') ? tg.initData : '';
+if (!tgInitData) {
+  showAuthBlock();
   return; // гра далі не ініціалізується — жодних обробників, жодного циклу
 }
 
@@ -1650,15 +1656,29 @@ async function fetchLeaderboard(limit) {
   } catch (e) { return []; }
 }
 
+/* Якщо Edge Function відповідає 403 — це означає, що гравця заблоковано
+   (banned=true у таблиці players). Показуємо той самий екран блокування,
+   що й для неавторизованих, але з причиною бану, якщо функція її повернула. */
+async function handleBannedResponse(r) {
+  if (r.status !== 403) return false;
+  let reason = '';
+  try { const d = await r.json(); reason = d && d.reason ? d.reason : ''; } catch (e) {}
+  showAuthBlock(
+    'Вас заблоковано в цій грі.' + (reason ? '<br><br>' + escapeHtml(reason) : '')
+  );
+  return true;
+}
+
 async function syncProgressToCloud() {
   if (!edgeReady() || cloudSaving) return;
   cloudSaving = true;
   try {
-    await fetch(EDGE_FN_URL, {
+    const r = await fetch(EDGE_FN_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ initData: tgInitData, score: Math.floor(state.totalStars), progress: state })
     });
+    await handleBannedResponse(r);
   } catch (e) {}
   cloudSaving = false;
 }
@@ -1671,6 +1691,7 @@ async function fetchCloudProgress() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ initData: tgInitData }) // без "progress" → функція розуміє це як запит на ЗАВАНТАЖЕННЯ
     });
+    if (await handleBannedResponse(r)) return null;
     if (!r.ok) return null;
     const data = await r.json();
     return data && data.row ? data.row : null;
