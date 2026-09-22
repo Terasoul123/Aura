@@ -1477,59 +1477,66 @@ document.querySelectorAll('img[data-icon]').forEach(im => { im.src = ICONS[im.da
 /* ==========================================================================
    6. СТАН ГРИ + ЗБЕРЕЖЕННЯ
    ========================================================================== */
-function load() {
-  const d = {
+function defaultState() {
+  return {
     score: 0, steps: 0, powerLvl: 1, autoLvl: 0,
     diamonds: 0, totalStars: 0, floorTier: 0,
     hp: CFG.HP_MAX, weapons: ['fists'],
     hpLvl: 0, armor: ['cloth'], viewMode: 'sky', skins: ['default'], skin: 'default', ups: {},
     monstersKilled: 0, questsClaimed: [], kills: { slime: 0, goblin: 0, skeleton: 0, bat: 0, spider: 0, lava: 0, ghost: 0, demon: 0, boss: 0 }
   };
+}
+/* Перетворює довільний "сирий" об'єкт збереження (з localStorage або з хмари)
+   у безпечний стан гри — з перевіркою типів/меж, як і раніше. */
+function sanitizeState(s) {
+  const d = defaultState();
+  if (!s || typeof s !== 'object') return d;
+  for (const k in d) {
+    if (k === 'weapons' || k === 'armor' || k === 'viewMode' || k === 'skins' || k === 'skin' || k === 'ups' || k === 'questsClaimed' || k === 'kills') continue;
+    const v = Number(s[k]); if (Number.isFinite(v) && v >= 0) d[k] = Math.floor(v);
+  }
+  if (Array.isArray(s.questsClaimed)) d.questsClaimed = s.questsClaimed.filter(id => typeof id === 'string');
+  if (s.kills && typeof s.kills === 'object') {
+    for (const k of ['slime','goblin','skeleton','bat','spider','lava','ghost','demon','boss']) {
+      const v = Math.floor(Number(s.kills[k]));
+      if (Number.isFinite(v) && v > 0) d.kills[k] = v;
+    }
+  }
+  if (Array.isArray(s.weapons)) {
+    const ids = new Set(WEAPONS.map(w => w.id));
+    const owned = s.weapons.filter(id => ids.has(id));
+    d.weapons = owned.includes('fists') ? owned : ['fists', ...owned];
+  }
+  if (Array.isArray(s.armor)) {
+    const ids = new Set(ARMOR.map(a => a.id));
+    const owned = s.armor.filter(id => ids.has(id));
+    d.armor = owned.includes('cloth') ? owned : ['cloth', ...owned];
+  }
+  if (Array.isArray(s.skins)) {
+    const ids = new Set(SKINS.map(x => x.id));
+    const owned = s.skins.filter(id => ids.has(id));
+    d.skins = owned.includes('default') ? owned : ['default', ...owned];
+  }
+  if (s.ups && typeof s.ups === 'object') {
+    for (const u of UPGRADES) {
+      const v = Math.floor(Number(s.ups[u.id]));
+      if (Number.isFinite(v) && v > 0) d.ups[u.id] = Math.min(v, u.max);
+    }
+  }
+  if (typeof s.skin === 'string' && d.skins.includes(s.skin)) d.skin = s.skin;
+  if (s.viewMode === 'walls' || s.viewMode === 'sky') d.viewMode = s.viewMode;
+  if (d.powerLvl < 1) d.powerLvl = 1;
+  d.floorTier = TIERS.filter(x => d.totalStars > x.at).length;   // поверх рахується від загальної кількості зірок
+  const maxHp = CFG.HP_MAX + d.hpLvl * CFG.HP_PER_LEVEL;
+  if (d.hp <= 0) d.hp = maxHp;
+  return d;
+}
+function load() {
   try {
     const raw = localStorage.getItem(CFG.SAVE_KEY);
-    if (raw) {
-      const s = JSON.parse(raw);
-      for (const k in d) {
-        if (k === 'weapons' || k === 'armor' || k === 'viewMode' || k === 'skins' || k === 'skin' || k === 'ups' || k === 'questsClaimed' || k === 'kills') continue;
-        const v = Number(s[k]); if (Number.isFinite(v) && v >= 0) d[k] = Math.floor(v);
-      }
-      if (Array.isArray(s.questsClaimed)) d.questsClaimed = s.questsClaimed.filter(id => typeof id === 'string');
-      if (s.kills && typeof s.kills === 'object') {
-        for (const k of ['slime','goblin','skeleton','bat','spider','lava','ghost','demon','boss']) {
-          const v = Math.floor(Number(s.kills[k]));
-          if (Number.isFinite(v) && v > 0) d.kills[k] = v;
-        }
-      }
-      if (Array.isArray(s.weapons)) {
-        const ids = new Set(WEAPONS.map(w => w.id));
-        const owned = s.weapons.filter(id => ids.has(id));
-        d.weapons = owned.includes('fists') ? owned : ['fists', ...owned];
-      }
-      if (Array.isArray(s.armor)) {
-        const ids = new Set(ARMOR.map(a => a.id));
-        const owned = s.armor.filter(id => ids.has(id));
-        d.armor = owned.includes('cloth') ? owned : ['cloth', ...owned];
-      }
-      if (Array.isArray(s.skins)) {
-        const ids = new Set(SKINS.map(x => x.id));
-        const owned = s.skins.filter(id => ids.has(id));
-        d.skins = owned.includes('default') ? owned : ['default', ...owned];
-      }
-      if (s.ups && typeof s.ups === 'object') {
-        for (const u of UPGRADES) {
-          const v = Math.floor(Number(s.ups[u.id]));
-          if (Number.isFinite(v) && v > 0) d.ups[u.id] = Math.min(v, u.max);
-        }
-      }
-      if (typeof s.skin === 'string' && d.skins.includes(s.skin)) d.skin = s.skin;
-      if (s.viewMode === 'walls' || s.viewMode === 'sky') d.viewMode = s.viewMode;
-      if (d.powerLvl < 1) d.powerLvl = 1;
-      d.floorTier = TIERS.filter(x => d.totalStars > x.at).length;   // поверх рахується від загальної кількості зірок
-      const maxHp = CFG.HP_MAX + d.hpLvl * CFG.HP_PER_LEVEL;
-      if (d.hp <= 0) d.hp = maxHp;
-    }
+    if (raw) return sanitizeState(JSON.parse(raw));
   } catch (e) {}
-  return d;
+  return defaultState();
 }
 const state = load();
 if (state.hp > hpMax()) state.hp = hpMax();
@@ -1542,7 +1549,7 @@ let spawnAcc = 0;                                      // секунд нако�
 function save() {
   try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {}
   dirty = false; lastSave = performance.now();
-  if (lastSave - lastCloudSave > 20000) { lastCloudSave = lastSave; saveScoreToCloud(state.totalStars); }
+  if (lastSave - lastCloudSave > 20000) { lastCloudSave = lastSave; syncProgressToCloud(); }
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
 window.addEventListener('pagehide', save);
@@ -1583,7 +1590,7 @@ async function fetchLeaderboard(limit) {
   } catch (e) { return []; }
 }
 
-async function saveScoreToCloud(score) {
+async function syncProgressToCloud() {
   if (!keyReady() || cloudSaving) return;
   cloudSaving = true;
   try {
@@ -1595,11 +1602,40 @@ async function saveScoreToCloud(score) {
         'Content-Type': 'application/json',
         Prefer: 'resolution=merge-duplicates'
       },
-      body: JSON.stringify({ username: playerName, score: Math.floor(score) })
+      body: JSON.stringify({ username: playerName, score: Math.floor(state.totalStars), progress: state })
     });
   } catch (e) {}
   cloudSaving = false;
 }
+
+async function fetchCloudProgress() {
+  if (!keyReady()) return null;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?username=eq.${encodeURIComponent(playerName)}&select=score,progress`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+    });
+    if (!r.ok) return null;
+    const data = await r.json();
+    return (data && data.length) ? data[0] : null;
+  } catch (e) { return null; }
+}
+
+/* Синхронізація при вході: якщо в хмарі прогрес більш просунутий (більше
+   накопичених зірок), ніж на цьому пристрої — підвантажуємо його. Так
+   прогрес не губиться при заході з іншого телефона/акаунта Telegram.
+   Локальний прогрес не перезаписується, якщо він і так попереду. */
+async function loadProgressFromCloud() {
+  const row = await fetchCloudProgress();
+  if (!row || !row.progress) return;
+  const cloud = sanitizeState(row.progress);
+  if (cloud.totalStars > state.totalStars) {
+    Object.assign(state, cloud);
+    if (state.hp > hpMax()) state.hp = hpMax();
+    dirty = true; uiDirty = true;
+    save();
+  }
+}
+loadProgressFromCloud();
 
 function awardFor(rank) {
   if (rank === 1) return '🥇';
