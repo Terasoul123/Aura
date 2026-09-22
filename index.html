@@ -1661,9 +1661,12 @@ function drawHero(t) {
   const h = isPngSkin ? Math.round(34 * CFG.HERO_SCALE * gameplayScale) : Math.round(spr.height * CFG.HERO_SCALE * gameplayScale);
   const w = isPngSkin ? Math.round((spr.width / spr.height) * h) : Math.round(spr.width * CFG.HERO_SCALE * gameplayScale);
   const remDrop = state.skin === 'rz_rem' ? 2 : (state.skin === 'rz_ram' ? 2 : 0);
-  // PNG-скіни малюємо зі згладжуванням, щоб після масштабування вони не ставали зайво піксельними/зубчастими.
+  // Малюємо героя зі згладжуванням для БУДЬ-ЯКОГО скіна: при нецілому масштабі
+  // (HERO_SCALE * gameplayScale) без згладжування nearest-neighbor "з'їдає"
+  // пікселі нерівномірно і персонаж виглядає зжатим/кривим під час анімації.
   const oldSmoothing = ctx.imageSmoothingEnabled;
-  if (isPngSkin) ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(spr, Math.round(cx - w / 2), Math.round(cy - h - lift + remDrop), w, h);
   ctx.imageSmoothingEnabled = oldSmoothing;
 }
