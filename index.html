@@ -203,16 +203,21 @@
   #btn-music{
     position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 136px);
     right:10px;width:36px;height:36px;border:0;border-radius:50%;pointer-events:auto;cursor:pointer;
-    overflow:hidden;background:radial-gradient(circle at 50% 50%,#1a1230 0 22%,#0d0a1a 23% 26%,#2c1f5c 27% 100%);
+    overflow:hidden;
+    background:repeating-radial-gradient(circle at 50% 50%,#0d0a1a 0 2px,#1c1440 2px 4px),
+               radial-gradient(circle at 50% 50%,#241a44 0 44%,#0d0a1a 44% 100%);
     box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -4px 0 0 #241a52,0 0 8px -2px rgba(126,227,255,.4);
     display:flex;align-items:center;justify-content:center;touch-action:manipulation;
   }
   #btn-music:active{transform:translateY(1px)}
-  #btn-music-img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none}
+  #btn-music::after{content:'';position:absolute;left:50%;top:50%;width:4px;height:4px;border-radius:50%;
+    background:#000;box-shadow:0 0 0 1px #5b47b0;transform:translate(-50%,-50%);z-index:2}
+  #btn-music-img{width:48%;height:48%;object-fit:cover;border-radius:50%;display:none;
+    box-shadow:0 0 0 2px #0d0a1a,0 0 0 3px #4b3a8f}
   #btn-music.has-cover #btn-music-img{display:block}
   #btn-music.has-cover #btn-music-fb{display:none}
-  #btn-music-fb{font-size:15px}
-  #btn-music.spin #btn-music-img,#btn-music.spin #btn-music-fb{animation:disc-spin 3.4s linear infinite}
+  #btn-music-fb{font-size:11px}
+  #btn-music.spin{animation:disc-spin 3.4s linear infinite}
   @keyframes disc-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
   /* ---------- модалка плейлиста ---------- */
@@ -221,12 +226,17 @@
   #music-modal.off{display:none}
   .music-now{display:flex;align-items:center;gap:12px;padding:4px 2px 14px}
   .music-cover-wrap{width:56px;height:56px;border-radius:50%;flex:none;overflow:hidden;position:relative;
-    background:radial-gradient(circle at 50% 50%,#1a1230 0 22%,#0d0a1a 23% 26%,#2c1f5c 27% 100%);
+    display:flex;align-items:center;justify-content:center;
+    background:repeating-radial-gradient(circle at 50% 50%,#0d0a1a 0 2.5px,#1c1440 2.5px 5px),
+               radial-gradient(circle at 50% 50%,#241a44 0 42%,#0d0a1a 42% 100%);
     box-shadow:inset 0 0 0 2px #5b47b0}
-  .music-cover-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none}
+  .music-cover-wrap::after{content:'';position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;
+    background:#000;box-shadow:0 0 0 1px #5b47b0;transform:translate(-50%,-50%);z-index:2}
+  .music-cover-wrap img{width:50%;height:50%;object-fit:cover;border-radius:50%;display:none;
+    box-shadow:0 0 0 2px #0d0a1a,0 0 0 3px #4b3a8f}
   .music-cover-wrap.has-cover img{display:block}
-  .music-cover-wrap.spin img,.music-cover-wrap.spin .music-cover-fb{animation:disc-spin 3.4s linear infinite}
-  .music-cover-fb{font-size:20px;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+  .music-cover-wrap.spin{animation:disc-spin 3.4s linear infinite}
+  .music-cover-fb{font-size:15px;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
   .music-cover-wrap.has-cover .music-cover-fb{display:none}
   .music-now-info{min-width:0;flex:1 1 auto}
   .music-now-title{font-family:var(--pixel);font-size:10px;color:var(--paper);text-shadow:var(--o2);
@@ -247,7 +257,17 @@
     background:#241a52;color:var(--dim);cursor:pointer;text-align:left;box-shadow:inset 0 0 0 2px #3a2d70;touch-action:manipulation}
   .music-item.active{background:linear-gradient(180deg,#4a3793 0%,#3d2a7a 100%);color:var(--paper);
     box-shadow:inset 0 0 0 2px var(--gold)}
-  .music-item-ic{font-size:12px;flex:none}
+  .music-item-disc{width:22px;height:22px;border-radius:50%;flex:none;position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    background:repeating-radial-gradient(circle at 50% 50%,#0d0a1a 0 1.4px,#1c1440 1.4px 2.8px),
+               radial-gradient(circle at 50% 50%,#241a44 0 40%,#0d0a1a 40% 100%);
+    box-shadow:inset 0 0 0 1px #4b3a8f}
+  .music-item-disc img{width:52%;height:52%;object-fit:cover;border-radius:50%;display:none;
+    box-shadow:0 0 0 1px #0d0a1a}
+  .music-item-disc.has-cover img{display:block}
+  .music-item-disc.has-cover .music-item-fb{display:none}
+  .music-item-disc.spin{animation:disc-spin 2.6s linear infinite}
+  .music-item-fb{font-size:8px;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
   .music-item-name{font-size:9px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .music-empty{font-size:9px;color:var(--dim);line-height:1.8;padding:8px 4px}
 
@@ -2797,7 +2817,7 @@ btnAds.addEventListener('click', () => {
       картинки обкладинки (необов'язково, можна лишити '').
    Приклади рядків нижче — заглушки, познач/заміни їх своїми файлами. */
 const TRACKS = [
-  { title: 'Subaru — Climb the stairs (RE:ZERO)', artist: '', src: 'music/track1auramonster.mp3', cover: 'music/cover1.jpg' },
+  { title: 'Subaru — Climb the stairs (RE:ZERO)', artist: '', src: 'music/track1auramonster.mp3', cover: 'music/cover1.png' },
   // додавай наступні треки так само новим рядком:
   // { title: 'Другий трек', artist: '', src: 'music/track2.mp3', cover: '' },
 ];
@@ -2841,9 +2861,15 @@ function renderMusicList() {
     musicListEl.innerHTML = '<div class="music-empty">Треків ще немає.<br>Додай свою музику у список TRACKS у коді гри.</div>';
     return;
   }
-  musicListEl.innerHTML = TRACKS.map((t, i) => `<button class="music-item${i === curTrack ? ' active' : ''}" type="button" data-idx="${i}">
-      <span class="music-item-ic">${i === curTrack && !bgAudio.paused ? '🔊' : '🎵'}</span>
-      <span class="music-item-name">${t.title || 'Трек ' + (i + 1)}</span></button>`).join('');
+  musicListEl.innerHTML = TRACKS.map((t, i) => {
+    const playing = i === curTrack && !bgAudio.paused;
+    return `<button class="music-item${i === curTrack ? ' active' : ''}" type="button" data-idx="${i}">
+      <span class="music-item-disc${t.cover ? ' has-cover' : ''}${playing ? ' spin' : ''}">
+        <span class="music-item-fb">${playing ? '🔊' : '🎵'}</span>
+        ${t.cover ? `<img src="${t.cover}" alt="" loading="lazy">` : ''}
+      </span>
+      <span class="music-item-name">${t.title || 'Трек ' + (i + 1)}</span></button>`;
+  }).join('');
   musicListEl.querySelectorAll('[data-idx]').forEach(b => b.addEventListener('click', () => loadTrack(+b.dataset.idx, true)));
 }
 function loadTrack(i, autoplay) {
