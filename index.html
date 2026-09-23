@@ -127,6 +127,17 @@
     box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -6px 0 0 #241a52;}
   .ref-icon{font-size:38px;margin-bottom:12px}
   .ref-avatar{width:44px;height:44px;border-radius:7px;image-rendering:pixelated;box-shadow:inset 0 0 0 2px var(--edge);background:#2c1f5c;object-fit:cover;margin:0 auto 12px;display:block}
+
+  /* ---------- донат за Telegram Stars ---------- */
+  .don-card{display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:8px;background:var(--card);box-shadow:inset 0 0 0 2px var(--edge)}
+  .don-ic{font-size:22px;flex:none;width:30px;text-align:center}
+  .don-mid{flex:1 1 auto;min-width:0}
+  .don-name{font-family:var(--pixel);font-size:9px;color:var(--paper)}
+  .don-get{font-size:9px;color:var(--dim);margin-top:3px}
+  .don-buy{flex:none;border:0;padding:9px 10px;background:#2c1f5c;color:var(--paper);font-family:var(--pixel);font-size:9px;cursor:pointer;white-space:nowrap;box-shadow:inset 0 0 0 2px var(--edge),inset 0 -3px 0 0 var(--edge-dark)}
+  .don-buy:active{transform:translateY(1px)}
+  .don-buy[disabled]{opacity:.5}
+  .don-note{font-size:8px;color:var(--dim);line-height:1.7;padding:8px 4px 2px}
   .ref-title{font-family:var(--pixel);font-size:12px;color:var(--gold);text-shadow:var(--o2);line-height:1.8;margin-bottom:14px}
   .ref-amount{font-family:var(--pixel);font-size:17px;color:#7ee3ff;text-shadow:var(--o2);margin-bottom:20px}
   .ref-ok{width:100%;border:0;padding:11px;background:#2c1f5c;color:var(--paper);
@@ -134,12 +145,12 @@
     box-shadow:inset 0 0 0 2px var(--edge),inset 0 -4px 0 0 var(--edge-dark)}
   .ref-ok:active{transform:translateY(1px)}
 
-  #panel-wpn,#panel-arm,#panel-skn,#panel-qst,#panel-lb{
+  #panel-wpn,#panel-arm,#panel-skn,#panel-qst,#panel-lb,#panel-don{
     flex:0 0 auto;max-height:34vh;overflow-y:auto;
     padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));
     background:var(--ink);border-top:4px solid #4b3a8f;display:flex;flex-direction:column;gap:8px;
   }
-  #panel-wpn.off,#panel-arm.off,#panel-skn.off,#panel-qst.off,#panel-lb.off{display:none}
+  #panel-wpn.off,#panel-arm.off,#panel-skn.off,#panel-qst.off,#panel-lb.off,#panel-don.off{display:none}
 
   /* ---------- таблиця лідерів ---------- */
   #panel-lb{gap:5px}
@@ -289,6 +300,7 @@
     <button class="tab" id="tab-skn" type="button">🎭 Образи</button>
     <button class="tab" id="tab-qst" type="button">📜 Завдання</button>
     <button class="tab" id="tab-lb" type="button">🏆 Топ</button>
+    <button class="tab" id="tab-don" type="button">⭐ Донат</button>
   </div>
 
   <div id="ref-modal" class="off">
@@ -326,6 +338,7 @@
   <div id="panel-skn" class="off"></div>
   <div id="panel-qst" class="off"></div>
   <div id="panel-lb" class="off"></div>
+  <div id="panel-don" class="off"></div>
 </div>
 
 <script>
@@ -1682,6 +1695,14 @@ const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,' + encodeURIComponent(
   + '<rect x="2.5" y="10.5" width="11" height="5" fill="#7669c2"/>'
   + '</svg>'
 );
+const DEFAULT_GIFT_ICON = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">'
+  + '<rect width="16" height="16" fill="#2c1f5c"/>'
+  + '<rect x="3" y="6" width="10" height="8" fill="#f0c838"/>'
+  + '<rect x="2" y="4" width="12" height="3" fill="#f6d86a"/>'
+  + '<rect x="7" y="4" width="2" height="10" fill="#c43a52"/>'
+  + '</svg>'
+);
 function getMyPhotoUrl() {
   try { return tg?.initDataUnsafe?.user?.photo_url || ''; } catch (e) { return ''; }
 }
@@ -1852,6 +1873,15 @@ function showRefRewardModal(diamonds, score, names, photo) {
   $('ref-modal').classList.remove('off');
 }
 function hideRefRewardModal() { $('ref-modal').classList.add('off'); }
+function showPurchaseModal(diamonds, score) {
+  $('ref-modal-text').innerHTML = 'Дякуємо за покупку!';
+  $('ref-modal-avatar').src = DEFAULT_GIFT_ICON;
+  const parts = [];
+  if (diamonds > 0) parts.push('+' + fmt(diamonds) + '💎');
+  if (score > 0) parts.push('+' + fmt(score) + '★');
+  $('ref-modal-amount').textContent = parts.join('  ');
+  $('ref-modal').classList.remove('off');
+}
 $('ref-modal-ok').addEventListener('click', hideRefRewardModal);
 
 async function claimReferralBonus() {
@@ -1870,18 +1900,22 @@ async function claimReferralBonus() {
     const bs = Math.floor(Number(row.score) || 0);
     const names = row.friend_names || '';
     const photo = row.friend_photo || '';
+    const pd = Math.floor(Number(row.purchase_diamonds) || 0);
+    const ps = Math.floor(Number(row.purchase_score) || 0);
     const invitesBefore = state.invitesCount || 0;
     state.invitesCount = Math.floor(Number(row.invites) || 0);
     if (state.invitesCount !== invitesBefore) refreshInviteBtn();
-    if (bd > 0 || bs > 0 || names) {
-      state.diamonds += bd;
-      state.score += bs;
-      state.totalStars += bs;
+    const totalD = bd + pd, totalS = bs + ps;
+    if (totalD > 0 || totalS > 0 || names) {
+      state.diamonds += totalD;
+      state.score += totalS;
+      state.totalStars += totalS;
       dirty = true; uiDirty = true;
-      if (bd > 0) floater('🎁 +' + fmt(bd) + '💎', cx * S, (cy - 70) * S);
+      if (totalD > 0) floater('🎁 +' + fmt(totalD) + '💎', cx * S, (cy - 70) * S);
       hapticNote('success');
       save();
-      showRefRewardModal(bd, bs, names, photo);
+      if (pd > 0 || ps > 0) showPurchaseModal(pd, ps);
+      else showRefRewardModal(bd, bs, names, photo);
     }
   } catch (e) {}
 }
@@ -1890,6 +1924,52 @@ claimReferralBonus();
    не чекало наступного перезапуску гри, а зʼявилося протягом хвилини
    після того, як запрошений друг дійде до 3-го поверху. */
 setInterval(claimReferralBonus, 25000);
+
+/* ===== Донат за Telegram Stars =====
+   Ціни/кількості мають ЗБІГАТИСЯ з тим, що прописано на сервері
+   (supabase/functions/create-invoice) — той список є авторитетним,
+   цей лише для показу картки гравцю ДО оплати. */
+const DONATE_TIERS = [
+  { id:'starter', stars:50,   diamonds:300,   game:5000,   ic:'🌱' },
+  { id:'small',   stars:100,  diamonds:700,   game:12000,  ic:'💠' },
+  { id:'medium',  stars:250,  diamonds:2000,  game:35000,  ic:'🔷' },
+  { id:'large',   stars:500,  diamonds:4500,  game:90000,  ic:'💎' },
+  { id:'mega',    stars:1000, diamonds:10000, game:220000, ic:'👑' }
+];
+function renderDonate() {
+  const card = t => `<div class="don-card"><div class="don-ic">${t.ic}</div>
+    <div class="don-mid"><div class="don-name">${fmt(t.diamonds)}💎 + ${fmt(t.game)}★</div>
+    <div class="don-get">одноразова покупка</div></div>
+    <button class="don-buy" type="button" data-tier="${t.id}">⭐ ${fmt(t.stars)}</button></div>`;
+  panelDon.innerHTML = '<div class="don-note">Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.</div>'
+    + DONATE_TIERS.map(card).join('');
+  panelDon.querySelectorAll('[data-tier]').forEach(b => b.addEventListener('click', () => buyTier(b.dataset.tier, b)));
+}
+async function buyTier(tierId, btn) {
+  if (!telegramId) return;
+  if (btn) btn.disabled = true;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/create-invoice`, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ telegram_id: telegramId, tier_id: tierId })
+    });
+    const data = await r.json();
+    if (!data.url) throw new Error(data.error || 'no_url');
+    tg.openInvoice(data.url, status => {
+      if (btn) btn.disabled = false;
+      if (status === 'paid') {
+        hapticNote('success');
+        floater('⭐ Оплата пройшла!', cx * S, (cy - 70) * S);
+        setTimeout(claimReferralBonus, 1500);
+        setTimeout(claimReferralBonus, 5000);
+      }
+    });
+  } catch (e) {
+    if (btn) btn.disabled = false;
+    hapticNote('error');
+  }
+}
 
 /* Посилання-запрошення для кнопки "Запросити друга".
    Формат для Mini App з прямим посиланням (t.me/БОТ/APP): параметр
@@ -2412,8 +2492,9 @@ btnAuto.addEventListener('click', () => {
 
 /* --- вкладки: прокачка / зброя / броня / образи --- */
 const tabUpg = $('tab-upg'), tabWpn = $('tab-wpn'), tabArm = $('tab-arm'), tabSkn = $('tab-skn'), tabQst = $('tab-qst'), tabLb = $('tab-lb');
-const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelQst = $('panel-qst'), panelLb = $('panel-lb');
-const tabs = [['upg', tabUpg, panelUpg], ['wpn', tabWpn, panelWpn], ['arm', tabArm, panelArm], ['skn', tabSkn, panelSkn], ['qst', tabQst, panelQst], ['lb', tabLb, panelLb]];
+const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelQst = $('panel-qst'), panelLb = $('panel-lb'), panelDon = $('panel-don');
+const tabDon = $('tab-don');
+const tabs = [['upg', tabUpg, panelUpg], ['wpn', tabWpn, panelWpn], ['arm', tabArm, panelArm], ['skn', tabSkn, panelSkn], ['qst', tabQst, panelQst], ['lb', tabLb, panelLb], ['don', tabDon, panelDon]];
 function selectTab(name) {
   curTab = name;
   for (const [n, tb, p] of tabs) {
@@ -2423,6 +2504,7 @@ function selectTab(name) {
   }
   uiDirty = true;
   if (name === 'lb') renderLeaderboard();
+  if (name === 'don') renderDonate();
 }
 tabs.forEach(([n, tb]) => tb.addEventListener('click', () => selectTab(n)));
 
