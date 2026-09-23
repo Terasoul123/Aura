@@ -173,6 +173,21 @@
   .ref-icon{font-size:38px;margin-bottom:12px}
   .ref-avatar{width:44px;height:44px;border-radius:7px;image-rendering:pixelated;box-shadow:inset 0 0 0 2px var(--edge);background:#2c1f5c;object-fit:cover;margin:0 auto 12px;display:block}
 
+  /* ---------- щоденні нагороди ---------- */
+  #daily-modal{position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;background:rgba(10,6,24,.72);padding:24px}
+  #daily-modal.off{display:none}
+  .dl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px}
+  .dl-c{position:relative;padding:8px 2px;border-radius:8px;background:#2c1f5c;box-shadow:inset 0 0 0 2px #4a3a90;font-family:var(--pixel);text-align:center}
+  .dl-c.wide{grid-column:span 2}
+  .dl-c.cur{box-shadow:inset 0 0 0 2px var(--gold),0 0 10px -2px rgba(255,210,63,.6)}
+  .dl-c.done{opacity:.55}
+  .dl-n{font-size:6px;color:var(--dim);margin-bottom:5px}
+  .dl-i{font-size:16px;line-height:1}
+  .dl-a{font-size:8px;color:#7ee3ff;margin-top:5px;word-break:break-word}
+  .dl-ok{position:absolute;top:2px;right:4px;font-size:9px;color:#6bdc92}
+  .dl-note{font-family:var(--pixel);font-size:8px;line-height:1.8;color:var(--dim);margin-bottom:12px;min-height:14px}
+  .dl-note b{font-weight:normal;color:var(--gold);font-size:10px}
+
   /* ---------- донат за Telegram Stars ---------- */
   .don-card{position:relative;display:flex;align-items:center;gap:10px;padding:12px;border-radius:10px;
     background:linear-gradient(135deg,var(--card),#241a52);box-shadow:inset 0 0 0 2px var(--edge),inset 0 -5px 0 0 var(--edge-dark)}
@@ -1138,6 +1153,9 @@ Object.assign(I18N.ru, {
 I18N.uk['auth-btn'] = 'Відкрити в Telegram'; I18N.en['auth-btn'] = 'Open in Telegram'; I18N.ru['auth-btn'] = 'Открыть в Telegram';
 Object.assign(I18N.uk, { maintTitle: 'Технічна перерва', maintText: 'Зараз ми оновлюємо гру.<br>Повертайся трохи пізніше — прогрес нікуди не подінеться.' });
 Object.assign(I18N.en, { maintTitle: 'Maintenance break', maintText: 'We\'re updating the game right now.<br>Come back a bit later — your progress is safe.' });
+Object.assign(I18N.uk, { dailyTitle: 'Щоденна нагорода', dailyDay: 'День', dailyClaim: 'Забрати', dailyNext: 'Наступна нагорода — завтра', dailyDone: 'Усі 7 нагород отримано!' });
+Object.assign(I18N.en, { dailyTitle: 'Daily reward', dailyDay: 'Day', dailyClaim: 'Claim', dailyNext: 'Next reward — tomorrow', dailyDone: 'All 7 rewards claimed!' });
+Object.assign(I18N.ru, { dailyTitle: 'Ежедневная награда', dailyDay: 'День', dailyClaim: 'Забрать', dailyNext: 'Следующая награда — завтра', dailyDone: 'Все 7 наград получены!' });
 Object.assign(I18N.ru, { maintTitle: 'Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Возвращайся чуть позже — прогресс никуда не денется.' });
 let curLang = (() => {
   try {
@@ -2406,7 +2424,8 @@ function defaultState() {
     hp: CFG.HP_MAX, weapons: ['fists'],
     hpLvl: 0, armor: ['cloth'], viewMode: 'sky', skins: ['default'], skin: 'default', ups: {},
     monstersKilled: 0, questsClaimed: [], kills: { slime: 0, goblin: 0, skeleton: 0, bat: 0, spider: 0, lava: 0, ghost: 0, demon: 0, boss: 0 },
-    referredBy: null, refRewardGiven: false, invitesCount: 0, botWarns: 0   // реферальна система
+    referredBy: null, refRewardGiven: false, invitesCount: 0, botWarns: 0,   // реферальна система
+    daily: { n: 0, day: '' }   // щоденні нагороди: n — скільки з 7 забрано, day — дата останнього забирання
   };
 }
 /* Перетворює довільний "сирий" об'єкт збереження (з localStorage або з хмари)
@@ -2423,6 +2442,11 @@ function sanitizeState(s) {
     if (Number.isFinite(rb) && rb > 0) d.referredBy = rb;
   }
   d.refRewardGiven = !!s.refRewardGiven;
+  if (s.daily && typeof s.daily === 'object') {
+    const n = Math.floor(Number(s.daily.n));
+    if (Number.isFinite(n)) d.daily.n = Math.max(0, Math.min(7, n));
+    if (typeof s.daily.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s.daily.day)) d.daily.day = s.daily.day;
+  }
   if (Array.isArray(s.questsClaimed)) d.questsClaimed = s.questsClaimed.filter(id => typeof id === 'string');
   if (s.kills && typeof s.kills === 'object') {
     for (const k of ['slime','goblin','skeleton','bat','spider','lava','ghost','demon','boss']) {
@@ -2710,13 +2734,15 @@ async function loadProgressFromCloud() {
   if (!row || !row.progress) return;
   const cloud = sanitizeState(row.progress);
   if (cloud.totalStars > state.totalStars) {
+    const keepDaily = (cloud.daily.n > state.daily.n || (cloud.daily.n === state.daily.n && cloud.daily.day > state.daily.day)) ? cloud.daily : state.daily;
     Object.assign(state, cloud);
+    state.daily = { n: keepDaily.n, day: keepDaily.day };
     if (state.hp > hpMax()) state.hp = hpMax();
     dirty = true; uiDirty = true;
     save();
   }
 }
-loadProgressFromCloud();
+loadProgressFromCloud().catch(() => {}).then(() => setTimeout(initDaily, 600));   // щоденна нагорода — після підтягування хмарного прогресу
 
 /* ==========================================================================
    6c. РЕФЕРАЛЬНА СИСТЕМА
@@ -4107,6 +4133,65 @@ function equipSkin(id) {
   haptic('light');
   burst(cx, cy - 10, 14, 60, SPARK);
 }
+/* ===== Щоденні нагороди (7 днів) =====
+   Кожен новий календарний день, коли гравець заходить, відкриває наступну нагороду (не скидається,
+   якщо пропустив день). День рахується за часом сервера Supabase (заголовок Date), щоб не можна було
+   накрутити переведенням годинника; без звʼязку — за часом пристрою. */
+const DAILY = [ { s: 300 }, { d: 5 }, { s: 1500 }, { d: 8 }, { s: 4000 }, { d: 15 }, { skin: 'ninja' } ];
+const DAILY_SKIN_FALLBACK = 60;   // якщо скін уже є — замість нього 60 💎
+let dailyAvail = false, dailyKey = '';
+document.body.insertAdjacentHTML('beforeend', '<div id="daily-modal" class="off"></div>');
+async function serverDayKey() {
+  let ms = Date.now();
+  try {
+    if (keyReady()) {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/app_settings?key=eq.maintenance&select=value&limit=1`, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } });
+      const d = Date.parse(r.headers.get('date') || '');
+      if (Number.isFinite(d)) ms = d;
+    }
+  } catch (e) {}
+  return new Date(ms - new Date(ms).getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+}
+function dailyRender(note) {
+  const n = state.daily.n;
+  const tile = (r, i) => {
+    const ic = r.skin ? '🎭' : (r.d ? '💎' : '★');
+    const amt = r.skin ? uiText(SKINS.find(x => x.id === r.skin).name) : fmt(r.d || r.s);
+    return `<div class="dl-c${i < n ? ' done' : ''}${dailyAvail && i === n ? ' cur' : ''}${i === 6 ? ' wide' : ''}"><div class="dl-n">${t('dailyDay')} ${i + 1}</div><div class="dl-i">${ic}</div><div class="dl-a">${escapeHtml(String(amt))}</div>${i < n ? '<div class="dl-ok">✔</div>' : ''}</div>`;
+  };
+  $('daily-modal').innerHTML = `<div class="ref-box"><div class="ref-icon">🎁</div><div class="ref-title">${t('dailyTitle')}</div>
+    <div class="dl-grid">${DAILY.map(tile).join('')}</div>
+    <div class="dl-note">${note ? '<b>' + escapeHtml(note) + '</b><br>' + t(n >= 7 ? 'dailyDone' : 'dailyNext') : ''}</div>
+    <button class="ref-ok" id="dl-btn" type="button">${dailyAvail ? t('dailyClaim') : 'OK'}</button></div>`;
+  $('daily-modal').classList.remove('off');
+}
+function dailyGrant(i) {
+  const r = DAILY[i];
+  if (r.s) { state.score += r.s; return '+' + fmt(r.s) + '★'; }
+  if (r.d) { state.diamonds += r.d; return '+' + fmt(r.d) + '💎'; }
+  if (state.skins.includes(r.skin)) { state.diamonds += DAILY_SKIN_FALLBACK; return '+' + DAILY_SKIN_FALLBACK + '💎'; }
+  state.skins.push(r.skin);
+  return '🎭 ' + uiText(SKINS.find(x => x.id === r.skin).name);
+}
+async function initDaily() {
+  if (document.hidden || !$('daily-modal').classList.contains('off') || state.daily.n >= 7) return;
+  const key = await serverDayKey();
+  if (!(key > state.daily.day) || state.daily.n >= 7) return;   // сьогодні вже забрано (або годинник відкотили назад)
+  dailyKey = key; dailyAvail = true; dailyRender();
+}
+$('daily-modal').addEventListener('click', e => {
+  if (!e.target.closest('#dl-btn')) return;
+  if (!dailyAvail) { $('daily-modal').classList.add('off'); return; }
+  dailyAvail = false;
+  const txt = dailyGrant(state.daily.n);
+  state.daily = { n: state.daily.n + 1, day: dailyKey };
+  dirty = true; uiDirty = true; shopSig = '';
+  save(); hapticNote('success');
+  floater('🎁 ' + txt, cx * S, (cy - 70) * S); burst(cx, cy - 10, 24, 90, SPARK);
+  dailyRender(txt);
+});
+document.addEventListener('visibilitychange', () => { if (!document.hidden) initDaily(); });
+
 function buySkin(id) {
   const s = SKINS.find(x => x.id === id);
   if (!s || state.skins.includes(id)) return;
