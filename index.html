@@ -346,6 +346,10 @@
 
   #floaters{position:absolute;inset:0;overflow:hidden;pointer-events:none}
   .floater{position:absolute;font-size:14px;color:var(--gold);text-shadow:var(--o2);white-space:nowrap;will-change:transform,opacity}
+  .floater.auto{color:#7fe8ff;font-size:12px}
+  #bot-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(10,6,24,.82);padding:24px}
+  #bot-modal.off{display:none}
+  .bot-text{font-family:var(--pixel);font-size:9px;line-height:2;color:var(--paper);margin-bottom:14px}
 
   #hint{
     position:absolute;left:0;right:0;bottom:18px;text-align:center;
@@ -410,6 +414,12 @@
     color:var(--paper);font-family:var(--pixel);font-size:10px;cursor:pointer;
     box-shadow:inset 0 0 0 2px var(--edge),inset 0 -3px 0 0 var(--edge-dark);display:flex;align-items:center;justify-content:center;gap:6px}
   .lang-btn:active{transform:translateY(1px)}
+  .link-list{display:flex;flex-direction:column;gap:8px}
+  .link-btn{justify-content:flex-start;text-align:left;padding:10px 12px;gap:10px}
+  .lk-ic{font-size:20px;flex:none;width:26px;text-align:center}
+  .lk-txt{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .lk-txt b{font-weight:normal;font-size:10px}
+  .lk-txt i{font-style:normal;font-size:8px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .lang-btn.active{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -3px 0 0 #8a5a0a;color:var(--gold)}
 </style>
 </head>
@@ -490,6 +500,15 @@
     </div>
   </div>
 
+  <div id="bot-modal" class="off">
+    <div class="ref-box">
+      <div class="ref-icon">⚠️</div>
+      <div class="ref-title" id="bot-title"></div>
+      <div class="bot-text" id="bot-text"></div>
+      <button class="ref-ok" id="bot-ok" type="button"></button>
+    </div>
+  </div>
+
   <div id="panel">
     <button class="up" id="up-power" type="button">
       <div class="up-head"><img data-icon="arrow" alt=""><span class="up-name">Сила кліку</span></div>
@@ -564,6 +583,14 @@
           <button class="lang-btn" id="lang-ru" type="button" data-lang="ru">🇷🇺 Русский</button>
         </div>
       </div>
+      <div class="settings-row">
+        <div class="settings-label" id="settings-links-label"></div>
+        <div class="link-list">
+          <button class="lang-btn link-btn" type="button" data-link="https://t.me/aura_up_news"><span class="lk-ic">📢</span><span class="lk-txt"><b id="lk-news-t"></b><i>t.me/aura_up_news</i></span></button>
+          <button class="lang-btn link-btn" type="button" data-link="https://t.me/Sergixlol"><span class="lk-ic">🛟</span><span class="lk-txt"><b id="lk-sup-t"></b><i>@Sergixlol</i></span></button>
+          <button class="lang-btn link-btn" type="button" data-link="https://www.tiktok.com/@nightsergio?_r=1&amp;_t=ZS-99yk3sH44P7"><span class="lk-ic">🎵</span><span class="lk-txt"><b id="lk-tt-t"></b><i>tiktok.com/@nightsergio</i></span></button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -590,6 +617,9 @@ const CFG = {
   ENC_TIME_SEC:    120,   // монстр з'являється кожні стільки секунд (2 хв)
   ENC_STEPS_AHEAD: 2,     // на скільки сходинок вище/попереду з'являється монстр
   ENC_ATK_EVERY:   1.1,   // як часто монстр б'є гравця (сек)
+  MIN_HITS_TO_KILL: 10,   // мінімум ударів, щоб убити монстра (проти вбивства з 1 удару)
+  BOT_FAST_TPS:    5,     // «швидкий» темп: стільки тапів за секунду і більше
+  BOT_STREAK_SEC:  240,   // скільки секунд поспіль швидкого тапання без пауз/сповільнення = попередження (4 хв)
   DEATH_LOSS:      0.2,   // частка зірок, яку гравець втрачає, якщо програє бій
   HERO_SCALE:      0.7,   // розмір героя на сцені (1 = як було)
   MON_SCALE:       0.6    // розмір монстрів на сцені (1 = як було)
@@ -899,6 +929,14 @@ function translateMenuAttributes() {
   });
 }
 
+Object.assign(I18N.uk, { botTitle:'Підозріла активність', botText:'Ти тапаєш без пауз понад {m} хв у швидкому темпі. Зроби перерву й грай чесно. Повторні порушення можуть призвести до блокування акаунта.', botTextAuto:'Виявлено автоматичні тапи (бот). Так грати не можна — повторні порушення можуть призвести до блокування акаунта.', botOk:'Зрозуміло' });
+Object.assign(I18N.en, { botTitle:'Suspicious activity', botText:'You have been tapping fast for over {m} min without a break. Please take a pause and play fair. Repeated violations may lead to an account ban.', botTextAuto:'Automated taps (bot) detected. This is not allowed — repeated violations may lead to an account ban.', botOk:'Got it' });
+Object.assign(I18N.ru, { botTitle:'Подозрительная активность', botText:'Ты тапаешь без пауз больше {m} мин в быстром темпе. Сделай перерыв и играй честно. Повторные нарушения могут привести к блокировке аккаунта.', botTextAuto:'Обнаружены автоматические тапы (бот). Так играть нельзя — повторные нарушения могут привести к блокировке аккаунта.', botOk:'Понятно' });
+
+Object.assign(I18N.uk, { linksLabel:'СПІЛЬНОТА', lkNews:'Новини каналу Telegram', lkSup:'Модерація / підтримка', lkTt:'TikTok канал' });
+Object.assign(I18N.en, { linksLabel:'COMMUNITY', lkNews:'Telegram channel news', lkSup:'Moderation / support', lkTt:'TikTok channel' });
+Object.assign(I18N.ru, { linksLabel:'СООБЩЕСТВО', lkNews:'Новости Telegram-канала', lkSup:'Модерация / поддержка', lkTt:'TikTok-канал' });
+
 let curLang = (() => {
   try {
     const saved = localStorage.getItem('lang');
@@ -933,6 +971,18 @@ function applyStaticI18n() {
   document.querySelectorAll('#shop-modal .shop-title')[0]  && (document.querySelectorAll('#shop-modal .shop-title')[0].textContent = t('shop-title'));
   $('settings-title')      && ($('settings-title').textContent = t('settings-title'));
   $('settings-lang-label') && ($('settings-lang-label').textContent = t('settings-lang-label'));
+  $('settings-links-label') && ($('settings-links-label').textContent = t('linksLabel'));
+  $('lk-news-t') && ($('lk-news-t').textContent = t('lkNews'));
+  $('lk-sup-t')  && ($('lk-sup-t').textContent  = t('lkSup'));
+  $('lk-tt-t')   && ($('lk-tt-t').textContent   = t('lkTt'));
+  // Settings community links: translate every visible label and its tooltip.
+  const settingsLinks = document.querySelectorAll('#settings-modal [data-link]');
+  const linkTitles = curLang === 'en'
+    ? ['Telegram channel news', 'Moderation / support', 'TikTok channel']
+    : curLang === 'ru'
+      ? ['Новости Telegram-канала', 'Модерация / поддержка', 'TikTok-канал']
+      : ['Новини каналу Telegram', 'Модерація / підтримка', 'TikTok канал'];
+  settingsLinks.forEach((el, i) => { if (linkTitles[i]) el.title = linkTitles[i]; });
   $('ref-modal-ok')        && ($('ref-modal-ok').textContent = t('ref-modal-ok'));
   const mnt = $('music-now-title');
   if (mnt && (mnt.textContent === I18N.uk['music-now-title-empty'] || mnt.textContent === I18N.en['music-now-title-empty'])) mnt.textContent = t('music-now-title-empty');
@@ -2130,7 +2180,7 @@ function defaultState() {
     hp: CFG.HP_MAX, weapons: ['fists'],
     hpLvl: 0, armor: ['cloth'], viewMode: 'sky', skins: ['default'], skin: 'default', ups: {},
     monstersKilled: 0, questsClaimed: [], kills: { slime: 0, goblin: 0, skeleton: 0, bat: 0, spider: 0, lava: 0, ghost: 0, demon: 0, boss: 0 },
-    referredBy: null, refRewardGiven: false, invitesCount: 0   // реферальна система
+    referredBy: null, refRewardGiven: false, invitesCount: 0, botWarns: 0   // реферальна система
   };
 }
 /* Перетворює довільний "сирий" об'єкт збереження (з localStorage або з хмари)
@@ -2936,10 +2986,11 @@ function draw() {
    ========================================================================== */
 const hintEl = $('hint');
 let lastFloater = 0, lastHaptic = 0;
+let autoEarned = 0, autoFloatT = 0;   // скільки зірок дав автоклік за останню секунду (для окремої цифри)
 
-function floater(text, x, y) {
+function floater(text, x, y, cls) {
   const d = document.createElement('div');
-  d.className = 'floater'; d.textContent = text;
+  d.className = 'floater' + (cls ? ' ' + cls : ''); d.textContent = text;
   d.style.left = x + 'px'; d.style.top = y + 'px';
   if (floatersEl.childElementCount > 14) floatersEl.firstChild.remove();
   floatersEl.appendChild(d);
@@ -2973,7 +3024,8 @@ function climbStep(auto) {
   dirty = true; uiDirty = true;
   checkTierReward();
   const now = performance.now();
-  if (now - lastFloater > (auto ? 260 : 50)) {
+  if (auto) autoEarned += gain;                      // автоклік показується окремою цифрою ⚙️ раз на секунду
+  else if (now - lastFloater > 50) {
     lastFloater = now;
     floater('+' + fmt(gain), (cx + Math.random() * 10 - 5) * S, (cy - 22) * S);
   }
@@ -2999,11 +3051,7 @@ function autoSteps(n) {
   visTarget = Math.min(visTarget + n, pos + MAX_JUMP_LEAD);
   dirty = true; uiDirty = true;
   checkTierReward();
-  const now = performance.now();
-  if (now - lastFloater > 260) {
-    lastFloater = now;
-    floater('+' + fmt(gain), (cx + Math.random() * 10 - 5) * S, (cy - 22) * S);
-  }
+  autoEarned += gain;
   burst(cx, cy - 2, 3, 40, SPARK);
 }
 
@@ -3029,11 +3077,15 @@ function startEncounter() {
   const ti = Math.min(lvl, TIER_HP.length - 1);
   const baseHp = Math.round(25 + state.steps * 0.25 + TIER_HP[ti] + state.totalStars * 0.0003 + Math.random() * 20);
   const baseDmg = Math.round(4 + TIER_DMG[ti] + Math.floor(Math.sqrt(state.totalStars / 20000)) + Math.random() * 3);
-  const hpMax = Math.round(baseHp * meta.hpMul);
+  const baseHpMax = Math.round(baseHp * meta.hpMul);
+  /* HP не може бути меншим за N ударів гравця — інакше сильна зброя вбиває монстрів з 1 удару */
+  const avgHit = weaponDmg() * dmgMul() * (1 + critChance() * (critMul() - 1));
+  const minHp = Math.ceil(avgHit * CFG.MIN_HITS_TO_KILL * (kind === 'boss' ? 2 : 1));
+  const hpMax = Math.max(baseHpMax, minHp);
   const dmg = Math.round(baseDmg * meta.dmgMul);
   combat = {
     kind, hp: hpMax, hpMax, dmg,
-    reward: Math.round(hpMax * 0.7 * meta.scoreMul),
+    reward: Math.round(baseHpMax * 0.7 * meta.scoreMul),   // нагорода не росте від «надутого» HP
     atkAcc: 0, hitFlash: 0, walkAcc: 0
   };
   spawnAcc = 0;
@@ -3094,9 +3146,32 @@ function onPlayerDeath() {
   hapticNote('error');
 }
 
-stage.addEventListener('pointerdown', e => { e.preventDefault(); if (combat) hitMonster(); else climbStep(false); });
+/* --- антибот: довге безперервне швидке тапання --- */
+let tapsSec = 0, fastSecs = 0;
+function showBotWarning(auto) {
+  if (!$('bot-modal').classList.contains('off')) return;
+  state.botWarns = (state.botWarns || 0) + 1; dirty = true;
+  $('bot-title').textContent = t('botTitle') + ' (' + state.botWarns + ')';
+  $('bot-text').textContent = auto ? t('botTextAuto') : t('botText').replace('{m}', Math.round(CFG.BOT_STREAK_SEC / 60));
+  $('bot-ok').textContent = t('botOk');
+  $('bot-modal').classList.remove('off');
+  hapticNote('warning');
+}
+$('bot-ok').addEventListener('click', () => { $('bot-modal').classList.add('off'); tapsSec = 0; fastSecs = 0; });
+function registerTap(e) {
+  if (e && e.isTrusted === false) { showBotWarning(true); return false; }   // штучні (скриптові) тапи не рахуємо
+  tapsSec++;
+  return true;
+}
+setInterval(() => {   // секунда з достатньо швидким темпом — стрік росте; пауза або сповільнення — скидає
+  if (tapsSec >= CFG.BOT_FAST_TPS) fastSecs++; else fastSecs = 0;
+  tapsSec = 0;
+  if (fastSecs >= CFG.BOT_STREAK_SEC) { fastSecs = 0; showBotWarning(false); }
+}, 1000);
+
+stage.addEventListener('pointerdown', e => { e.preventDefault(); if (!registerTap(e)) return; if (combat) hitMonster(); else climbStep(false); });
 document.addEventListener('keydown', e => {
-  if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); if (!e.repeat) { if (combat) hitMonster(); else climbStep(false); } }
+  if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); if (!e.repeat && registerTap(e)) { if (combat) hitMonster(); else climbStep(false); } }
 });
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('gesturestart', e => e.preventDefault());
@@ -3184,6 +3259,15 @@ function openSettings() { settingsModal.classList.remove('off'); haptic('light')
 function closeSettings() { settingsModal.classList.add('off'); haptic('light'); }
 btnSettings.addEventListener('click', openSettings);
 settingsCloseBtn.addEventListener('click', closeSettings);
+document.querySelectorAll('#settings-modal [data-link]').forEach(b => b.addEventListener('click', () => {
+  const url = b.dataset.link;
+  haptic('light');
+  try {
+    if (tg && /^https:\/\/t\.me\//.test(url) && tg.openTelegramLink) tg.openTelegramLink(url);
+    else if (tg && tg.openLink) tg.openLink(url);
+    else window.open(url, '_blank', 'noopener');
+  } catch (e) { window.open(url, '_blank', 'noopener'); }
+}));
 settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettings(); });
 $('lang-uk').addEventListener('click', () => { haptic('light'); setLang('uk'); });
 $('lang-en').addEventListener('click', () => { haptic('light'); setLang('en'); });
@@ -3559,7 +3643,7 @@ const scoreEl = $('score'), diamondsEl = $('diamonds');
 function renderUI() {
   scoreEl.textContent = fmt(state.score);
   diamondsEl.textContent = fmt(state.diamonds);
-  $('per-click').textContent = `+${fmt(Math.round(state.powerLvl * clickMul()))} ${t('perClick')}` + (state.autoLvl ? ` · ${t('autoSuffix')} ${state.autoLvl}${t('perSec')}` : '');
+  $('per-click').textContent = `+${fmt(Math.round(state.powerLvl * clickMul()))} ${t('perClick')}` + (state.autoLvl ? ` · ${t('autoSuffix')} ${state.autoLvl}${t('perSec')} (+${fmt(Math.round(state.autoLvl * state.powerLvl * clickMul() * autoMul() * (1 + luckChance())))}★${t('perSec')})` : '');
 
   const cp = costPower(), ca = costAuto();
   $('cost-power').textContent = fmt(cp);
@@ -3609,6 +3693,11 @@ function update(dt) {
     autoAcc += dt * state.autoLvl;
     const n = Math.floor(autoAcc);
     if (n >= 1) { autoAcc -= n; autoSteps(n); }
+  }
+  autoFloatT += dt;
+  if (autoFloatT >= 1) {                                // цифра саме від автокліку: скільки він приніс за секунду
+    autoFloatT = 0;
+    if (autoEarned > 0) { floater('⚙️+' + fmt(autoEarned), (cx + 16) * S, (cy - 44) * S, 'auto'); autoEarned = 0; }
   }
   const diff = visTarget - pos;                         // герой стрибає до візуальної цілі (не швидше за ліміт)
   if (diff > 0.001) {
