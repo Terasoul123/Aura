@@ -766,11 +766,28 @@ Object.assign(MENU_I18N_RU_EN, Object.fromEntries(Object.entries(MENU_I18N_RU_UK
 Object.assign(MENU_I18N_RU_REV, Object.fromEntries(Object.entries(MENU_I18N_RU_UK).map(([uk,ru]) => [ru,uk])));
 
 
+/* Кеш перекладу: раніше кожен виклик для EN/RU заново будував величезні словники
+   й компілював ~100 регулярних виразів, а магазин викликає це сотні разів
+   при кожному оновленні — звідси «застигання» персонажа. Тепер результат запам'ятовується. */
+const _mtCache = new Map();
+let _mtLang = null;
+const _altCache = {};
 function menuTranslateString(str) {
+  if (!str) return str;
+  if (_mtLang !== curLang) { _mtCache.clear(); _mtLang = curLang; }
+  let r = _mtCache.get(str);
+  if (r === undefined) {
+    r = menuTranslateStringRaw(str);
+    if (_mtCache.size > 4000) _mtCache.clear();
+    _mtCache.set(str, r);
+  }
+  return r;
+}
+function menuTranslateStringRaw(str) {
   if (!str) return str;
   let out = str;
   const dict = curLang === 'en' ? MENU_I18N : (curLang === 'ru' ? MENU_I18N_RU_UK : MENU_I18N_REV);
-  const altDict = curLang === 'ru' ? MENU_I18N_RU_EN : (curLang === 'en' ? Object.fromEntries(Object.entries(MENU_I18N_RU_UK).map(([uk,ru]) => [ru, MENU_I18N[uk] || uk])) : MENU_I18N_RU_REV);
+  const altDict = curLang === 'ru' ? MENU_I18N_RU_EN : (curLang === 'en' ? (_altCache.en || (_altCache.en = Object.fromEntries(Object.entries(MENU_I18N_RU_UK).map(([uk,ru]) => [ru, MENU_I18N[uk] || uk])))) : MENU_I18N_RU_REV);
 
   // Exact phrases first; also handle switching from another translated language.
   if (dict[out] !== undefined) out = dict[out];
