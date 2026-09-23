@@ -518,6 +518,14 @@
  font-size:9px;text-shadow:2px 2px 0 #120a2e;background:linear-gradient(90deg,#2aa9e0,#4a7bff 55%,#9b4dff);
  box-shadow:inset 0 0 0 2px #bfeaff,inset 0 -4px 0 0 rgba(20,10,80,.45),0 0 16px rgba(90,160,255,.7)}
 #aura-loader .gb:active{transform:translateY(1px)}
+#aura-loader .mlinks{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:16px}
+#aura-loader .mb{pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;border-radius:9px;text-align:left;color:#fff;font-family:inherit;-webkit-tap-highlight-color:transparent;
+ background:linear-gradient(180deg,#3d2a7a,#2c1f5c);box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 0 #241a52}
+#aura-loader .mb:active{transform:translateY(1px)}
+#aura-loader .mb-ic{font-size:20px;width:26px;text-align:center;flex:none}
+#aura-loader .mb-tx{display:flex;flex-direction:column;gap:5px;min-width:0}
+#aura-loader .mb-tx b{font-weight:normal;font-size:10px;line-height:1.4}
+#aura-loader .mb-tx i{font-style:normal;font-size:8px;color:#b9a9f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #aura-loader .gb i{width:14px;height:14px;background:#fff;clip-path:polygon(0 45%,100% 0,78% 100%,50% 70%,36% 100%,36% 62%)}
 @media (max-height:560px){#aura-loader .moon{display:none}}
 @media (prefers-reduced-motion:reduce){#aura-loader *{animation-duration:0s!important;animation-iteration-count:1!important}#aura-loader .fl{animation:none}}
@@ -572,10 +580,17 @@ function tick(now){if(finished||blocked)return;var dt=Math.min(.1,(now-last)/100
  st.textContent=!T.script?'Збираємо героїв…':(T.game.t&&T.game.d<T.game.t?'Розфарбовуємо небо…':(p<1?'Готуємось до підйому!':'Поїхали!'));
  if(p>=1){finish();return;}requestAnimationFrame(tick);}
 function finish(){if(blocked)return;finished=true;if(desc)Object.defineProperty(HTMLImageElement.prototype,'src',desc);
- setTimeout(function(){if(blocked)return;root.classList.add('done');setTimeout(function(){root.remove();},900);},350);}
+ setTimeout(function(){if(blocked)return;root.classList.add('done');setTimeout(function(){root.style.display='none';},900);},350);}
 window.AuraLoader={block:function(o){blocked=true;finished=true;if(desc)Object.defineProperty(HTMLImageElement.prototype,'src',desc);
+ root.style.display='';
  document.getElementById('al-gt').textContent=o.title;document.getElementById('al-gx').innerHTML=o.text;
- var b=document.getElementById('al-gb');b.lastChild.textContent=o.btn;root.removeAttribute('role');root.classList.remove('done');root.classList.add('blocked');}};
+ var gi=root.querySelector('.gi');if(gi)gi.textContent=o.icon||'\uD83D\uDD12';
+ var b=document.getElementById('al-gb');b.lastChild.textContent=o.btn;b.style.display=o.hideBtn?'none':'';root.removeAttribute('role');root.classList.remove('done');root.classList.add('blocked');},
+ unblock:function(){root.classList.remove('blocked');root.classList.add('done');setTimeout(function(){if(root.classList.contains('done'))root.style.display='none';},900);}};
+/* кнопки-посилання (технічна перерва): відкриваємо через Telegram API, бо <a target=_blank> у Mini App часто мовчить */
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.mb[data-link]');if(!b)return;e.preventDefault();
+ var u=b.getAttribute('data-link'),w=window.Telegram&&window.Telegram.WebApp;
+ try{if(w&&/^https:\/\/t\.me\//.test(u)&&w.openTelegramLink)w.openTelegramLink(u);else if(w&&w.openLink)w.openLink(u);else window.open(u,'_blank','noopener');}catch(x){window.open(u,'_blank','noopener');}});
 root.style.setProperty('--p',0);requestAnimationFrame(tick);
 })();
 </script>
@@ -755,7 +770,7 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
         <div class="link-list">
           <button class="lang-btn link-btn" type="button" data-link="https://t.me/aura_up_news"><span class="lk-ic">📢</span><span class="lk-txt"><b id="lk-news-t"></b><i>t.me/aura_up_news</i></span></button>
           <button class="lang-btn link-btn" type="button" data-link="https://t.me/Sergixlol"><span class="lk-ic">🛟</span><span class="lk-txt"><b id="lk-sup-t"></b><i>@Sergixlol</i></span></button>
-          <button class="lang-btn link-btn" type="button" data-link="https://www.tiktok.com/@nightsergio?_r=1&amp;_t=ZS-99yk3sH44P7"><span class="lk-ic">🎵</span><span class="lk-txt"><b id="lk-tt-t"></b><i>tiktok.com/@nightsergio</i></span></button>
+          <button class="lang-btn link-btn" type="button" data-link="https://www.tiktok.com/@nightsergio?_r=1&amp;_t=ZS-99yuGlOXaGC"><span class="lk-ic">🎵</span><span class="lk-txt"><b id="lk-tt-t"></b><i>tiktok.com/@nightsergio</i></span></button>
         </div>
       </div>
     </div>
@@ -1104,9 +1119,9 @@ Object.assign(I18N.uk, { botTitle:'Підозріла активність', bot
 Object.assign(I18N.en, { botTitle:'Suspicious activity', botText:'You have been tapping fast for over {m} min without a break. Please take a pause and play fair. Repeated violations may lead to an account ban.', botTextAuto:'Automated taps (bot) detected. This is not allowed — repeated violations may lead to an account ban.', botOk:'Got it' });
 Object.assign(I18N.ru, { botTitle:'Подозрительная активность', botText:'Ты тапаешь без пауз больше {m} мин в быстром темпе. Сделай перерыв и играй честно. Повторные нарушения могут привести к блокировке аккаунта.', botTextAuto:'Обнаружены автоматические тапы (бот). Так играть нельзя — повторные нарушения могут привести к блокировке аккаунта.', botOk:'Понятно' });
 
-Object.assign(I18N.uk, { linksLabel:'СПІЛЬНОТА', lkNews:'Новини каналу Telegram', lkSup:'Модерація / підтримка', lkTt:'TikTok канал' });
-Object.assign(I18N.en, { linksLabel:'COMMUNITY', lkNews:'Telegram channel news', lkSup:'Moderation / support', lkTt:'TikTok channel' });
-Object.assign(I18N.ru, { linksLabel:'СООБЩЕСТВО', lkNews:'Новости Telegram-канала', lkSup:'Модерация / поддержка', lkTt:'TikTok-канал' });
+Object.assign(I18N.uk, { linksLabel:'СПІЛЬНОТА', lkNews:'Новини каналу Telegram', lkSup:'Підтримка', lkTt:'TikTok канал' });
+Object.assign(I18N.en, { linksLabel:'COMMUNITY', lkNews:'Telegram channel news', lkSup:'Support', lkTt:'TikTok channel' });
+Object.assign(I18N.ru, { linksLabel:'СООБЩЕСТВО', lkNews:'Новости Telegram-канала', lkSup:'Поддержка', lkTt:'TikTok-канал' });
 Object.assign(I18N.uk, {
   settingsAudioLabel:'ЗВУК', settingsMusicVolume:'Гучність музики', settingsSoundVolume:'Гучність звуків',
   settingsVibration:'Вібрація', settingsAutoPause:'Автопауза музики', on:'Увімкнено', off:'Вимкнено'
@@ -1121,9 +1136,9 @@ Object.assign(I18N.ru, {
 });
 
 I18N.uk['auth-btn'] = 'Відкрити в Telegram'; I18N.en['auth-btn'] = 'Open in Telegram'; I18N.ru['auth-btn'] = 'Открыть в Telegram';
-Object.assign(I18N.uk, { maintTitle: '🛠 Технічна перерва', maintText: 'Зараз ми оновлюємо гру.<br>Повертайся трохи пізніше — прогрес нікуди не подінеться.' });
-Object.assign(I18N.en, { maintTitle: '🛠 Maintenance break', maintText: 'We\'re updating the game right now.<br>Come back a bit later — your progress is safe.' });
-Object.assign(I18N.ru, { maintTitle: '🛠 Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Возвращайся чуть позже — прогресс никуда не денется.' });
+Object.assign(I18N.uk, { maintTitle: 'Технічна перерва', maintText: 'Зараз ми оновлюємо гру.<br>Повертайся трохи пізніше — прогрес нікуди не подінеться.' });
+Object.assign(I18N.en, { maintTitle: 'Maintenance break', maintText: 'We\'re updating the game right now.<br>Come back a bit later — your progress is safe.' });
+Object.assign(I18N.ru, { maintTitle: 'Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Возвращайся чуть позже — прогресс никуда не денется.' });
 let curLang = (() => {
   try {
     const saved = localStorage.getItem('lang');
@@ -1184,10 +1199,10 @@ function applyStaticI18n() {
   // Settings community links: translate every visible label and its tooltip.
   const settingsLinks = document.querySelectorAll('#settings-modal [data-link]');
   const linkTitles = curLang === 'en'
-    ? ['Telegram channel news', 'Moderation / support', 'TikTok channel']
+    ? ['Telegram channel news', 'Support', 'TikTok channel']
     : curLang === 'ru'
-      ? ['Новости Telegram-канала', 'Модерация / поддержка', 'TikTok-канал']
-      : ['Новини каналу Telegram', 'Модерація / підтримка', 'TikTok канал'];
+      ? ['Новости Telegram-канала', 'Поддержка', 'TikTok-канал']
+      : ['Новини каналу Telegram', 'Підтримка', 'TikTok канал'];
   settingsLinks.forEach((el, i) => { if (linkTitles[i]) el.title = linkTitles[i]; });
   $('ref-modal-ok')        && ($('ref-modal-ok').textContent = t('ref-modal-ok'));
   const mnt = $('music-now-title');
@@ -1227,7 +1242,7 @@ function setLang(lang) {
    Це відсікає найпростіший спосіб накрутки (відкрити сайт напряму і
    слати запити з консолі) — без цього гра взагалі не стартує.
    ========================================================================== */
-function showAuthBlock(text, title) {
+function showAuthBlock(text, title, opts) {
   const blockEl = $('auth-block');
   const textEl = $('auth-text');
   if (textEl && text) textEl.innerHTML = text;
@@ -1235,7 +1250,7 @@ function showAuthBlock(text, title) {
   document.title = shownTitle;
   const authTitleEl = document.querySelector('.auth-title');
   if (authTitleEl && title) authTitleEl.textContent = title;
-  if (window.AuraLoader) { window.AuraLoader.block({ title: shownTitle, text: text || t('auth-text'), btn: t('auth-btn') }); return; }
+  if (window.AuraLoader) { window.AuraLoader.block({ title: shownTitle, text: text || t('auth-text'), btn: t('auth-btn'), icon: opts && opts.icon, hideBtn: !!(opts && opts.hideBtn) }); return; }
   if (blockEl) blockEl.classList.remove('off');
 }
 
@@ -2603,12 +2618,12 @@ function isAdmin() {
 }
 function maintenanceLinksHtml() {
   const links = [
-    ['📢', t('lkNews'), 'https://t.me/aura_up_news'],
-    ['🛟', t('lkSup'),  'https://t.me/Sergixlol'],
-    ['🎵', t('lkTt'),   'https://www.tiktok.com/@nightsergio?_r=1&_t=ZS-99yk3sH44P7']
+    ['📢', t('lkNews'), 'AuraUP - News',  'https://t.me/aura_up_news'],
+    ['🛟', t('lkSup'),  '@Sergixlol',     'https://t.me/Sergixlol'],
+    ['🎵', t('lkTt'),   '@nightsergio',   'https://www.tiktok.com/@nightsergio?_r=1&_t=ZS-99yuGlOXaGC']
   ];
-  return '<div class="maint-links">' + links.map(([ic, label, url]) =>
-    `<a class="lang-btn link-btn" href="${url}" target="_blank" rel="noopener"><span class="lk-ic">${ic}</span><span class="lk-txt"><b>${escapeHtml(label)}</b></span></a>`
+  return '<div class="mlinks">' + links.map(([ic, label, sub, url]) =>
+    `<button type="button" class="mb" data-link="${escapeHtml(url)}"><span class="mb-ic">${ic}</span><span class="mb-tx"><b>${escapeHtml(label)}</b><i>${escapeHtml(sub)}</i></span></button>`
   ).join('') + '</div>';
 }
 let inMaintenance = false;
@@ -2623,9 +2638,11 @@ async function checkMaintenance() {
     const on = !!(rows && rows[0] && rows[0].value);
     if (on) {
       inMaintenance = true;
-      showAuthBlock(t('maintText') + maintenanceLinksHtml(), t('maintTitle'));
+      showAuthBlock(t('maintText') + maintenanceLinksHtml(), t('maintTitle'), { icon: '🛠', hideBtn: true });
     } else if (inMaintenance) {
       inMaintenance = false;
+      if (window.AuraLoader && window.AuraLoader.unblock) window.AuraLoader.unblock();
+      try { applyStaticI18n(); } catch (e) {}
       const blockEl = $('auth-block');
       if (blockEl) blockEl.classList.add('off');
     }
