@@ -9,6 +9,9 @@
 <!-- Telegram Mini App SDK -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+<!-- AdsGram SDK (реклама за нагороду) -->
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
 <!-- Піксельний шрифт (має кирилицю) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -86,6 +89,21 @@
     0%,100%{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -4px 0 0 #8a5a0a,0 0 10px -2px rgba(255,210,63,.6)}
     50%{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -4px 0 0 #8a5a0a,0 0 16px 0 rgba(255,210,63,.95)}
   }
+
+  /* ---------- кнопка "дивитись рекламу за 1 алмаз" (AdsGram) ---------- */
+  #ads-wrap{
+    position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 94px);
+    right:10px;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;
+  }
+  #btn-ads{
+    width:36px;height:36px;border:0;border-radius:10px;pointer-events:auto;cursor:pointer;
+    background:linear-gradient(180deg,#1f7a52,#124a32);
+    box-shadow:inset 0 0 0 2px #7ee3ff,inset 0 -4px 0 0 #0c3323,0 0 10px -2px rgba(126,227,255,.6);
+    font-size:16px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;
+  }
+  #btn-ads:active{transform:translateY(1px)}
+  #btn-ads[disabled]{opacity:.5;pointer-events:none}
+  #ads-label{font-size:7px;line-height:1.35;color:var(--paper);text-shadow:var(--o2);text-align:center;max-width:56px;white-space:nowrap}
 
   /* ---------- тимчасова кнопка чіту (+1 000 000 за клік +10 000 💎) ---------- */
   #btn-cheat{
@@ -329,6 +347,11 @@
     <button id="btn-view" type="button" title="Небо / Стіни вежі">🏯</button>
     <button id="btn-shop" type="button" title="Магазин">🛒</button>
     <button id="btn-cheat" type="button" title="Чіт: +1 000 000 за клік + 10 000 💎 (тимчасово)">🐞</button>
+
+    <div id="ads-wrap">
+      <button id="btn-ads" type="button" title="Дивитись рекламу">📺</button>
+      <div id="ads-label">+1💎 за рекламу</div>
+    </div>
 
     <div id="hud">
       <div id="score-row">
@@ -2646,6 +2669,38 @@ function closeShop() { shopModal.classList.add('off'); haptic('light'); }
 btnShop.addEventListener('click', openShop);
 shopCloseBtn.addEventListener('click', closeShop);
 shopModal.addEventListener('click', e => { if (e.target === shopModal) closeShop(); });
+
+/* ===== Реклама за нагороду (AdsGram) =====
+   blockId взятий з кабінету https://partner.adsgram.ai (AuraUp → Ad blocks). */
+const ADSGRAM_BLOCK_ID = '49386';
+const AD_REWARD_DIAMONDS = 1;
+const AdController = (window.Adsgram && typeof window.Adsgram.init === 'function')
+  ? window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID })
+  : null;
+
+const btnAds = $('btn-ads');
+let adBusy = false;
+btnAds.addEventListener('click', () => {
+  if (adBusy) return;
+  if (!AdController) { hapticNote('error'); return; }
+  adBusy = true;
+  btnAds.disabled = true;
+  AdController.show()
+    .then(() => {
+      state.diamonds += AD_REWARD_DIAMONDS;
+      dirty = true; uiDirty = true;
+      hapticNote('success');
+      floater('📺 +' + AD_REWARD_DIAMONDS + '💎', cx * S, (cy - 70) * S);
+    })
+    .catch(() => {
+      // рекламу не переглянуто до кінця або сталася помилка — нагороду не даємо
+      hapticNote('error');
+    })
+    .finally(() => {
+      adBusy = false;
+      btnAds.disabled = false;
+    });
+});
 
 /* --- додаткові прокачки (за зірки та діаманти) --- */
 const panelMore = $('more-ups');
