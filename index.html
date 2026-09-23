@@ -755,12 +755,12 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
       <div class="settings-row" id="settings-audio-row">
         <div class="settings-label" id="settings-audio-label"></div>
         <div class="settings-control">
-          <div class="settings-control-head"><span class="settings-control-title" id="settings-music-volume-title"></span><span class="settings-value" id="settings-music-volume-value">70%</span></div>
-          <input class="settings-range" id="settings-music-volume" type="range" min="0" max="100" step="1" value="70">
+          <div class="settings-control-head"><span class="settings-control-title" id="settings-music-volume-title"></span><span class="settings-value" id="settings-music-volume-value">100%</span></div>
+          <input class="settings-range" id="settings-music-volume" type="range" min="0" max="100" step="1" value="100">
         </div>
         <div class="settings-control">
-          <div class="settings-control-head"><span class="settings-control-title" id="settings-sound-volume-title"></span><span class="settings-value" id="settings-sound-volume-value">50%</span></div>
-          <input class="settings-range" id="settings-sound-volume" type="range" min="0" max="100" step="1" value="50">
+          <div class="settings-control-head"><span class="settings-control-title" id="settings-sound-volume-title"></span><span class="settings-value" id="settings-sound-volume-value">100%</span></div>
+          <input class="settings-range" id="settings-sound-volume" type="range" min="0" max="100" step="1" value="100">
         </div>
         <button class="settings-toggle on" id="settings-vibration" type="button"><span id="settings-vibration-title"></span><span class="toggle-state" id="settings-vibration-state"></span></button>
         <button class="settings-toggle on" id="settings-autopause" type="button"><span id="settings-autopause-title"></span><span class="toggle-state" id="settings-autopause-state"></span></button>
@@ -834,8 +834,8 @@ if (tg) {
 }
 let vibrationEnabled = (() => { try { const v=localStorage.getItem('vibrationEnabled'); return v === null ? true : v === '1'; } catch(e) { return true; } })();
 let autoPauseMusic = (() => { try { const v=localStorage.getItem('autoPauseMusic'); return v === null ? true : v === '1'; } catch(e) { return true; } })();
-let musicVolume = (() => { try { const v=Number(localStorage.getItem('musicVolume')); return Number.isFinite(v) ? Math.max(0,Math.min(100,v)) : 70; } catch(e) { return 70; } })();
-let soundVolume = (() => { try { const v=Number(localStorage.getItem('soundVolume')); return Number.isFinite(v) ? Math.max(0,Math.min(100,v)) : 50; } catch(e) { return 50; } })();
+let musicVolume = (() => { try { const raw=localStorage.getItem('musicVolume'); if (raw === null || raw === '') return 100; const v=Number(raw); return Number.isFinite(v) ? Math.max(0,Math.min(100,v)) : 100; } catch(e) { return 100; } })();
+let soundVolume = (() => { try { const raw=localStorage.getItem('soundVolume'); if (raw === null || raw === '') return 100; const v=Number(raw); return Number.isFinite(v) ? Math.max(0,Math.min(100,v)) : 100; } catch(e) { return 100; } })();
 const haptic     = k => { try { if (vibrationEnabled && tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred(k || 'light'); } catch (e) {} };
 const hapticNote = k => { try { if (vibrationEnabled && tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred(k); } catch (e) {} };
 
