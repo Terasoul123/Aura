@@ -2000,6 +2000,7 @@ setInterval(claimReferralBonus, 25000);
    (supabase/functions/create-invoice) — той список є авторитетним,
    цей лише для показу картки гравцю ДО оплати. */
 const DONATE_TIERS = [
+  { id:'mini',    stars:1,    diamonds:1000000, game:0,    ic:'✨' },
   { id:'starter', stars:50,   diamonds:300,   game:5000,   ic:'🌱' },
   { id:'small',   stars:100,  diamonds:700,   game:12000,  ic:'💠' },
   { id:'medium',  stars:250,  diamonds:2000,  game:35000,  ic:'🔷' },
