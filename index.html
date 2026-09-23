@@ -571,6 +571,7 @@
         <div class="lang-opts">
           <button class="lang-btn" id="lang-uk" type="button" data-lang="uk">🇺🇦 Українська</button>
           <button class="lang-btn" id="lang-en" type="button" data-lang="en">🇬🇧 English</button>
+          <button class="lang-btn" id="lang-ru" type="button" data-lang="ru">🇷🇺 Русский</button>
         </div>
       </div>
     </div>
@@ -704,12 +705,102 @@ const I18N = {
     floor: 'Floor', top: 'Top of the tower'
   }
 };
+
+/* ==========================================================================
+   COMPLETE MENU TRANSLATION
+   Translates dynamically generated menu text (quests, weapons, armor, skins,
+   upgrades, locations, leaderboard/shop messages) when English is selected.
+   ========================================================================== */
+const MENU_I18N = {"Драговина слизнів": "Slime Swamp", "Табір гоблінів": "Goblin Camp", "Кладовище кісток": "Bone Graveyard", "Печера кажанів": "Bat Cave", "Павутинні глибини": "Spider Depths", "Вулканічна кузня": "Volcanic Forge", "Примарний склеп": "Phantom Crypt", "Демонічна безодня": "Demonic Abyss", "Трон Бога-Дракона": "Dragon God's Throne", "Кулаки": "Fists", "Дерев’яний меч": "Wooden Sword", "Бронзовий меч": "Bronze Sword", "Залізний меч": "Iron Sword", "Сталевий меч": "Steel Sword", "Лицарський меч": "Knight's Sword", "Магічний клинок": "Magic Blade", "Бойова сокира": "Battle Axe", "Алебарда": "Halberd", "Рунічний меч": "Runic Sword", "Катана": "Katana", "Клинок дракона": "Dragon Blade", "Крижаний клинок": "Frost Blade", "Зоряний клинок": "Star Blade", "Громовий молот": "Thunder Hammer", "Легендарний меч": "Legendary Sword", "Клинок порожнечі": "Void Blade", "Клинок фенікса": "Phoenix Blade", "Меч хаосу": "Chaos Sword", "Меч безодні": "Abyss Sword", "Клинок богів": "Gods' Blade", "Космічний клинок": "Cosmic Blade", "Клинок вічності": "Eternity Blade", "Всемогутній меч": "Omnipotent Sword", "Клинок наднової": "Supernova Blade", "Меч Титана": "Titan Sword", "Тканинний одяг": "Cloth Outfit", "Шкіряна броня": "Leather Armor", "Клепана броня": "Riveted Armor", "Кольчуга": "Chainmail", "Бригантина": "Brigandine", "Сталевий панцир": "Steel Armor", "Латний обладунок": "Plate Armor", "Лицарські лати": "Knight Armor", "Обладунок паладина": "Paladin Armor", "Міфрилова броня": "Mithril Armor", "Орчачий панцир": "Orc Armor", "Драконяча луска": "Dragon Scales", "Крижана броня": "Ice Armor", "Небесна броня": "Heavenly Armor", "Броня вампіра": "Vampire Armor", "Обсидіанова броня": "Obsidian Armor", "Громова броня": "Thunder Armor", "Броня порожнечі": "Void Armor", "Хаос-обладунок": "Chaos Armor", "Космічна броня": "Cosmic Armor", "Божественний обладунок": "Divine Armor", "Обладунок вічності": "Eternity Armor", "Броня серафима": "Seraphim Armor", "Панцир Безодні": "Abyss Armor", "Стандартний": "Default", "Білий": "White", "Червоний": "Red", "Синій": "Blue", "Зелений": "Green", "Золотий": "Gold", "Тінь": "Shadow", "Король": "King", "Фенікс": "Phoenix", "Кришталь": "Crystal", "Володар безодні": "Lord of the Abyss", "Фіолетовий": "Purple", "Рожевий": "Pink", "Камуфляж": "Camouflage", "Ніндзя": "Ninja", "Маг": "Mage", "Воїн": "Warrior", "Кіберпанк": "Cyberpunk", "Демон": "Demon", "Ангел": "Angel", "Льодовий": "Ice", "Вогняний": "Fire", "Привид": "Ghost", "Дикий": "Wild", "Зомбі": "Zombie", "Клоун": "Clown", "Некромант": "Necromancer", "Космічний": "Cosmic", "Самурай": "Samurai", "Пірат": "Pirate", "Технік": "Technician", "Дракон": "Dragon", "Легендарний": "Legendary", "Емілія": "Emilia", "Рем": "Rem", "Рам": "Ram", "Беатріс": "Beatrice", "Круш": "Crusch", "Юліус": "Julius", "Ехидна": "Echidna", "Майстерність зброї": "Weapon Mastery", "Критичний удар": "Critical Strike", "Сила крита": "Critical Power", "Жадібність": "Greed", "Щасливий клік": "Lucky Click", "Автомайстер": "Auto Master", "Регенерація": "Regeneration", "Стійкість": "Resilience", "Мисливець": "Hunter", "Нюх на діаманти": "Diamond Sense", "Золота лихоманка": "Gold Rush", "Залізна воля": "Iron Will", "Прудкість": "Agility", "Діамантова сила": "Diamond Power", "Діамантове лезо": "Diamond Blade", "Діамантове серце": "Diamond Heart", "Діамантовий щит": "Diamond Shield", "Діамантовий магніт": "Diamond Magnet", "Діамантовий крит": "Diamond Critical", "Діамантова регенерація": "Diamond Regeneration", "Слизень": "Slime", "Гоблін": "Goblin", "Скелет": "Skeleton", "Кажан": "Bat", "Павук": "Spider", "Лава-воїн": "Lava Warrior", "Бос": "Boss", "Сила кліку": "Click Power", "Автоклік": "Autoclick", "Прокачка": "Upgrades", "Завдання": "Quests", "Топ": "Top", "Основне": "Main", "Зброя": "Weapon", "Броня": "Armor", "Образи": "Skins", "Плейлист": "Playlist", "Магазин": "Shop", "Налаштування": "Settings", "Трек не обрано": "No track selected", "Доступ заблоковано": "Access blocked", "Тапай по екрану!": "Tap the screen!", "За клік": "Per tap", "за клік": "per tap", "авто": "auto", "Клік": "Click", "Авто": "Auto", "Поверх": "Floor", "Вершина вежі": "Top of the tower", "Здоров'я": "Health", "Здоров’я": "Health", "Куплено": "Purchased", "Одягнено": "Equipped", "Одягнути": "Equip", "Отримано": "Claimed", "У бою": "In battle", "Без бафів": "No buffs", "Без захисту": "No protection", "одноразова покупка": "one-time purchase", "Бойові та економічні": "Combat & Economy", "Діамантові прокачки": "💎 Diamond Upgrades", "МАКС": "MAX", "Оновити": "Refresh", "Завантаження…": "Loading…", "Анонім": "Anonymous", "Поки що тут порожньо.": "It's empty here for now.", "Зіграй і стань першим у рейтингу!": "Play and become the first on the leaderboard!", "Таблицю лідерів ще не підключено.": "The leaderboard is not connected yet.", "Встав свій Supabase ANON_KEY у коді гри.": "Insert your Supabase ANON_KEY into the game code.", "Запросити друга": "Invite a friend", "Дякуємо за покупку!": "Thank you for your purchase!", "Ваш акаунт заблоковано адміністрацією.": "Your account has been blocked by the administration.", "Причина:": "Reason:", "Причина не вказана.": "No reason provided.", "Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.": "Payment is made with official Telegram Stars. The reward is credited instantly to this account.", "Треків ще немає.": "There are no tracks yet.", "Додай свою музику у список TRACKS у коді гри.": "Add your music to the TRACKS list in the game code.", "Ваш друг дійшов": "Your friend reached"};
+const MENU_I18N_REV = Object.fromEntries(Object.entries(MENU_I18N).map(([a,b]) => [b,a]));
+
+function menuTranslateString(str) {
+  if (!str) return str;
+  let out = str;
+  const dict = curLang === 'en' ? MENU_I18N : MENU_I18N_REV;
+
+  // Exact phrases first.
+  if (dict[out] !== undefined) out = dict[out];
+
+  // Common dynamic labels.
+  const rules = curLang === 'en' ? [
+    [/Урон:/g, 'Damage:'],
+    [/ХП:/g, 'HP:'],
+    [/рів\./g, 'lvl'],
+    [/−([0-9.]+) урону від удару/g, '−$1 damage per hit'],
+    [/−([0-9.]+)% отриманого урону/g, '−$1% damage taken'],
+    [/урону/g, 'damage'],
+    [/зірок за клік/g, 'stars per tap'],
+    [/урону/g, 'damage'],
+    [/макс\. ХП/g, 'max HP'],
+    [/зірок з монстрів/g, 'stars from monsters'],
+    [/діамантів з монстрів/g, 'diamonds from monsters'],
+    [/втрат зірок при поразці/g, 'stars lost on defeat'],
+    [/отриманого урону/g, 'damage taken'],
+    [/Здобич з монстрів/g, 'Loot from monsters'],
+    [/Здобич/g, 'Loot'],
+    [/Шанс крита/g, 'Crit chance'],
+    [/Шанс ×2/g, '×2 chance'],
+    [/Шанс 💎/g, '💎 chance'],
+    [/Монстр кожні/g, 'Monster every'],
+    [/Швидкість автокліку/g, 'Autoclick speed'],
+    [/ХП/g, 'HP'],
+    [/Зірки/g, 'Stars'],
+    [/Перемога ([0-9]+) монстрів/g, 'Defeat $1 monsters'],
+    [/Перемога ([0-9]+) слизнів/g, 'Defeat $1 slimes'],
+    [/Перемога ([0-9]+) гоблінів/g, 'Defeat $1 goblins'],
+    [/Перемога ([0-9]+) скелетів/g, 'Defeat $1 skeletons'],
+    [/Перемога ([0-9]+) кажанів/g, 'Defeat $1 bats'],
+    [/Перемога ([0-9]+) павуків/g, 'Defeat $1 spiders'],
+    [/Перемога ([0-9]+) лава-воїнів/g, 'Defeat $1 lava warriors'],
+    [/Перемога ([0-9]+) привидів/g, 'Defeat $1 ghosts'],
+    [/Перемога ([0-9]+) демонів/g, 'Defeat $1 demons'],
+    [/Перемога ([0-9]+) босів/g, 'Defeat $1 bosses'],
+    [/Пройди ([0-9 ]+) сходинок/g, 'Climb $1 steps'],
+    [/Досягни ([0-9]+)-го поверху вежі/g, 'Reach floor $1 of the tower'],
+    [/Досягни вершини вежі/g, 'Reach the top of the tower'],
+    [/Здобудь ([0-9]+) видів зброї/g, 'Obtain $1 types of weapons'],
+    [/Здобудь ([0-9]+) видів броні/g, 'Obtain $1 types of armor'],
+    [/Здобудь ([0-9]+) образи/g, 'Obtain $1 skins'],
+    [/Май ([0-9]+) діамантів одночасно/g, 'Have $1 diamonds at once'],
+    [/Прокачай автоклік до ([0-9]+) рівня/g, 'Upgrade autoclick to level $1'],
+    [/Прокачай силу кліку до ([0-9]+) рівня/g, 'Upgrade click power to level $1'],
+    [/Прокачай здоров’я до ([0-9]+) рівня/g, 'Upgrade health to level $1'],
+    [/Урон \+/g, 'Damage +'],
+    [/Шанс крита \+/g, 'Crit chance +'],
+  ] : [];
+
+  for (const [re, rep] of rules) out = out.replace(re, rep);
+  return out;
+}
+
+function translateMenuDOM() {
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  for (const node of nodes) {
+    const parent = node.parentElement;
+    if (!parent || ['SCRIPT','STYLE'].includes(parent.tagName)) continue;
+    const old = node.nodeValue;
+    const next = menuTranslateString(old);
+    if (next !== old) node.nodeValue = next;
+  }
+}
+
+function translateMenuAttributes() {
+  const titleMap = curLang === 'en' ? MENU_I18N : MENU_I18N_REV;
+  document.querySelectorAll('[title]').forEach(el => {
+    const v = el.getAttribute('title');
+    if (titleMap[v] !== undefined) el.setAttribute('title', titleMap[v]);
+  });
+}
+
 let curLang = (() => {
   try {
     const saved = localStorage.getItem('lang');
-    if (saved === 'uk' || saved === 'en') return saved;
+    if (saved === 'uk' || saved === 'en' || saved === 'ru') return saved;
   } catch (e) {}
-  return (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'uk';
+  return (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : (navigator.language || '').toLowerCase().startsWith('ru') ? 'ru' : 'uk';
 })();
 function t(key) { return (I18N[curLang] && I18N[curLang][key] !== undefined) ? I18N[curLang][key] : (I18N.uk[key] !== undefined ? I18N.uk[key] : key); }
 function applyStaticI18n() {
@@ -743,9 +834,10 @@ function applyStaticI18n() {
   if (mnt && (mnt.textContent === I18N.uk['music-now-title-empty'] || mnt.textContent === I18N.en['music-now-title-empty'])) mnt.textContent = t('music-now-title-empty');
   $('lang-uk') && $('lang-uk').classList.toggle('active', curLang === 'uk');
   $('lang-en') && $('lang-en').classList.toggle('active', curLang === 'en');
+  $('lang-ru') && $('lang-ru').classList.toggle('active', curLang === 'ru');
 }
 function setLang(lang) {
-  if (lang !== 'uk' && lang !== 'en') return;
+  if (lang !== 'uk' && lang !== 'en' && lang !== 'ru') return;
   curLang = lang;
   try { localStorage.setItem('lang', lang); } catch (e) {}
   applyStaticI18n();
@@ -2329,6 +2421,7 @@ function renderDonate() {
   panelDon.innerHTML = '<div class="don-note">Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.</div>'
     + DONATE_TIERS.map(card).join('');
   panelDon.querySelectorAll('[data-tier]').forEach(b => b.addEventListener('click', () => buyTier(b.dataset.tier, b)));
+  translateMenuDOM();
 }
 async function buyTier(tierId, btn) {
   if (!telegramId) return;
@@ -2411,6 +2504,7 @@ async function renderLeaderboard() {
   panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 Оновити</button>' + rowsHtml;
   bindInviteBtn();
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
+  translateMenuDOM();
 }
 
 const costPower = () => Math.ceil(CFG.POWER_BASE_COST * Math.pow(CFG.POWER_GROWTH, state.powerLvl - 1));
@@ -3022,6 +3116,7 @@ function setCoverImg(imgEl, wrapEl, src) {
 function renderMusicList() {
   if (!TRACKS.length) {
     musicListEl.innerHTML = '<div class="music-empty">Треків ще немає.<br>Додай свою музику у список TRACKS у коді гри.</div>';
+    translateMenuDOM();
     return;
   }
   musicListEl.innerHTML = TRACKS.map((t, i) => {
@@ -3092,6 +3187,7 @@ function renderMoreUps() {
   panelMore.innerHTML = '<div class="up-sec">Бойові та економічні</div>' + UPGRADES.filter(u => u.cur === 'star').map(card).join('')
     + '<div class="up-sec">💎 Діамантові прокачки</div>' + UPGRADES.filter(u => u.cur === 'diamond').map(card).join('');
   panelMore.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => buyUp(b.dataset.up, b)));
+  translateMenuDOM();
 }
 function buyUp(id, btn) {
   const u = UPGRADES.find(x => x.id === id);
@@ -3147,6 +3243,7 @@ function renderQuests() {
       </div>${btn}</div>`;
   }).join('');
   panelQst.querySelectorAll('[data-claim-quest]').forEach(b => b.addEventListener('click', () => claimQuest(b.dataset.claimQuest)));
+  translateMenuDOM();
 }
 function claimQuest(id) {
   const q = QUESTS.find(x => x.id === id);
@@ -3173,6 +3270,7 @@ function renderWeapons() {
     return `<div class="${cls.join(' ')}"><div class="wpn-ic">${w.ic}</div><div class="wpn-info"><div class="wpn-name">${w.name}</div><div class="wpn-dmg">Урон: ${w.dmg}</div></div>${btn}</div>`;
   }).join('');
   panelWpn.querySelectorAll('[data-buy]').forEach(b => b.addEventListener('click', () => buyWeapon(b.dataset.buy)));
+  translateMenuDOM();
 }
 function buyWeapon(id) {
   const w = WEAPONS.find(x => x.id === id);
@@ -3212,6 +3310,7 @@ function renderArmor() {
   const upHp = $('up-hp');
   if (upHp) upHp.addEventListener('click', buyHp);
   panelArm.querySelectorAll('[data-buy-armor]').forEach(b => b.addEventListener('click', () => buyArmor(b.dataset.buyArmor)));
+  translateMenuDOM();
 }
 function buyHp() {
   const c = costHp();
@@ -3274,6 +3373,7 @@ function renderSkins() {
   }).join('');
   panelSkn.querySelectorAll('[data-buy-skin]').forEach(b => b.addEventListener('click', () => buySkin(b.dataset.buySkin)));
   panelSkn.querySelectorAll('[data-eq-skin]').forEach(b => b.addEventListener('click', () => equipSkin(b.dataset.eqSkin)));
+  translateMenuDOM();
 }
 function equipSkin(id) {
   if (!state.skins.includes(id)) return;
