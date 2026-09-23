@@ -2177,6 +2177,8 @@ const state = load();
 if (state.hp > hpMax()) state.hp = hpMax();
 let shopSig = '', curTab = 'upg';     // score — бали, steps — скільки сходинок пройдено, powerLvl — бали за клік, autoLvl — автокроків/сек
 let pos = state.steps;    // плавна позиція героя (для анімації)
+let visTarget = state.steps;  // до якої сходинки герой візуально стрибає (з лімітом)
+let bgPos = state.steps;      // позиція фону (хмари/зірки/стіни) — рухається повільніше та з лімітом
 let autoAcc = 0, dirty = false, uiDirty = true, bump = false, lastSave = 0, floorPipsBuilt = false;
 let combat = null;                                    // {kind,hp,hpMax,dmg,reward,atkAcc,hitFlash,walkFrame,walkAcc}
 let spawnAcc = 0;                                      // секунд накопичено з останньої появи монстра
@@ -2619,7 +2621,10 @@ const STEP = 16;
 // Жорсткий ліміт візуальної швидкості. Навіть якщо state.steps зростає
 // дуже швидко, герой і вся сцена не можуть перескакувати по екрану швидше.
 const MAX_VISUAL_MOVE_PX_SEC = 30;
-const MAX_VISUAL_STEP_SEC = MAX_VISUAL_MOVE_PX_SEC / STEP;
+// Ліміти анімації (бали/зірки від цього НЕ залежать — рахуються за кожен клік):
+const MAX_JUMPS_PER_SEC   = 20;  // герой візуально стрибає не частіше ніж 20 разів за секунду
+const MAX_JUMP_LEAD       = 2;   // скільки стрибків герой може «не встигати» (без черги, що росте)
+const MAX_BG_STEPS_PER_SEC = 6;  // макс. швидкість руху хмар, зірок, гір і стін (у «сходинках» за секунду)
 const MAX_PARTICLE_SPEED = 55;
 let W = 0, H = 0, S = 3, cx = 0, cy = 0;    // логічний розмір, масштаб, позиція героя (ноги)
 let stars = [], clouds = [];
@@ -2688,7 +2693,7 @@ function drawClouds(n, climb, t) {
 function drawWalls(loc) {
   const set = loc.tiles.body;
   const tile = 16;
-  const off = Math.round(mod(pos * STEP * 0.5, tile));
+  const off = Math.round(mod(bgPos * STEP * 0.5, tile));
   const jBase = Math.floor(off / tile) + 1;
   for (let y = -tile; y < H + tile; y += tile) {
     const j = jBase + Math.floor((y + off) / tile);
@@ -2736,7 +2741,7 @@ function drawStairs(set, alpha) {
 
 /* --- герой --- */
 function drawHero(t) {
-  const moving = state.steps - pos > 0.06;
+  const moving = visTarget - pos > 0.06;
   const frac = pos - Math.floor(pos);
   const set = skinSprites(state.skin);
   let spr = set.idle, lift = 0;
@@ -2887,7 +2892,7 @@ function updateAura(dt) {
 let time = 0;
 function draw() {
   if (!W) return;
-  const climb = pos * STEP;
+  const climb = bgPos * STEP;
   const n = 1;
   const loc = locFor(state.floorTier);
 
@@ -2947,6 +2952,7 @@ function climbStep(auto) {
   state.score += gain;
   state.totalStars += gain;
   state.steps += 1;
+  visTarget = Math.min(visTarget + 1, pos + MAX_JUMP_LEAD);
   dirty = true; uiDirty = true;
   checkTierReward();
   const now = performance.now();
@@ -2960,6 +2966,28 @@ function climbStep(auto) {
     hintEl.classList.add('off');
     if (now - lastHaptic > 70) { lastHaptic = now; haptic('light'); }
   }
+}
+
+/* Багато автокліків за кадр: бали рахуються за ВСІ кліки, а візуально — один короткий ефект */
+function autoSteps(n) {
+  if (combat || n < 1) return;
+  if (n <= 6) { for (let i = 0; i < n; i++) climbStep(true); return; }
+  const per = state.powerLvl * clickMul() * autoMul();
+  const total = per * n * (1 + luckChance()) + clickCarry;
+  const gain = Math.max(n, Math.floor(total));
+  clickCarry = Math.max(0, total - gain);
+  state.score += gain;
+  state.totalStars += gain;
+  state.steps += n;
+  visTarget = Math.min(visTarget + n, pos + MAX_JUMP_LEAD);
+  dirty = true; uiDirty = true;
+  checkTierReward();
+  const now = performance.now();
+  if (now - lastFloater > 260) {
+    lastFloater = now;
+    floater('+' + fmt(gain), (cx + Math.random() * 10 - 5) * S, (cy - 22) * S);
+  }
+  burst(cx, cy - 2, 3, 40, SPARK);
 }
 
 function checkTierReward() {
@@ -3562,16 +3590,16 @@ function renderUI() {
 function update(dt) {
   if (!combat && state.autoLvl > 0) {                   // автоклікер (стоїть під час бою)
     autoAcc += dt * state.autoLvl;
-    let guard = 0;
-    while (autoAcc >= 1 && guard++ < 8) { autoAcc -= 1; climbStep(true); }
-    if (autoAcc > 8) autoAcc = 0;
+    const n = Math.floor(autoAcc);
+    if (n >= 1) { autoAcc -= n; autoSteps(n); }
   }
-  let diff = state.steps - pos;                         // герой доганяє «справжню» позицію
+  const diff = visTarget - pos;                         // герой стрибає до візуальної цілі (не швидше за ліміт)
   if (diff > 0.001) {
     const smoothMove = diff * (1 - Math.exp(-dt * 20));
-    const maxMove = MAX_VISUAL_STEP_SEC * dt;
-    pos += Math.min(smoothMove, maxMove);
-    if (state.steps - pos < 0.02) pos = state.steps;
+    const mv = Math.min(smoothMove, MAX_JUMPS_PER_SEC * dt);
+    pos += mv;
+    bgPos += Math.min(mv, MAX_BG_STEPS_PER_SEC * dt);   // фон рухається повільніше й теж з лімітом
+    if (visTarget - pos < 0.02) pos = visTarget;
   }
   if (combat) {
     combat.hitFlash = Math.max(0, combat.hitFlash - dt);
