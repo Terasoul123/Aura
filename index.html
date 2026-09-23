@@ -398,6 +398,28 @@
   .lvl{font-size:8px;color:var(--dim);white-space:nowrap}
 
   @media (prefers-reduced-motion:reduce){#hint,#btn-shop{animation:none}}
+
+  /* ---------- кнопка налаштувань ---------- */
+  #btn-settings{
+    position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 178px);
+    right:10px;width:36px;height:36px;border:0;border-radius:10px;pointer-events:auto;cursor:pointer;
+    background:#2c1f5c;box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -4px 0 0 #241a52;
+    font-size:16px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;
+  }
+  #btn-settings:active{transform:translateY(1px)}
+
+  /* ---------- модалка налаштувань ---------- */
+  #settings-modal{position:fixed;inset:0;z-index:9998;display:flex;align-items:flex-end;justify-content:center;
+    background:rgba(10,6,24,.72)}
+  #settings-modal.off{display:none}
+  .settings-row{display:flex;flex-direction:column;gap:8px;padding:4px 2px 8px}
+  .settings-label{font-size:9px;color:var(--dim);letter-spacing:.3px;padding:4px 2px}
+  .lang-opts{display:flex;gap:10px}
+  .lang-btn{flex:1;border:0;padding:12px 8px;border-radius:10px;background:linear-gradient(180deg,#3d2a7a,#2c1f5c);
+    color:var(--paper);font-family:var(--pixel);font-size:10px;cursor:pointer;
+    box-shadow:inset 0 0 0 2px var(--edge),inset 0 -3px 0 0 var(--edge-dark);display:flex;align-items:center;justify-content:center;gap:6px}
+  .lang-btn:active{transform:translateY(1px)}
+  .lang-btn.active{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -3px 0 0 #8a5a0a;color:var(--gold)}
 </style>
 </head>
 
@@ -429,6 +451,8 @@
       <img id="btn-music-img" src="" alt="">
       <span id="btn-music-fb">💿</span>
     </button>
+
+    <button id="btn-settings" type="button" title="Налаштування">⚙️</button>
 
     <div id="hud">
       <div id="score-row">
@@ -538,6 +562,19 @@
       <div id="panel-don"></div>
     </div>
   </div>
+
+  <div id="settings-modal" class="off">
+    <div class="shop-box">
+      <div class="shop-head"><span class="shop-title" id="settings-title">⚙️ Налаштування</span><button class="shop-close" id="settings-close" type="button">✕</button></div>
+      <div class="settings-row">
+        <div class="settings-label" id="settings-lang-label">МОВА / LANGUAGE</div>
+        <div class="lang-opts">
+          <button class="lang-btn" id="lang-uk" type="button" data-lang="uk">🇺🇦 Українська</button>
+          <button class="lang-btn" id="lang-en" type="button" data-lang="en">🇬🇧 English</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -599,6 +636,121 @@ const hapticNote = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.not
    4. ДОПОМІЖНЕ
    ========================================================================== */
 const $   = id => document.getElementById(id);
+
+/* ==========================================================================
+   ЛОКАЛІЗАЦІЯ (укр / англ) — кнопка налаштувань перемикає мову інтерфейсу.
+   Ігровий контент (поверхи, зброя, завдання, крамниця) залишається
+   українською, перекладено основний інтерфейс.
+   ========================================================================== */
+const I18N = {
+  uk: {
+    'auth-title': 'Доступ заблоковано',
+    'auth-text': 'Цю гру можна проходити лише через офіційний Telegram-бот.<br>Прогрес і таблиця лідерів доступні тільки авторизованим гравцям.',
+    'btn-view-title': 'Небо / Стіни вежі',
+    'btn-shop-title': 'Магазин',
+    'btn-cheat-title': 'Чіт: +1 000 000 за клік + 10 000 💎 (тимчасово)',
+    'btn-ads-title': 'Дивитись рекламу',
+    'ads-label': '+1💎 за рекламу',
+    'btn-music-title': 'Плейлист',
+    'btn-settings-title': 'Налаштування',
+    'hint': 'Тапай по екрану!',
+    'tab-upg': '⚙ Прокачка',
+    'tab-qst': '📜 Завдання',
+    'tab-lb': '🏆 Топ',
+    'sub-ups': '⚡Основне',
+    'sub-wpn': '⚔Зброя',
+    'sub-arm': '🛡Броня',
+    'sub-skn': '🎭Образи',
+    'up-power-name': 'Сила кліку',
+    'up-auto-name': 'Автоклік',
+    'music-title': '🎵 Плейлист',
+    'shop-title': '🛒 Магазин',
+    'settings-title': '⚙️ Налаштування',
+    'settings-lang-label': 'МОВА / LANGUAGE',
+    'music-now-title-empty': 'Трек не обрано',
+    'ref-modal-ok': 'OK',
+    perClick: 'за клік', autoSuffix: 'авто', perSec: '/с',
+    lvl: 'рів.', click: 'Клік', auto: 'Авто',
+    floor: 'Поверх', top: 'Вершина вежі'
+  },
+  en: {
+    'auth-title': 'Access blocked',
+    'auth-text': 'This game can only be played through the official Telegram bot.<br>Progress and the leaderboard are only available to authorized players.',
+    'btn-view-title': 'Sky / Tower walls',
+    'btn-shop-title': 'Shop',
+    'btn-cheat-title': 'Cheat: +1,000,000 per tap + 10,000 💎 (temporary)',
+    'btn-ads-title': 'Watch an ad',
+    'ads-label': '+1💎 for an ad',
+    'btn-music-title': 'Playlist',
+    'btn-settings-title': 'Settings',
+    'hint': 'Tap the screen!',
+    'tab-upg': '⚙ Upgrades',
+    'tab-qst': '📜 Quests',
+    'tab-lb': '🏆 Top',
+    'sub-ups': '⚡Main',
+    'sub-wpn': '⚔Weapon',
+    'sub-arm': '🛡Armor',
+    'sub-skn': '🎭Skins',
+    'up-power-name': 'Click power',
+    'up-auto-name': 'Autoclick',
+    'music-title': '🎵 Playlist',
+    'shop-title': '🛒 Shop',
+    'settings-title': '⚙️ Settings',
+    'settings-lang-label': 'LANGUAGE / МОВА',
+    'music-now-title-empty': 'No track selected',
+    'ref-modal-ok': 'OK',
+    perClick: 'per tap', autoSuffix: 'auto', perSec: '/s',
+    lvl: 'lvl', click: 'Click', auto: 'Auto',
+    floor: 'Floor', top: 'Top of the tower'
+  }
+};
+let curLang = (() => {
+  try {
+    const saved = localStorage.getItem('lang');
+    if (saved === 'uk' || saved === 'en') return saved;
+  } catch (e) {}
+  return (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'uk';
+})();
+function t(key) { return (I18N[curLang] && I18N[curLang][key] !== undefined) ? I18N[curLang][key] : (I18N.uk[key] !== undefined ? I18N.uk[key] : key); }
+function applyStaticI18n() {
+  document.documentElement.lang = curLang;
+  $('auth-text') && ($('auth-text').innerHTML = t('auth-text'));
+  const authTitleEl = document.querySelector('.auth-title');
+  if (authTitleEl) authTitleEl.textContent = t('auth-title');
+  $('btn-view')     && ($('btn-view').title = t('btn-view-title'));
+  $('btn-shop')     && ($('btn-shop').title = t('btn-shop-title'));
+  $('btn-cheat')    && ($('btn-cheat').title = t('btn-cheat-title'));
+  $('btn-ads')      && ($('btn-ads').title = t('btn-ads-title'));
+  $('ads-label')    && ($('ads-label').textContent = t('ads-label'));
+  $('btn-music')    && ($('btn-music').title = t('btn-music-title'));
+  $('btn-settings') && ($('btn-settings').title = t('btn-settings-title'));
+  $('hint')         && ($('hint').textContent = t('hint'));
+  $('tab-upg')      && ($('tab-upg').textContent = t('tab-upg'));
+  $('tab-qst')      && ($('tab-qst').textContent = t('tab-qst'));
+  $('tab-lb')       && ($('tab-lb').textContent = t('tab-lb'));
+  $('sub-ups')      && ($('sub-ups').innerHTML = '<span class="subtab-ic">⚡</span>' + t('sub-ups').replace('⚡',''));
+  $('sub-wpn')      && ($('sub-wpn').innerHTML = '<span class="subtab-ic">⚔</span>' + t('sub-wpn').replace('⚔',''));
+  $('sub-arm')      && ($('sub-arm').innerHTML = '<span class="subtab-ic">🛡</span>' + t('sub-arm').replace('🛡',''));
+  $('sub-skn')      && ($('sub-skn').innerHTML = '<span class="subtab-ic">🎭</span>' + t('sub-skn').replace('🎭',''));
+  document.querySelectorAll('#up-power .up-name')[0] && (document.querySelectorAll('#up-power .up-name')[0].textContent = t('up-power-name'));
+  document.querySelectorAll('#up-auto .up-name')[0]  && (document.querySelectorAll('#up-auto .up-name')[0].textContent = t('up-auto-name'));
+  document.querySelectorAll('#music-modal .shop-title')[0] && (document.querySelectorAll('#music-modal .shop-title')[0].textContent = t('music-title'));
+  document.querySelectorAll('#shop-modal .shop-title')[0]  && (document.querySelectorAll('#shop-modal .shop-title')[0].textContent = t('shop-title'));
+  $('settings-title')      && ($('settings-title').textContent = t('settings-title'));
+  $('settings-lang-label') && ($('settings-lang-label').textContent = t('settings-lang-label'));
+  $('ref-modal-ok')        && ($('ref-modal-ok').textContent = t('ref-modal-ok'));
+  const mnt = $('music-now-title');
+  if (mnt && (mnt.textContent === I18N.uk['music-now-title-empty'] || mnt.textContent === I18N.en['music-now-title-empty'])) mnt.textContent = t('music-now-title-empty');
+  $('lang-uk') && $('lang-uk').classList.toggle('active', curLang === 'uk');
+  $('lang-en') && $('lang-en').classList.toggle('active', curLang === 'en');
+}
+function setLang(lang) {
+  if (lang !== 'uk' && lang !== 'en') return;
+  curLang = lang;
+  try { localStorage.setItem('lang', lang); } catch (e) {}
+  applyStaticI18n();
+  if (typeof uiDirty !== 'undefined') uiDirty = true;
+}
 
 /* ==========================================================================
    4b. ГЕЙТ АВТОРИЗАЦІЇ TELEGRAM
@@ -2776,6 +2928,17 @@ btnShop.addEventListener('click', openShop);
 shopCloseBtn.addEventListener('click', closeShop);
 shopModal.addEventListener('click', e => { if (e.target === shopModal) closeShop(); });
 
+/* --- налаштування (мова) --- */
+const btnSettings = $('btn-settings'), settingsModal = $('settings-modal'), settingsCloseBtn = $('settings-close');
+function openSettings() { settingsModal.classList.remove('off'); haptic('light'); }
+function closeSettings() { settingsModal.classList.add('off'); haptic('light'); }
+btnSettings.addEventListener('click', openSettings);
+settingsCloseBtn.addEventListener('click', closeSettings);
+settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettings(); });
+$('lang-uk').addEventListener('click', () => { haptic('light'); setLang('uk'); });
+$('lang-en').addEventListener('click', () => { haptic('light'); setLang('en'); });
+applyStaticI18n();
+
 /* ===== Реклама за нагороду (AdsGram) =====
    blockId взятий з кабінету https://partner.adsgram.ai (AuraUp → Ad blocks). */
 const ADSGRAM_BLOCK_ID = '49386';
@@ -3150,15 +3313,15 @@ const scoreEl = $('score'), diamondsEl = $('diamonds');
 function renderUI() {
   scoreEl.textContent = fmt(state.score);
   diamondsEl.textContent = fmt(state.diamonds);
-  $('per-click').textContent = `+${fmt(Math.round(state.powerLvl * clickMul()))} за клік` + (state.autoLvl ? ` · авто ${state.autoLvl}/с` : '');
+  $('per-click').textContent = `+${fmt(Math.round(state.powerLvl * clickMul()))} ${t('perClick')}` + (state.autoLvl ? ` · ${t('autoSuffix')} ${state.autoLvl}${t('perSec')}` : '');
 
   const cp = costPower(), ca = costAuto();
   $('cost-power').textContent = fmt(cp);
-  $('lvl-power').textContent  = 'рів. ' + state.powerLvl;
-  $('eff-power').textContent  = `Клік: ${fmt(state.powerLvl)} → ${fmt(state.powerLvl + 1)}`;
+  $('lvl-power').textContent  = t('lvl') + ' ' + state.powerLvl;
+  $('eff-power').textContent  = `${t('click')}: ${fmt(state.powerLvl)} → ${fmt(state.powerLvl + 1)}`;
   $('cost-auto').textContent  = fmt(ca);
-  $('lvl-auto').textContent   = 'рів. ' + state.autoLvl;
-  $('eff-auto').textContent   = `Авто: ${state.autoLvl} → ${state.autoLvl + 1}/с`;
+  $('lvl-auto').textContent   = t('lvl') + ' ' + state.autoLvl;
+  $('eff-auto').textContent   = `${t('auto')}: ${state.autoLvl} → ${state.autoLvl + 1}${t('perSec')}`;
   btnPower.classList.toggle('can', state.score >= cp);
   btnAuto.classList.toggle('can',  state.score >= ca);
 
@@ -3172,7 +3335,7 @@ function renderUI() {
 
   const floors = TIERS.length;
   const curFloor = Math.min(state.floorTier + 1, floors);
-  $('floor-label').textContent = state.floorTier >= floors ? 'Вершина вежі' : 'Поверх ' + curFloor + '/' + floors;
+  $('floor-label').textContent = state.floorTier >= floors ? t('top') : t('floor') + ' ' + curFloor + '/' + floors;
   $('floor-name').textContent = locFor(state.floorTier).name;
   $('floor-prog').textContent = state.floorTier >= floors ? '' : fmt(state.totalStars) + ' / ' + fmt(TIERS[state.floorTier].at) + ' ★';
   if (!floorPipsBuilt) {
