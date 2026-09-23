@@ -115,7 +115,12 @@
   .hp-num{font-size:8px;color:var(--paper);text-shadow:var(--o2);min-width:44px;text-align:right}
 
   /* ---------- вкладки ---------- */
-  #tabs{flex:0 0 auto;display:flex;gap:8px;padding:12px 12px 0;background:var(--ink)}
+  #tabs{flex:0 0 auto;position:relative;display:flex;gap:8px;padding:12px 12px 0;background:var(--ink)}
+  #tabs::before{
+    content:'▴';position:absolute;top:2px;left:50%;transform:translateX(-50%);
+    font-size:9px;color:var(--dim);opacity:.65;pointer-events:none;transition:transform .2s,opacity .2s;
+  }
+  #tabs.collapsed::before{content:'▴';transform:translateX(-50%) rotate(180deg);color:var(--gold);opacity:.9}
   .tab{
     flex:1 1 0;min-width:0;padding:11px 2px 10px;border:0;border-radius:10px;background:#241a52;color:var(--dim);font-family:var(--pixel);
     font-size:9px;white-space:nowrap;box-shadow:inset 0 0 0 2px #3a2d70,0 2px 0 0 rgba(0,0,0,.3);cursor:pointer;touch-action:manipulation;
@@ -2557,6 +2562,7 @@ btnAuto.addEventListener('click', () => {
 
 /* --- нижні вкладки: прокачка / завдання / топ ---
    а всередині "Прокачки" — свої підвкладки: основне / зброя / броня / образи */
+const tabsBar = $('tabs');
 const tabUpg = $('tab-upg'), tabQst = $('tab-qst'), tabLb = $('tab-lb');
 const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelQst = $('panel-qst'), panelLb = $('panel-lb'), panelDon = $('panel-don');
 const subtabsBar = $('subtabs');
@@ -2565,20 +2571,29 @@ const subUps = $('sub-ups'), subWpn = $('sub-wpn'), subArm = $('sub-arm'), subSk
 const mainTabs = [['upg', tabUpg], ['qst', tabQst], ['lb', tabLb]];
 const subTabs  = [['ups', subUps, panelUpg], ['wpn', subWpn, panelWpn], ['arm', subArm, panelArm], ['skn', subSkn, panelSkn]];
 let curSub = 'ups';
+let tabsCollapsed = false;   // сховані всі панелі — лишаються тільки 3 кнопки внизу
 
 function applyPanels() {
-  panelQst.classList.toggle('off', curTab !== 'qst');
-  panelLb.classList.toggle('off', curTab !== 'lb');
-  const onUpg = curTab === 'upg';
+  const open = !tabsCollapsed;
+  panelQst.classList.toggle('off', !open || curTab !== 'qst');
+  panelLb.classList.toggle('off', !open || curTab !== 'lb');
+  const onUpg = open && curTab === 'upg';
   subtabsBar.classList.toggle('off', !onUpg);
   for (const [n, , p] of subTabs) p.classList.toggle('off', !(onUpg && n === curSub));
+  for (const [n, tb] of mainTabs) tb.classList.toggle('active', open && n === curTab);
+  tabsBar.classList.toggle('collapsed', tabsCollapsed);
+  requestAnimationFrame(resize);   // сцена займає вивільнене місце — підганяємо canvas під новий розмір
 }
 function selectTab(name) {
-  curTab = name;
-  for (const [n, tb] of mainTabs) tb.classList.toggle('active', n === name);
+  if (!tabsCollapsed && curTab === name) {
+    tabsCollapsed = true;          // повторний тап по відкритій вкладці — згорнути все
+  } else {
+    tabsCollapsed = false;         // будь-який тап по вкладці, коли згорнуто — розгорнути її
+    curTab = name;
+  }
   applyPanels();
   uiDirty = true;
-  if (name === 'lb') renderLeaderboard();
+  if (!tabsCollapsed && name === 'lb') renderLeaderboard();
 }
 function selectSub(name) {
   curSub = name;
