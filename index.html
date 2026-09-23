@@ -1797,6 +1797,39 @@ function getTelegramId() {
 }
 const telegramId = getTelegramId();
 
+/* ===== Бан гравця =====
+   Адмін вручну ставить leaderboard.banned = true і, за бажанням,
+   пише ban_reason у Supabase Table Editor. Клієнт лише ЧИТАЄ ці поля —
+   права на запис у них у anon/authenticated відкликані на сервері,
+   тож гравець не може сам собі зняти бан через REST. Коли адмін
+   повертає banned = false (або NULL), гра розблоковується сама —
+   без перезаходу, бо перевірка йде по таймеру. */
+let isBanned = false;
+async function checkBan() {
+  if (!keyReady() || !telegramId) return;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?telegram_id=eq.${telegramId}&select=banned,ban_reason&limit=1`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+    });
+    if (!r.ok) return;
+    const rows = await r.json();
+    const row = rows && rows[0];
+    const banned = !!(row && row.banned);
+    if (banned) {
+      isBanned = true;
+      const reason = (row.ban_reason || '').trim();
+      showAuthBlock('🚫 Ваш акаунт заблоковано адміністрацією.<br><br>' +
+        (reason ? 'Причина: ' + escapeHtml(reason) : 'Причина не вказана.'));
+    } else if (isBanned) {
+      isBanned = false;
+      const blockEl = $('auth-block');
+      if (blockEl) blockEl.classList.add('off');
+    }
+  } catch (e) {}
+}
+checkBan();
+setInterval(checkBan, 15000);
+
 async function fetchLeaderboard(limit) {
   if (!keyReady()) return null; // ключ ще не вставлено
   try {
