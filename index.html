@@ -407,8 +407,18 @@
   #settings-modal{position:fixed;inset:0;z-index:9998;display:flex;align-items:flex-end;justify-content:center;
     background:rgba(10,6,24,.72)}
   #settings-modal.off{display:none}
+  #settings-modal .shop-box{overflow-y:auto;overflow-x:hidden}
   .settings-row{display:flex;flex-direction:column;gap:8px;padding:4px 2px 8px}
   .settings-label{font-size:9px;color:var(--dim);letter-spacing:.3px;padding:4px 2px}
+  .settings-control{display:flex;flex-direction:column;gap:6px;padding:8px 10px;border-radius:10px;background:#2c1f5c;box-shadow:inset 0 0 0 2px var(--edge),inset 0 -3px 0 0 var(--edge-dark)}
+  .settings-control-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .settings-control-title{font-family:var(--pixel);font-size:9px;color:var(--paper)}
+  .settings-value{font-family:var(--pixel);font-size:8px;color:var(--gold);min-width:32px;text-align:right}
+  .settings-range{width:100%;height:18px;accent-color:var(--gold);cursor:pointer}
+  .settings-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;border-radius:10px;padding:10px 12px;background:#2c1f5c;color:var(--paper);font-family:var(--pixel);font-size:9px;text-align:left;cursor:pointer;box-shadow:inset 0 0 0 2px var(--edge),inset 0 -3px 0 0 var(--edge-dark)}
+  .settings-toggle .toggle-state{font-size:8px;color:var(--dim)}
+  .settings-toggle.on{box-shadow:inset 0 0 0 2px #6bdc92,inset 0 -3px 0 0 #285f3d}
+  .settings-toggle.on .toggle-state{color:#9cf0b8}
   .lang-opts{display:flex;gap:10px}
   .lang-btn{flex:1;border:0;padding:12px 8px;border-radius:10px;background:linear-gradient(180deg,#3d2a7a,#2c1f5c);
     color:var(--paper);font-family:var(--pixel);font-size:10px;cursor:pointer;
@@ -583,6 +593,19 @@
           <button class="lang-btn" id="lang-ru" type="button" data-lang="ru">🇷🇺 Русский</button>
         </div>
       </div>
+      <div class="settings-row" id="settings-audio-row">
+        <div class="settings-label" id="settings-audio-label"></div>
+        <div class="settings-control">
+          <div class="settings-control-head"><span class="settings-control-title" id="settings-music-volume-title"></span><span class="settings-value" id="settings-music-volume-value">70%</span></div>
+          <input class="settings-range" id="settings-music-volume" type="range" min="0" max="100" step="1" value="70">
+        </div>
+        <div class="settings-control">
+          <div class="settings-control-head"><span class="settings-control-title" id="settings-sound-volume-title"></span><span class="settings-value" id="settings-sound-volume-value">50%</span></div>
+          <input class="settings-range" id="settings-sound-volume" type="range" min="0" max="100" step="1" value="50">
+        </div>
+        <button class="settings-toggle on" id="settings-vibration" type="button"><span id="settings-vibration-title"></span><span class="toggle-state" id="settings-vibration-state"></span></button>
+        <button class="settings-toggle on" id="settings-autopause" type="button"><span id="settings-autopause-title"></span><span class="toggle-state" id="settings-autopause-state"></span></button>
+      </div>
       <div class="settings-row">
         <div class="settings-label" id="settings-links-label"></div>
         <div class="link-list">
@@ -650,8 +673,12 @@ if (tg) {
   try { tg.setHeaderColor('#1b1035'); tg.setBackgroundColor('#1b1035'); } catch (e) {}
   try { tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch (e) {}
 }
-const haptic     = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(k || 'light'); } catch (e) {} };
-const hapticNote = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k); } catch (e) {} };
+let vibrationEnabled = (() => { try { const v=localStorage.getItem('vibrationEnabled'); return v === null ? true : v === '1'; } catch(e) { return true; } })();
+let autoPauseMusic = (() => { try { const v=localStorage.getItem('autoPauseMusic'); return v === null ? true : v === '1'; } catch(e) { return true; } })();
+let musicVolume = (() => { try { const v=Number(localStorage.getItem('musicVolume')); return Number.isFinite(v) ? Math.max(0,Math.min(100,v)) : 70; } catch(e) { return 70; } })();
+let soundVolume = (() => { try { const v=Number(localStorage.getItem('soundVolume')); return Number.isFinite(v) ? Math.max(0,Math.min(100,v)) : 50; } catch(e) { return 50; } })();
+const haptic     = k => { try { if (vibrationEnabled && tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred(k || 'light'); } catch (e) {} };
+const hapticNote = k => { try { if (vibrationEnabled && tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred(k); } catch (e) {} };
 
 /* ==========================================================================
    4. ДОПОМІЖНЕ
@@ -936,6 +963,18 @@ Object.assign(I18N.ru, { botTitle:'Подозрительная активнос
 Object.assign(I18N.uk, { linksLabel:'СПІЛЬНОТА', lkNews:'Новини каналу Telegram', lkSup:'Модерація / підтримка', lkTt:'TikTok канал' });
 Object.assign(I18N.en, { linksLabel:'COMMUNITY', lkNews:'Telegram channel news', lkSup:'Moderation / support', lkTt:'TikTok channel' });
 Object.assign(I18N.ru, { linksLabel:'СООБЩЕСТВО', lkNews:'Новости Telegram-канала', lkSup:'Модерация / поддержка', lkTt:'TikTok-канал' });
+Object.assign(I18N.uk, {
+  settingsAudioLabel:'ЗВУК', settingsMusicVolume:'Гучність музики', settingsSoundVolume:'Гучність звуків',
+  settingsVibration:'Вібрація', settingsAutoPause:'Автопауза музики', on:'Увімкнено', off:'Вимкнено'
+});
+Object.assign(I18N.en, {
+  settingsAudioLabel:'AUDIO', settingsMusicVolume:'Music volume', settingsSoundVolume:'Sound effects volume',
+  settingsVibration:'Vibration', settingsAutoPause:'Pause music when minimized', on:'On', off:'Off'
+});
+Object.assign(I18N.ru, {
+  settingsAudioLabel:'ЗВУК', settingsMusicVolume:'Громкость музыки', settingsSoundVolume:'Громкость звуков',
+  settingsVibration:'Вибрация', settingsAutoPause:'Пауза музыки при сворачивании', on:'Включено', off:'Выключено'
+});
 
 let curLang = (() => {
   try {
@@ -975,6 +1014,19 @@ function applyStaticI18n() {
   $('lk-news-t') && ($('lk-news-t').textContent = t('lkNews'));
   $('lk-sup-t')  && ($('lk-sup-t').textContent  = t('lkSup'));
   $('lk-tt-t')   && ($('lk-tt-t').textContent   = t('lkTt'));
+  $('settings-audio-label') && ($('settings-audio-label').textContent = t('settingsAudioLabel'));
+  $('settings-music-volume-title') && ($('settings-music-volume-title').textContent = t('settingsMusicVolume'));
+  $('settings-sound-volume-title') && ($('settings-sound-volume-title').textContent = t('settingsSoundVolume'));
+  $('settings-vibration-title') && ($('settings-vibration-title').textContent = t('settingsVibration'));
+  $('settings-autopause-title') && ($('settings-autopause-title').textContent = t('settingsAutoPause'));
+  $('settings-vibration-state') && ($('settings-vibration-state').textContent = vibrationEnabled ? t('on') : t('off'));
+  $('settings-autopause-state') && ($('settings-autopause-state').textContent = autoPauseMusic ? t('on') : t('off'));
+  $('settings-vibration') && $('settings-vibration').classList.toggle('on', vibrationEnabled);
+  $('settings-autopause') && $('settings-autopause').classList.toggle('on', autoPauseMusic);
+  $('settings-music-volume') && ($('settings-music-volume').value = musicVolume);
+  $('settings-sound-volume') && ($('settings-sound-volume').value = soundVolume);
+  $('settings-music-volume-value') && ($('settings-music-volume-value').textContent = musicVolume + '%');
+  $('settings-sound-volume-value') && ($('settings-sound-volume-value').textContent = soundVolume + '%');
   // Settings community links: translate every visible label and its tooltip.
   const settingsLinks = document.querySelectorAll('#settings-modal [data-link]');
   const linkTitles = curLang === 'en'
@@ -3169,9 +3221,9 @@ setInterval(() => {   // секунда з достатньо швидким т�
   if (fastSecs >= CFG.BOT_STREAK_SEC) { fastSecs = 0; showBotWarning(false); }
 }, 1000);
 
-stage.addEventListener('pointerdown', e => { e.preventDefault(); if (!registerTap(e)) return; if (combat) hitMonster(); else climbStep(false); });
+stage.addEventListener('pointerdown', e => { e.preventDefault(); if (!registerTap(e)) return; playSfx(combat ? 'success' : 'tap'); if (combat) hitMonster(); else climbStep(false); });
 document.addEventListener('keydown', e => {
-  if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); if (!e.repeat && registerTap(e)) { if (combat) hitMonster(); else climbStep(false); } }
+  if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); if (!e.repeat && registerTap(e)) { playSfx(combat ? 'success' : 'tap'); if (combat) hitMonster(); else climbStep(false); } }
 });
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('gesturestart', e => e.preventDefault());
@@ -3272,6 +3324,10 @@ settingsModal.addEventListener('click', e => { if (e.target === settingsModal) c
 $('lang-uk').addEventListener('click', () => { haptic('light'); setLang('uk'); });
 $('lang-en').addEventListener('click', () => { haptic('light'); setLang('en'); });
 $('lang-ru').addEventListener('click', () => { haptic('light'); setLang('ru'); });
+$('settings-music-volume').addEventListener('input', e => { musicVolume = +e.target.value; saveSetting('musicVolume', musicVolume); $('settings-music-volume-value').textContent = musicVolume + '%'; applyMusicVolume(); });
+$('settings-sound-volume').addEventListener('input', e => { soundVolume = +e.target.value; saveSetting('soundVolume', soundVolume); $('settings-sound-volume-value').textContent = soundVolume + '%'; if (soundVolume > 0) playSfx('tap'); });
+$('settings-vibration').addEventListener('click', () => { vibrationEnabled = !vibrationEnabled; saveSetting('vibrationEnabled', vibrationEnabled ? '1' : '0'); applyStaticI18n(); if (vibrationEnabled) haptic('light'); });
+$('settings-autopause').addEventListener('click', () => { autoPauseMusic = !autoPauseMusic; saveSetting('autoPauseMusic', autoPauseMusic ? '1' : '0'); applyStaticI18n(); });
 applyStaticI18n();
 
 /* ===== Реклама за нагороду (AdsGram) =====
@@ -3320,6 +3376,28 @@ const TRACKS = [
   // { title: 'Другий трек', artist: '', src: 'music/track2.mp3', cover: '' },
 ];
 
+let audioCtx = null;
+let lastSfxAt = 0;
+function saveSetting(key, value) { try { localStorage.setItem(key, value); } catch(e) {} }
+function playSfx(type='tap') {
+  if (soundVolume <= 0) return;
+  const now = performance.now();
+  if (now - lastSfxAt < 55) return;
+  lastSfxAt = now;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type === 'success' ? 'sine' : 'square';
+    o.frequency.value = type === 'success' ? 720 : 240;
+    const v = (soundVolume / 100) * 0.035;
+    g.gain.setValueAtTime(v, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (type === 'success' ? 0.09 : 0.045));
+    o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + 0.1);
+  } catch(e) {}
+}
+function applyMusicVolume() { if (typeof bgAudio !== 'undefined' && bgAudio) bgAudio.volume = musicVolume / 100; }
+
 const bgAudio      = $('bg-audio');
 const btnMusic     = $('btn-music');
 const btnMusicImg  = $('btn-music-img');
@@ -3336,6 +3414,7 @@ const musicSeek      = $('music-seek');
 const musicCurTime   = $('music-cur-time');
 const musicDurTime   = $('music-dur-time');
 const musicListEl    = $('music-list');
+bgAudio.volume = musicVolume / 100;
 
 let curTrack = -1, seekDragging = false;
 
@@ -3408,6 +3487,16 @@ musicSeek.addEventListener('change', () => {
 btnMusic.addEventListener('click', () => { musicModal.classList.remove('off'); renderMusicList(); haptic('light'); });
 musicClose.addEventListener('click', () => { musicModal.classList.add('off'); haptic('light'); });
 musicModal.addEventListener('click', e => { if (e.target === musicModal) musicModal.classList.add('off'); });
+let wasPlayingBeforeHidden = false;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    wasPlayingBeforeHidden = !bgAudio.paused;
+    if (autoPauseMusic && wasPlayingBeforeHidden) bgAudio.pause();
+  } else if (autoPauseMusic && wasPlayingBeforeHidden) {
+    bgAudio.play().catch(() => {});
+    wasPlayingBeforeHidden = false;
+  }
+});
 
 renderMusicList();
 
