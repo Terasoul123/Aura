@@ -434,7 +434,7 @@
 
     <div id="ads-wrap">
       <button id="btn-ads" type="button" title="Дивитись рекламу">📺</button>
-      <div id="ads-label">+1💎 за рекламу</div>
+      <div id="ads-label">+1💎</div>
     </div>
 
     <button id="btn-music" type="button" title="Плейлист">
@@ -734,6 +734,37 @@ Object.assign(MENU_I18N_RU_UK, MENU_I18N_EXTRA_RU);
 Object.assign(MENU_I18N_REV, Object.fromEntries(Object.entries(MENU_I18N_EXTRA_EN).map(([uk,en]) => [en,uk])));
 Object.assign(MENU_I18N_RU_EN, Object.fromEntries(Object.entries(MENU_I18N_EXTRA_RU).map(([uk,ru]) => [MENU_I18N_EXTRA_EN[uk] || uk,ru])));
 Object.assign(MENU_I18N_RU_REV, Object.fromEntries(Object.entries(MENU_I18N_EXTRA_RU).map(([uk,ru]) => [ru,uk])));
+/* Final quest translations: every quest name and description is covered. */
+Object.assign(MENU_I18N, {
+  'Убивця Бога-Дракона':'Dragon God Slayer','Перемога 10 босів':'Defeat 10 bosses',
+  'Арсенал':'Arsenal','Здобудь 15 видів зброї':'Obtain 15 types of weapons',
+  'Легендарний арсенал':'Legendary Arsenal','Здобудь 20 видів зброї':'Obtain 20 types of weapons',
+  'Непохитний':'Unshakable','Здобудь 10 видів броні':'Obtain 10 types of armor',
+  'Обладунок легенди':'Legendary Armor','Здобудь 18 видів броні':'Obtain 18 types of armor',
+  'Колекціонер образів':'Skin Collector','Здобудь 5 образів':'Obtain 5 skins',
+  'Володар гардеробу':'Wardrobe Master','Здобудь 10 образів':'Obtain 10 skins',
+  'Легендарний стиль':'Legendary Style','Здобудь 20 образів':'Obtain 20 skins',
+  'Скарбничка':'Treasure Chest','Май 100 діамантів одночасно':'Have 100 diamonds at once',
+  'Загартований':'Hardened','Прокачай здоров’я до 10 рівня':'Upgrade health to level 10',
+  'Повна автоматизація':'Full Automation','Прокачай автоклік до 15 рівня':'Upgrade autoclick to level 15'
+});
+Object.assign(MENU_I18N_RU_UK, {
+  'Убивця Бога-Дракона':'Убийца Бога-Дракона','Перемога 10 босів':'Победи 10 боссов',
+  'Арсенал':'Арсенал','Здобудь 15 видів зброї':'Получи 15 видов оружия',
+  'Легендарний арсенал':'Легендарный арсенал','Здобудь 20 видів зброї':'Получи 20 видов оружия',
+  'Непохитний':'Непоколебимый','Здобудь 10 видів броні':'Получи 10 видов брони',
+  'Обладунок легенди':'Доспех легенды','Здобудь 18 видів броні':'Получи 18 видов брони',
+  'Колекціонер образів':'Коллекционер образов','Здобудь 5 образів':'Получи 5 образов',
+  'Володар гардеробу':'Владыка гардероба','Здобудь 10 образів':'Получи 10 образов',
+  'Легендарний стиль':'Легендарный стиль','Здобудь 20 образів':'Получи 20 образов',
+  'Скарбничка':'Копилка','Май 100 діамантів одночасно':'Имей 100 алмазов одновременно',
+  'Загартований':'Закалённый','Прокачай здоров’я до 10 рівня':'Прокачай здоровье до 10 уровня',
+  'Повна автоматизація':'Полная автоматизация','Прокачай автоклік до 15 рівня':'Прокачай автоклик до 15 уровня'
+});
+Object.assign(MENU_I18N_REV, Object.fromEntries(Object.entries(MENU_I18N).map(([uk,en]) => [en,uk])));
+Object.assign(MENU_I18N_RU_EN, Object.fromEntries(Object.entries(MENU_I18N_RU_UK).map(([uk,ru]) => [MENU_I18N[uk] || uk,ru])));
+Object.assign(MENU_I18N_RU_REV, Object.fromEntries(Object.entries(MENU_I18N_RU_UK).map(([uk,ru]) => [ru,uk])));
+
 
 function menuTranslateString(str) {
   if (!str) return str;
@@ -746,6 +777,27 @@ function menuTranslateString(str) {
   else if (altDict[out] !== undefined) out = altDict[out];
 
   // Common dynamic labels.
+  const extraRulesEN = [
+    [/Перші кроки/g,'First Steps'],[/Марафонець/g,'Marathon Runner'],[/Невтомний мандрівник/g,'Tireless Traveler'],
+    [/Другий поверх/g,'Second Floor'],[/Третій поверх/g,'Third Floor'],[/Четвертий поверх/g,'Fourth Floor'],[/Вершина вежі/g,'Tower Summit'],
+    [/Убивця Бога-Дракона/g,'Dragon God Slayer'],[/Арсенал/g,'Arsenal'],[/Легендарний арсенал/g,'Legendary Arsenal'],[/Непохитний/g,'Unshakable'],[/Обладунок легенди/g,'Legendary Armor'],
+    [/Колекціонер образів/g,'Skin Collector'],[/Володар гардеробу/g,'Wardrobe Master'],[/Легендарний стиль/g,'Legendary Style'],[/Скарбничка/g,'Treasure Chest'],[/Загартований/g,'Hardened'],[/Повна автоматизація/g,'Full Automation'],
+    [/Урон:/g,'Damage:'],[/урону від удару/g,'damage from hits'],[/Без захисту/g,'No protection'],[/МАКС/g,'MAX'],[/одноразова покупка/g,'one-time purchase'],
+    [/Здобич \+/g,'Loot +'],[/Здобич 💎 \+/g,'Loot 💎 +'],[/Макс\. ХП/g,'Max HP'],[/Швидкість автокліку/g,'Autoclick speed'],[/Зірки/g,'Stars'],[/Урон \+/g,'Damage +'],
+    [/Твій друг дійшов/g,'Your friend reached'],[/дійшов\(ла\)/g,'reached'],[/до 3-го поверху!/g,'the 3rd floor!'],[/Оплата пройшла!/g,'Payment successful!']
+  ];
+  const extraRulesRU = [
+    [/Перші кроки/g,'Первые шаги'],[/Марафонець/g,'Марафонец'],[/Невтомний мандрівник/g,'Неутомимый путешественник'],
+    [/Другий поверх/g,'Второй этаж'],[/Третій поверх/g,'Третий этаж'],[/Четвертий поверх/g,'Четвёртый этаж'],[/Вершина вежі/g,'Вершина башни'],
+    [/Убивця Бога-Дракона/g,'Убийца Бога-Дракона'],[/Арсенал/g,'Арсенал'],[/Легендарний арсенал/g,'Легендарный арсенал'],[/Непохитний/g,'Непоколебимый'],[/Обладунок легенди/g,'Доспех легенды'],
+    [/Колекціонер образів/g,'Коллекционер образов'],[/Володар гардеробу/g,'Владыка гардероба'],[/Легендарний стиль/g,'Легендарный стиль'],[/Скарбничка/g,'Копилка'],[/Загартований/g,'Закалённый'],[/Повна автоматизація/g,'Полная автоматизация'],
+    [/Урон:/g,'Урон:'],[/урону від удару/g,'урона от ударов'],[/Без захисту/g,'Без защиты'],[/МАКС/g,'МАКС'],[/одноразова покупка/g,'разовая покупка'],
+    [/Здобич 💎 \+/g,'Добыча 💎 +'],[/Здобич \+/g,'Добыча +'],[/Макс\. ХП/g,'Макс. ОЗ'],[/Швидкість автокліку/g,'Скорость автоклика'],[/Зірки/g,'Звёзды'],[/Урон \+/g,'Урон +'],
+    [/Твій друг дійшов/g,'Твой друг достиг'],[/дійшов\(ла\)/g,'достиг'],[/до 3-го поверху!/g,'3-го этажа!'],[/Оплата пройшла!/g,'Оплата прошла!']
+  ];
+  if (curLang === 'en') for (const [re,rep] of extraRulesEN) out = out.replace(re,rep);
+  if (curLang === 'ru') for (const [re,rep] of extraRulesRU) out = out.replace(re,rep);
+
   const rules = curLang === 'en' ? [
     [/Урон:/g, 'Damage:'],
     [/ХП:/g, 'HP:'],
@@ -801,6 +853,12 @@ function menuTranslateString(str) {
   }
   for (const [re, rep] of rules) out = out.replace(re, rep);
   return out;
+}
+
+/* Direct localization for dynamically rendered game text. */
+function uiText(value) {
+  if (value === null || value === undefined) return value;
+  return menuTranslateString(String(value));
 }
 
 function translateMenuDOM() {
@@ -901,7 +959,7 @@ function showAuthBlock(text) {
   const textEl = $('auth-text');
   if (textEl && text) textEl.innerHTML = text;
   if (blockEl) blockEl.classList.remove('off');
-  document.title = 'Доступ заблоковано';
+  document.title = t('auth-title');
 }
 
 const tgInitData = (tg && typeof tg.initData === 'string') ? tg.initData : '';
@@ -2381,8 +2439,8 @@ async function grantReferralRewardIfEligible() {
    навіть якщо в момент нарахування він був офлайн. */
 function showRefRewardModal(diamonds, score, names, photo) {
   $('ref-modal-text').innerHTML = names
-    ? escapeHtml(names) + ' дійшов(ла)<br>до 3-го поверху!'
-    : 'Твій друг дійшов<br>до 3-го поверху!';
+    ? escapeHtml(names) + ' ' + uiText('дійшов(ла)') + '<br>' + uiText('до 3-го поверху!')
+    : uiText('Твій друг дійшов') + '<br>' + uiText('до 3-го поверху!');
   $('ref-modal-avatar').src = photo || DEFAULT_AVATAR;
   const parts = [];
   if (diamonds > 0) parts.push('+' + fmt(diamonds) + '💎');
@@ -2392,7 +2450,7 @@ function showRefRewardModal(diamonds, score, names, photo) {
 }
 function hideRefRewardModal() { $('ref-modal').classList.add('off'); }
 function showPurchaseModal(diamonds, score) {
-  $('ref-modal-text').innerHTML = 'Дякуємо за покупку!';
+  $('ref-modal-text').innerHTML = uiText('Дякуємо за покупку!');
   $('ref-modal-avatar').src = DEFAULT_GIFT_ICON;
   const parts = [];
   if (diamonds > 0) parts.push('+' + fmt(diamonds) + '💎');
@@ -2458,9 +2516,9 @@ const DONATE_TIERS = [
 function renderDonate() {
   const card = t => `<div class="don-card"><div class="don-ic">${t.ic}</div>
     <div class="don-mid"><div class="don-name">${fmt(t.diamonds)}💎 + ${fmt(t.game)}★</div>
-    <div class="don-get">одноразова покупка</div></div>
+    <div class="don-get">${uiText('одноразова покупка')}</div></div>
     <button class="don-buy" type="button" data-tier="${t.id}">⭐ ${fmt(t.stars)}</button></div>`;
-  panelDon.innerHTML = '<div class="don-note">Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.</div>'
+  panelDon.innerHTML = `<div class="don-note">${uiText('Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.')}</div>`
     + DONATE_TIERS.map(card).join('');
   panelDon.querySelectorAll('[data-tier]').forEach(b => b.addEventListener('click', () => buyTier(b.dataset.tier, b)));
   translateMenuDOM();
@@ -2517,22 +2575,22 @@ function awardFor(rank) {
   return '';
 }
 
-const inviteBtnHtml = () => '<button class="lb-refresh" id="lb-invite-btn" type="button">👥 Запросити друга (' + fmt(state.invitesCount || 0) + ')</button>';
+const inviteBtnHtml = () => '<button class="lb-refresh" id="lb-invite-btn" type="button">👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')</button>';
 function bindInviteBtn() { const b = $('lb-invite-btn'); if (b) b.addEventListener('click', shareReferralLink); }
-function refreshInviteBtn() { const b = $('lb-invite-btn'); if (b) b.textContent = '👥 Запросити друга (' + fmt(state.invitesCount || 0) + ')'; }
+function refreshInviteBtn() { const b = $('lb-invite-btn'); if (b) b.textContent = '👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')'; }
 
 async function renderLeaderboard() {
-  panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 Оновити</button><div class="lb-empty">Завантаження…</div>';
+  panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button><div class="lb-empty">' + uiText('Завантаження…') + '</div>';
   bindInviteBtn();
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
 
   if (!keyReady()) {
-    panelLb.querySelector('.lb-empty').innerHTML = 'Таблицю лідерів ще не підключено.<br>Встав свій Supabase ANON_KEY у коді гри.';
+    panelLb.querySelector('.lb-empty').innerHTML = uiText('Таблицю лідерів ще не підключено.') + '<br>' + uiText('Встав свій Supabase ANON_KEY у коді гри.');
     return;
   }
   const top = await fetchLeaderboard(100);
   if (!top || !top.length) {
-    panelLb.querySelector('.lb-empty').innerHTML = 'Поки що тут порожньо.<br>Зіграй і стань першим у рейтингу!';
+    panelLb.querySelector('.lb-empty').innerHTML = uiText('Поки що тут порожньо.') + '<br>' + uiText('Зіграй і стань першим у рейтингу!');
     return;
   }
   const rowsHtml = top.map((p, i) => {
@@ -2540,10 +2598,10 @@ async function renderLeaderboard() {
     const award = awardFor(rank);
     const isMe = (p.username || '') === playerName;
     const cls = ['lb-row']; if (rank <= 3) cls.push('top' + rank); if (isMe) cls.push('me');
-    const name = escapeHtml(String(p.username || 'Анонім')).slice(0, 20);
+    const name = escapeHtml(String(p.username || uiText('Анонім'))).slice(0, 20);
     return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span>${avatarImg(p.photo_url, 'lb-avatar')}<span class="lb-name">${name}</span><span class="lb-score">${fmt(p.score || 0)}</span></div>`;
   }).join('');
-  panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 Оновити</button>' + rowsHtml;
+  panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
   bindInviteBtn();
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
   translateMenuDOM();
@@ -2926,7 +2984,7 @@ function startEncounter() {
   uiDirty = true;
   hapticNote('warning');
   $('combat-hud').classList.remove('off');
-  $('mons-name').textContent = meta.label;
+  $('mons-name').textContent = uiText(meta.label);
   hintEl.classList.add('off');
 }
 function hitMonster() {
@@ -3158,7 +3216,7 @@ function setCoverImg(imgEl, wrapEl, src) {
 }
 function renderMusicList() {
   if (!TRACKS.length) {
-    musicListEl.innerHTML = '<div class="music-empty">Треків ще немає.<br>Додай свою музику у список TRACKS у коді гри.</div>';
+    musicListEl.innerHTML = '<div class="music-empty">' + uiText('Треків ще немає.') + '<br>' + uiText('Додай свою музику у список TRACKS у коді гри.') + '</div>';
     translateMenuDOM();
     return;
   }
@@ -3169,7 +3227,7 @@ function renderMusicList() {
         <span class="music-item-fb">${playing ? '🔊' : '🎵'}</span>
         ${t.cover ? `<img src="${t.cover}" alt="" loading="lazy">` : ''}
       </span>
-      <span class="music-item-name">${t.title || 'Трек ' + (i + 1)}</span></button>`;
+      <span class="music-item-name">${uiText(t.title || 'Трек ' + (i + 1))}</span></button>`;
   }).join('');
   musicListEl.querySelectorAll('[data-idx]').forEach(b => b.addEventListener('click', () => loadTrack(+b.dataset.idx, true)));
 }
@@ -3178,7 +3236,7 @@ function loadTrack(i, autoplay) {
   curTrack = (i + TRACKS.length) % TRACKS.length;
   const t = TRACKS[curTrack];
   bgAudio.src = t.src;
-  musicNowTitle.textContent = t.title || 'Трек ' + (curTrack + 1);
+  musicNowTitle.textContent = uiText(t.title || 'Трек ' + (curTrack + 1));
   musicNowArtist.textContent = t.artist || '';
   setCoverImg(musicNowCover, musicCoverWrap, t.cover);
   setCoverImg(btnMusicImg, btnMusic, t.cover);
@@ -3220,15 +3278,15 @@ function renderMoreUps() {
   const card = u => {
     const l = upLvl(u.id), maxed = l >= u.max, c = upCost(u);
     const can = !maxed && balanceOf(u.cur) >= c;
-    const cost = maxed ? '<span class="cost" style="color:#bdf5b0">МАКС</span>'
+    const cost = maxed ? `<span class="cost" style="color:#bdf5b0">${uiText('МАКС')}</span>`
       : `<span class="cost"><img src="${curIcon[u.cur]}" alt="">${fmt(c)}</span>`;
     return `<button class="up${can ? ' can' : ''}${maxed ? ' max' : ''}" type="button" data-up="${u.id}">
-      <div class="up-head"><span class="up-ic">${u.ic}</span><span class="up-name">${u.name}</span></div>
-      <div class="up-eff">${u.show(l)}${maxed ? '' : '<br>→ ' + u.show(l + 1)}</div>
+      <div class="up-head"><span class="up-ic">${u.ic}</span><span class="up-name">${uiText(u.name)}</span></div>
+      <div class="up-eff">${uiText(u.show(l))}${maxed ? '' : '<br>→ ' + uiText(u.show(l + 1))}</div>
       <div class="up-foot">${cost}<span class="lvl">${l}/${u.max}</span></div></button>`;
   };
-  panelMore.innerHTML = '<div class="up-sec">Бойові та економічні</div>' + UPGRADES.filter(u => u.cur === 'star').map(card).join('')
-    + '<div class="up-sec">💎 Діамантові прокачки</div>' + UPGRADES.filter(u => u.cur === 'diamond').map(card).join('');
+  panelMore.innerHTML = '<div class="up-sec">' + uiText('Бойові та економічні') + '</div>' + UPGRADES.filter(u => u.cur === 'star').map(card).join('')
+    + '<div class="up-sec">💎 ' + uiText('Діамантові прокачки').replace('💎 ','') + '</div>' + UPGRADES.filter(u => u.cur === 'diamond').map(card).join('');
   panelMore.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => buyUp(b.dataset.up, b)));
   translateMenuDOM();
 }
@@ -3276,11 +3334,11 @@ function renderQuests() {
     const pct = Math.min(100, Math.round(val / q.goal * 100));
     const cls = ['wpn']; if (claimed) cls.push('done'); if (done && !claimed) cls.push('can');
     let btn;
-    if (claimed) btn = `<button class="wpn-btn owned" disabled>✔ Отримано</button>`;
+    if (claimed) btn = `<button class="wpn-btn owned" disabled>✔ ${uiText('Отримано')}</button>`;
     else if (done) btn = `<button class="wpn-btn can" data-claim-quest="${q.id}"><img src="${curIcon[q.cur]}" alt="">${fmt(q.reward)}</button>`;
     else btn = `<button class="wpn-btn" disabled><img src="${curIcon[q.cur]}" alt="">${fmt(q.reward)}</button>`;
     return `<div class="${cls.join(' ')}"><span class="wpn-ic">${q.ic}</span>
-      <div class="wpn-info"><div class="wpn-name">${q.name}</div><div class="wpn-buff">${q.show}</div>
+      <div class="wpn-info"><div class="wpn-name">${uiText(q.name)}</div><div class="wpn-buff">${uiText(q.show)}</div>
         <div class="quest-bar"><div class="quest-bar-fill" style="width:${pct}%"></div></div>
         <div class="wpn-sub">${fmt(val)} / ${fmt(q.goal)}</div>
       </div>${btn}</div>`;
@@ -3308,9 +3366,9 @@ function renderWeapons() {
     const can = !owned && balanceOf(w.cur) >= w.cost;
     const cls = ['wpn']; if (owned) cls.push('owned'); if (can) cls.push('can');
     const btn = owned
-      ? `<button class="wpn-btn owned" disabled>${equipped ? '★ У бою' : 'Куплено'}</button>`
+      ? `<button class="wpn-btn owned" disabled>${equipped ? '★ ' + uiText('У бою') : uiText('Куплено')}</button>`
       : priceBtn(w.cur, w.cost, can, 'data-buy', w.id);
-    return `<div class="${cls.join(' ')}"><div class="wpn-ic">${w.ic}</div><div class="wpn-info"><div class="wpn-name">${w.name}</div><div class="wpn-dmg">Урон: ${w.dmg}</div></div>${btn}</div>`;
+    return `<div class="${cls.join(' ')}"><div class="wpn-ic">${w.ic}</div><div class="wpn-info"><div class="wpn-name">${uiText(w.name)}</div><div class="wpn-dmg">${uiText('Урон:')} ${w.dmg}</div></div>${btn}</div>`;
   }).join('');
   panelWpn.querySelectorAll('[data-buy]').forEach(b => b.addEventListener('click', () => buyWeapon(b.dataset.buy)));
   translateMenuDOM();
@@ -3331,11 +3389,11 @@ function renderArmor() {
   const ch = costHp();
   const hpCard = `
     <div class="up${state.score >= ch ? ' can' : ''}" id="up-hp" style="cursor:pointer">
-      <div class="up-head"><img src="${curIcon.star}" style="width:27px;height:27px;image-rendering:pixelated" alt=""><span class="up-name">Здоров'я</span></div>
-      <div class="up-eff">ХП: ${hpMax()} → ${Math.round((CFG.HP_MAX + (state.hpLvl + 1) * CFG.HP_PER_LEVEL) * (1 + hpBonus()))}</div>
+      <div class="up-head"><img src="${curIcon.star}" style="width:27px;height:27px;image-rendering:pixelated" alt=""><span class="up-name">${uiText("Здоров'я")}</span></div>
+      <div class="up-eff">${uiText('ХП:')} ${hpMax()} → ${Math.round((CFG.HP_MAX + (state.hpLvl + 1) * CFG.HP_PER_LEVEL) * (1 + hpBonus()))}</div>
       <div class="up-foot">
         <span class="cost"><img src="${curIcon.star}" alt="">${fmt(ch)}</span>
-        <span class="lvl">рів. ${state.hpLvl}</span>
+        <span class="lvl">${uiText('рів.')} ${state.hpLvl}</span>
       </div>
     </div>`;
   const items = ARMOR.map(a => {
@@ -3344,10 +3402,10 @@ function renderArmor() {
     const can = !owned && balanceOf(a.cur) >= a.cost;
     const cls = ['wpn']; if (owned) cls.push('owned'); if (can) cls.push('can');
     const btn = owned
-      ? `<button class="wpn-btn owned" disabled>${equipped ? '★ Одягнено' : 'Куплено'}</button>`
+      ? `<button class="wpn-btn owned" disabled>${equipped ? '★ ' + uiText('Одягнено') : uiText('Куплено')}</button>`
       : priceBtn(a.cur, a.cost, can, 'data-buy-armor', a.id);
-    const eff = a.flat ? `−${a.flat} урону від удару` + (a.pct ? ` · −${Math.round(a.pct * 100)}%` : '') : 'Без захисту';
-    return `<div class="${cls.join(' ')}"><div class="wpn-ic">${a.ic}</div><div class="wpn-info"><div class="wpn-name">${a.name}</div><div class="wpn-dmg">${eff}</div></div>${btn}</div>`;
+    const eff = a.flat ? `−${a.flat} ${uiText('урону від удару')}` + (a.pct ? ` · −${Math.round(a.pct * 100)}%` : '') : uiText('Без захисту');
+    return `<div class="${cls.join(' ')}"><div class="wpn-ic">${a.ic}</div><div class="wpn-info"><div class="wpn-name">${uiText(a.name)}</div><div class="wpn-dmg">${eff}</div></div>${btn}</div>`;
   }).join('');
   panelArm.innerHTML = hpCard + items;
   const upHp = $('up-hp');
@@ -3409,10 +3467,10 @@ function renderSkins() {
     const can = !owned && balanceOf(s.cur) >= s.cost;
     const cls = ['wpn']; if (owned) cls.push('owned'); if (can) cls.push('can'); if (eq) cls.push('eq');
     let btn;
-    if (eq) btn = `<button class="wpn-btn owned" disabled>★ Одягнено</button>`;
-    else if (owned) btn = `<button class="wpn-btn" data-eq-skin="${s.id}">Одягнути</button>`;
+    if (eq) btn = `<button class="wpn-btn owned" disabled>★ ${uiText('Одягнено')}</button>`;
+    else if (owned) btn = `<button class="wpn-btn" data-eq-skin="${s.id}">${uiText('Одягнути')}</button>`;
     else btn = priceBtn(s.cur, s.cost, can, 'data-buy-skin', s.id);
-    return `<div class="${cls.join(' ')}"><img class="skn-pv" src="${skinPreviewUrl(s.id)}" alt="" style="${pvStyle(s.id)}"><div class="wpn-info skn-info"><div class="wpn-name">${s.name}</div><div class="wpn-buff">${buffText(s.buff)}</div></div>${btn}</div>`;
+    return `<div class="${cls.join(' ')}"><img class="skn-pv" src="${skinPreviewUrl(s.id)}" alt="" style="${pvStyle(s.id)}"><div class="wpn-info skn-info"><div class="wpn-name">${uiText(s.name)}</div><div class="wpn-buff">${uiText(buffText(s.buff))}</div></div>${btn}</div>`;
   }).join('');
   panelSkn.querySelectorAll('[data-buy-skin]').forEach(b => b.addEventListener('click', () => buySkin(b.dataset.buySkin)));
   panelSkn.querySelectorAll('[data-eq-skin]').forEach(b => b.addEventListener('click', () => equipSkin(b.dataset.eqSkin)));
@@ -3474,7 +3532,7 @@ function renderUI() {
   const floors = TIERS.length;
   const curFloor = Math.min(state.floorTier + 1, floors);
   $('floor-label').textContent = state.floorTier >= floors ? t('top') : t('floor') + ' ' + curFloor + '/' + floors;
-  $('floor-name').textContent = locFor(state.floorTier).name;
+  $('floor-name').textContent = uiText(locFor(state.floorTier).name);
   $('floor-prog').textContent = state.floorTier >= floors ? '' : fmt(state.totalStars) + ' / ' + fmt(TIERS[state.floorTier].at) + ' ★';
   if (!floorPipsBuilt) {
     $('floor-pips').innerHTML = Array.from({ length: floors }, () => '<div class="fpip"></div>').join('');
