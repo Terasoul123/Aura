@@ -105,15 +105,6 @@
   #btn-ads[disabled]{opacity:.5;pointer-events:none}
   #ads-label{font-size:7px;line-height:1.35;color:var(--paper);text-shadow:var(--o2);text-align:center;max-width:56px;white-space:nowrap}
 
-  /* ---------- тимчасова кнопка чіту (+1 000 000 за клік +10 000 💎) ---------- */
-  #btn-cheat{
-    position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 10px);
-    left:10px;width:26px;height:26px;border:0;pointer-events:auto;cursor:pointer;
-    background:#2c1f5c;box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 0 #241a52;
-    font-size:12px;border-radius:8px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;opacity:.55;
-  }
-  #btn-cheat.on{background:#8a5a0a;box-shadow:inset 0 0 0 2px var(--gold),inset 0 -3px 0 0 #5c3c06;opacity:1}
-  #btn-cheat:active{transform:translateY(1px)}
 
   /* ---------- бій: підпис монстра ---------- */
   #mons-name{font-size:9px;color:var(--paper);text-shadow:var(--o2);text-align:center}
@@ -202,7 +193,7 @@
   /* ---------- кнопка-платівка (плейлист) ---------- */
   #btn-music{
     position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 136px);
-    right:10px;width:36px;height:36px;border:0;border-radius:50%;pointer-events:auto;cursor:pointer;
+    left:10px;width:46px;height:46px;border:0;border-radius:50%;pointer-events:auto;cursor:pointer;
     overflow:hidden;
     background:repeating-radial-gradient(circle at 50% 50%,#0d0a1a 0 2px,#1c1440 2px 4px),
                radial-gradient(circle at 50% 50%,#241a44 0 44%,#0d0a1a 44% 100%);
@@ -216,7 +207,7 @@
     box-shadow:0 0 0 2px #0d0a1a,0 0 0 3px #4b3a8f}
   #btn-music.has-cover #btn-music-img{display:block}
   #btn-music.has-cover #btn-music-fb{display:none}
-  #btn-music-fb{font-size:11px}
+  #btn-music-fb{font-size:14px}
   #btn-music.spin{animation:disc-spin 3.4s linear infinite}
   @keyframes disc-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
@@ -402,7 +393,7 @@
   /* ---------- кнопка налаштувань ---------- */
   #btn-settings{
     position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 178px);
-    right:10px;width:36px;height:36px;border:0;border-radius:10px;pointer-events:auto;cursor:pointer;
+    left:10px;width:36px;height:36px;border:0;border-radius:10px;pointer-events:auto;cursor:pointer;
     background:#2c1f5c;box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -4px 0 0 #241a52;
     font-size:16px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;
   }
@@ -440,7 +431,6 @@
 
     <button id="btn-view" type="button" title="Небо / Стіни вежі">🏯</button>
     <button id="btn-shop" type="button" title="Магазин">🛒</button>
-    <button id="btn-cheat" type="button" title="Чіт: +1 000 000 за клік + 10 000 💎 (тимчасово)">🐞</button>
 
     <div id="ads-wrap">
       <button id="btn-ads" type="button" title="Дивитись рекламу">📺</button>
@@ -649,9 +639,8 @@ const I18N = {
     'auth-text': 'Цю гру можна проходити лише через офіційний Telegram-бот.<br>Прогрес і таблиця лідерів доступні тільки авторизованим гравцям.',
     'btn-view-title': 'Небо / Стіни вежі',
     'btn-shop-title': 'Магазин',
-    'btn-cheat-title': 'Чіт: +1 000 000 за клік + 10 000 💎 (тимчасово)',
     'btn-ads-title': 'Дивитись рекламу',
-    'ads-label': '+1💎 за рекламу',
+    'ads-label': '+1💎',
     'btn-music-title': 'Плейлист',
     'btn-settings-title': 'Налаштування',
     'hint': 'Тапай по екрану!',
@@ -679,9 +668,8 @@ const I18N = {
     'auth-text': 'This game can only be played through the official Telegram bot.<br>Progress and the leaderboard are only available to authorized players.',
     'btn-view-title': 'Sky / Tower walls',
     'btn-shop-title': 'Shop',
-    'btn-cheat-title': 'Cheat: +1,000,000 per tap + 10,000 💎 (temporary)',
     'btn-ads-title': 'Watch an ad',
-    'ads-label': '+1💎 for an ad',
+    'ads-label': '+1💎',
     'btn-music-title': 'Playlist',
     'btn-settings-title': 'Settings',
     'hint': 'Tap the screen!',
@@ -703,6 +691,20 @@ const I18N = {
     perClick: 'per tap', autoSuffix: 'auto', perSec: '/s',
     lvl: 'lvl', click: 'Click', auto: 'Auto',
     floor: 'Floor', top: 'Top of the tower'
+  },
+  ru: {
+    'auth-title': 'Доступ заблокирован',
+    'auth-text': 'В эту игру можно играть только через официальный Telegram-бот.<br>Прогресс и таблица лидеров доступны только авторизованным игрокам.',
+    'btn-view-title': 'Небо / Стены башни', 'btn-shop-title': 'Магазин',
+    'btn-ads-title': 'Смотреть рекламу', 'ads-label': '+1💎',
+    'btn-music-title': 'Плейлист', 'btn-settings-title': 'Настройки',
+    'hint': 'Тапай по экрану!', 'tab-upg': '⚙ Улучшения', 'tab-qst': '📜 Задания', 'tab-lb': '🏆 Топ',
+    'sub-ups': '⚡Основное', 'sub-wpn': '⚔Оружие', 'sub-arm': '🛡Броня', 'sub-skn': '🎭Образы',
+    'up-power-name': 'Сила клика', 'up-auto-name': 'Автоклик', 'music-title': '🎵 Плейлист',
+    'shop-title': '🛒 Магазин', 'settings-title': '⚙️ Настройки', 'settings-lang-label': 'ЯЗЫК / LANGUAGE',
+    'music-now-title-empty': 'Трек не выбран', 'ref-modal-ok': 'OK',
+    perClick: 'за клик', autoSuffix: 'авто', perSec: '/с', lvl: 'ур.', click: 'Клик', auto: 'Авто',
+    floor: 'Этаж', top: 'Вершина башни'
   }
 };
 
@@ -713,14 +715,19 @@ const I18N = {
    ========================================================================== */
 const MENU_I18N = {"Драговина слизнів": "Slime Swamp", "Табір гоблінів": "Goblin Camp", "Кладовище кісток": "Bone Graveyard", "Печера кажанів": "Bat Cave", "Павутинні глибини": "Spider Depths", "Вулканічна кузня": "Volcanic Forge", "Примарний склеп": "Phantom Crypt", "Демонічна безодня": "Demonic Abyss", "Трон Бога-Дракона": "Dragon God's Throne", "Кулаки": "Fists", "Дерев’яний меч": "Wooden Sword", "Бронзовий меч": "Bronze Sword", "Залізний меч": "Iron Sword", "Сталевий меч": "Steel Sword", "Лицарський меч": "Knight's Sword", "Магічний клинок": "Magic Blade", "Бойова сокира": "Battle Axe", "Алебарда": "Halberd", "Рунічний меч": "Runic Sword", "Катана": "Katana", "Клинок дракона": "Dragon Blade", "Крижаний клинок": "Frost Blade", "Зоряний клинок": "Star Blade", "Громовий молот": "Thunder Hammer", "Легендарний меч": "Legendary Sword", "Клинок порожнечі": "Void Blade", "Клинок фенікса": "Phoenix Blade", "Меч хаосу": "Chaos Sword", "Меч безодні": "Abyss Sword", "Клинок богів": "Gods' Blade", "Космічний клинок": "Cosmic Blade", "Клинок вічності": "Eternity Blade", "Всемогутній меч": "Omnipotent Sword", "Клинок наднової": "Supernova Blade", "Меч Титана": "Titan Sword", "Тканинний одяг": "Cloth Outfit", "Шкіряна броня": "Leather Armor", "Клепана броня": "Riveted Armor", "Кольчуга": "Chainmail", "Бригантина": "Brigandine", "Сталевий панцир": "Steel Armor", "Латний обладунок": "Plate Armor", "Лицарські лати": "Knight Armor", "Обладунок паладина": "Paladin Armor", "Міфрилова броня": "Mithril Armor", "Орчачий панцир": "Orc Armor", "Драконяча луска": "Dragon Scales", "Крижана броня": "Ice Armor", "Небесна броня": "Heavenly Armor", "Броня вампіра": "Vampire Armor", "Обсидіанова броня": "Obsidian Armor", "Громова броня": "Thunder Armor", "Броня порожнечі": "Void Armor", "Хаос-обладунок": "Chaos Armor", "Космічна броня": "Cosmic Armor", "Божественний обладунок": "Divine Armor", "Обладунок вічності": "Eternity Armor", "Броня серафима": "Seraphim Armor", "Панцир Безодні": "Abyss Armor", "Стандартний": "Default", "Білий": "White", "Червоний": "Red", "Синій": "Blue", "Зелений": "Green", "Золотий": "Gold", "Тінь": "Shadow", "Король": "King", "Фенікс": "Phoenix", "Кришталь": "Crystal", "Володар безодні": "Lord of the Abyss", "Фіолетовий": "Purple", "Рожевий": "Pink", "Камуфляж": "Camouflage", "Ніндзя": "Ninja", "Маг": "Mage", "Воїн": "Warrior", "Кіберпанк": "Cyberpunk", "Демон": "Demon", "Ангел": "Angel", "Льодовий": "Ice", "Вогняний": "Fire", "Привид": "Ghost", "Дикий": "Wild", "Зомбі": "Zombie", "Клоун": "Clown", "Некромант": "Necromancer", "Космічний": "Cosmic", "Самурай": "Samurai", "Пірат": "Pirate", "Технік": "Technician", "Дракон": "Dragon", "Легендарний": "Legendary", "Емілія": "Emilia", "Рем": "Rem", "Рам": "Ram", "Беатріс": "Beatrice", "Круш": "Crusch", "Юліус": "Julius", "Ехидна": "Echidna", "Майстерність зброї": "Weapon Mastery", "Критичний удар": "Critical Strike", "Сила крита": "Critical Power", "Жадібність": "Greed", "Щасливий клік": "Lucky Click", "Автомайстер": "Auto Master", "Регенерація": "Regeneration", "Стійкість": "Resilience", "Мисливець": "Hunter", "Нюх на діаманти": "Diamond Sense", "Золота лихоманка": "Gold Rush", "Залізна воля": "Iron Will", "Прудкість": "Agility", "Діамантова сила": "Diamond Power", "Діамантове лезо": "Diamond Blade", "Діамантове серце": "Diamond Heart", "Діамантовий щит": "Diamond Shield", "Діамантовий магніт": "Diamond Magnet", "Діамантовий крит": "Diamond Critical", "Діамантова регенерація": "Diamond Regeneration", "Слизень": "Slime", "Гоблін": "Goblin", "Скелет": "Skeleton", "Кажан": "Bat", "Павук": "Spider", "Лава-воїн": "Lava Warrior", "Бос": "Boss", "Сила кліку": "Click Power", "Автоклік": "Autoclick", "Прокачка": "Upgrades", "Завдання": "Quests", "Топ": "Top", "Основне": "Main", "Зброя": "Weapon", "Броня": "Armor", "Образи": "Skins", "Плейлист": "Playlist", "Магазин": "Shop", "Налаштування": "Settings", "Трек не обрано": "No track selected", "Доступ заблоковано": "Access blocked", "Тапай по екрану!": "Tap the screen!", "За клік": "Per tap", "за клік": "per tap", "авто": "auto", "Клік": "Click", "Авто": "Auto", "Поверх": "Floor", "Вершина вежі": "Top of the tower", "Здоров'я": "Health", "Здоров’я": "Health", "Куплено": "Purchased", "Одягнено": "Equipped", "Одягнути": "Equip", "Отримано": "Claimed", "У бою": "In battle", "Без бафів": "No buffs", "Без захисту": "No protection", "одноразова покупка": "one-time purchase", "Бойові та економічні": "Combat & Economy", "Діамантові прокачки": "💎 Diamond Upgrades", "МАКС": "MAX", "Оновити": "Refresh", "Завантаження…": "Loading…", "Анонім": "Anonymous", "Поки що тут порожньо.": "It's empty here for now.", "Зіграй і стань першим у рейтингу!": "Play and become the first on the leaderboard!", "Таблицю лідерів ще не підключено.": "The leaderboard is not connected yet.", "Встав свій Supabase ANON_KEY у коді гри.": "Insert your Supabase ANON_KEY into the game code.", "Запросити друга": "Invite a friend", "Дякуємо за покупку!": "Thank you for your purchase!", "Ваш акаунт заблоковано адміністрацією.": "Your account has been blocked by the administration.", "Причина:": "Reason:", "Причина не вказана.": "No reason provided.", "Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.": "Payment is made with official Telegram Stars. The reward is credited instantly to this account.", "Треків ще немає.": "There are no tracks yet.", "Додай свою музику у список TRACKS у коді гри.": "Add your music to the TRACKS list in the game code.", "Ваш друг дійшов": "Your friend reached"};
 const MENU_I18N_REV = Object.fromEntries(Object.entries(MENU_I18N).map(([a,b]) => [b,a]));
+const MENU_I18N_RU_UK = {"Драговина слизнів":"Болото слизней","Табір гоблінів":"Лагерь гоблинов","Кладовище кісток":"Кладбище костей","Печера кажанів":"Пещера летучих мышей","Павутинні глибини":"Паучьи глубины","Вулканічна кузня":"Вулканическая кузница","Примарний склеп":"Призрачный склеп","Демонічна безодня":"Демоническая бездна","Трон Бога-Дракона":"Трон Бога-Дракона","Кулаки":"Кулаки","Дерев’яний меч":"Деревянный меч","Бронзовий меч":"Бронзовый меч","Залізний меч":"Железный меч","Сталевий меч":"Стальной меч","Лицарський меч":"Рыцарский меч","Магічний клинок":"Магический клинок","Бойова сокира":"Боевая секира","Алебарда":"Алебарда","Рунічний меч":"Рунический меч","Катана":"Катана","Клинок дракона":"Клинок дракона","Крижаний клинок":"Ледяной клинок","Зоряний клинок":"Звёздный клинок","Громовий молот":"Громовой молот","Легендарний меч":"Легендарный меч","Клинок порожнечі":"Клинок пустоты","Клинок фенікса":"Клинок феникса","Меч хаосу":"Меч хаоса","Меч безодні":"Меч бездны","Клинок богів":"Клинок богов","Космічний клинок":"Космический клинок","Клинок вічності":"Клинок вечности","Всемогутній меч":"Всемогущий меч","Клинок наднової":"Клинок сверхновой","Меч Титана":"Меч Титана","Тканинний одяг":"Тканевая одежда","Шкіряна броня":"Кожаная броня","Клепана броня":"Клёпаная броня","Кольчуга":"Кольчуга","Бригантина":"Бригантина","Сталевий панцир":"Стальной доспех","Латний обладунок":"Латный доспех","Лицарські лати":"Рыцарские латы","Обладунок паладина":"Доспех паладина","Міфрилова броня":"Мифриловая броня","Орчачий панцир":"Орочий доспех","Драконяча луска":"Чешуя дракона","Крижана броня":"Ледяная броня","Небесна броня":"Небесная броня","Броня вампіра":"Броня вампира","Обсидіанова броня":"Обсидиановая броня","Громова броня":"Грозовая броня","Броня порожнечі":"Броня пустоты","Хаос-обладунок":"Доспех хаоса","Космічна броня":"Космическая броня","Божественний обладунок":"Божественный доспех","Обладунок вічності":"Доспех вечности","Броня серафима":"Броня серафима","Панцир Безодні":"Доспех Бездны","Стандартний":"Стандартный","Білий":"Белый","Червоний":"Красный","Синій":"Синий","Зелений":"Зелёный","Золотий":"Золотой","Тінь":"Тень","Король":"Король","Фенікс":"Феникс","Кришталь":"Кристалл","Володар безодні":"Владыка бездны","Фіолетовий":"Фиолетовый","Рожевий":"Розовый","Камуфляж":"Камуфляж","Ніндзя":"Ниндзя","Маг":"Маг","Воїн":"Воин","Кіберпанк":"Киберпанк","Демон":"Демон","Ангел":"Ангел","Льодовий":"Ледяной","Вогняний":"Огненный","Привид":"Призрак","Дикий":"Дикий","Зомбі":"Зомби","Клоун":"Клоун","Некромант":"Некромант","Космічний":"Космический","Самурай":"Самурай","Пірат":"Пират","Технік":"Техник","Дракон":"Дракон","Легендарний":"Легендарный","Майстерність зброї":"Мастерство оружия","Критичний удар":"Критический удар","Сила крита":"Сила крита","Жадібність":"Жадность","Щасливий клік":"Счастливый клик","Автомайстер":"Автомастер","Регенерація":"Регенерация","Стійкість":"Стойкость","Мисливець":"Охотник","Нюх на діаманти":"Чутьё на алмазы","Золота лихоманка":"Золотая лихорадка","Залізна воля":"Железная воля","Прудкість":"Ловкость","Діамантова сила":"Сила алмазов","Діамантове лезо":"Алмазный клинок","Діамантове серце":"Алмазное сердце","Діамантовий щит":"Алмазный щит","Діамантовий магніт":"Алмазный магнит","Діамантовий крит":"Алмазный крит","Діамантова регенерація":"Алмазная регенерация","Слизень":"Слизень","Гоблін":"Гоблин","Скелет":"Скелет","Кажан":"Летучая мышь","Павук":"Паук","Лава-воїн":"Лава-воин","Бос":"Босс","Сила кліку":"Сила клика","Автоклік":"Автоклик","Прокачка":"Улучшения","Завдання":"Задания","Топ":"Топ","Основне":"Основное","Зброя":"Оружие","Броня":"Броня","Образи":"Образы","Плейлист":"Плейлист","Магазин":"Магазин","Налаштування":"Настройки","Трек не обрано":"Трек не выбран","Доступ заблоковано":"Доступ заблокирован","Тапай по екрану!":"Тапай по экрану!","За клік":"за клик","за клік":"за клик","авто":"авто","Клік":"Клик","Авто":"Авто","Поверх":"Этаж","Вершина вежі":"Вершина башни","Здоров'я":"Здоровье","Здоров’я":"Здоровье","Куплено":"Куплено","Одягнено":"Экипировано","Одягнути":"Экипировать","Отримано":"Получено","У бою":"В бою","Без бафів":"Без баффов","Без захисту":"Без защиты","одноразова покупка":"разовая покупка","Бойові та економічні":"Боевые и экономические","Діамантові прокачки":"💎 Алмазные улучшения","МАКС":"МАКС","Оновити":"Обновить","Завантаження…":"Загрузка…","Анонім":"Аноним","Поки що тут порожньо.":"Пока здесь пусто.","Зіграй і стань першим у рейтингу!":"Сыграй и стань первым в рейтинге!","Таблицю лідерів ще не підключено.":"Таблица лидеров ещё не подключена.","Встав свій Supabase ANON_KEY у коді гри.":"Вставь свой Supabase ANON_KEY в код игры.","Запросити друга":"Пригласить друга","Дякуємо за покупку!":"Спасибо за покупку!","Ваш акаунт заблоковано адміністрацією.":"Ваш аккаунт заблокирован администрацией.","Причина:":"Причина:","Причина не вказана.":"Причина не указана.","Треків ще немає.":"Треков пока нет.","Додай свою музику у список TRACKS у коді гри.":"Добавь свою музыку в список TRACKS в коде игры.","Ваш друг дійшов":"Ваш друг дошёл"};
+const MENU_I18N_RU_EN = Object.fromEntries(Object.entries(MENU_I18N_RU_UK).map(([uk,ru]) => [MENU_I18N[uk] || uk, ru]));
+const MENU_I18N_RU_REV = Object.fromEntries(Object.entries(MENU_I18N_RU_UK).map(([uk,ru]) => [ru,uk]));
 
 function menuTranslateString(str) {
   if (!str) return str;
   let out = str;
-  const dict = curLang === 'en' ? MENU_I18N : MENU_I18N_REV;
+  const dict = curLang === 'en' ? MENU_I18N : (curLang === 'ru' ? MENU_I18N_RU_UK : MENU_I18N_REV);
+  const altDict = curLang === 'ru' ? MENU_I18N_RU_EN : (curLang === 'en' ? Object.fromEntries(Object.entries(MENU_I18N_RU_UK).map(([uk,ru]) => [ru, MENU_I18N[uk] || uk])) : MENU_I18N_RU_REV);
 
-  // Exact phrases first.
+  // Exact phrases first; also handle switching from another translated language.
   if (dict[out] !== undefined) out = dict[out];
+  else if (altDict[out] !== undefined) out = altDict[out];
 
   // Common dynamic labels.
   const rules = curLang === 'en' ? [
@@ -770,6 +777,12 @@ function menuTranslateString(str) {
     [/Шанс крита \+/g, 'Crit chance +'],
   ] : [];
 
+  if (curLang === 'ru') {
+    const ruRules = [
+      [/Урон:/g,'Урон:'],[/ХП:/g,'ОЗ:'],[/рів\./g,'ур.'],[/урону/g,'урона'],[/зірок за клік/g,'звёзд за клик'],[/зірок з монстрів/g,'звёзд с монстров'],[/діамантів з монстрів/g,'алмазов с монстров'],[/втрат зірок при поразці/g,'потери звёзд при поражении'],[/отриманого урону/g,'получаемого урона'],[/Здобич з монстрів/g,'Добыча с монстров'],[/Здобич/g,'Добыча'],[/Шанс крита/g,'Шанс крита'],[/Монстр кожні/g,'Монстр каждые'],[/Швидкість автокліку/g,'Скорость автоклика'],[/Зірки/g,'Звёзды'],[/Пройди ([0-9 ]+) сходинок/g,'Пройди $1 ступеней'],[/Досягни ([0-9]+)-го поверху вежі/g,'Достигни $1-го этажа башни'],[/Досягни вершини вежі/g,'Достигни вершины башни'],[/Здобудь ([0-9]+) видів зброї/g,'Получи $1 видов оружия'],[/Здобудь ([0-9]+) видів броні/g,'Получи $1 видов брони'],[/Здобудь ([0-9]+) образи/g,'Получи $1 образов'],[/Май ([0-9]+) діамантів одночасно/g,'Имей $1 алмазов одновременно'],[/Прокачай автоклік до ([0-9]+) рівня/g,'Прокачай автоклик до $1 уровня'],[/Прокачай силу кліку до ([0-9]+) рівня/g,'Прокачай силу клика до $1 уровня'],[/Прокачай здоров’я до ([0-9]+) рівня/g,'Прокачай здоровье до $1 уровня']
+    ];
+    for (const [re,rep] of ruRules) out = out.replace(re,rep);
+  }
   for (const [re, rep] of rules) out = out.replace(re, rep);
   return out;
 }
@@ -788,7 +801,7 @@ function translateMenuDOM() {
 }
 
 function translateMenuAttributes() {
-  const titleMap = curLang === 'en' ? MENU_I18N : MENU_I18N_REV;
+  const titleMap = curLang === 'en' ? MENU_I18N : (curLang === 'ru' ? MENU_I18N_RU_UK : MENU_I18N_REV);
   document.querySelectorAll('[title]').forEach(el => {
     const v = el.getAttribute('title');
     if (titleMap[v] !== undefined) el.setAttribute('title', titleMap[v]);
@@ -805,12 +818,12 @@ let curLang = (() => {
 function t(key) { return (I18N[curLang] && I18N[curLang][key] !== undefined) ? I18N[curLang][key] : (I18N.uk[key] !== undefined ? I18N.uk[key] : key); }
 function applyStaticI18n() {
   document.documentElement.lang = curLang;
+  document.title = curLang === 'en' ? 'Stairs to the Sky' : (curLang === 'ru' ? 'Лестница в небо' : 'Сходи в небо');
   $('auth-text') && ($('auth-text').innerHTML = t('auth-text'));
   const authTitleEl = document.querySelector('.auth-title');
   if (authTitleEl) authTitleEl.textContent = t('auth-title');
   $('btn-view')     && ($('btn-view').title = t('btn-view-title'));
   $('btn-shop')     && ($('btn-shop').title = t('btn-shop-title'));
-  $('btn-cheat')    && ($('btn-cheat').title = t('btn-cheat-title'));
   $('btn-ads')      && ($('btn-ads').title = t('btn-ads-title'));
   $('ads-label')    && ($('ads-label').textContent = t('ads-label'));
   $('btn-music')    && ($('btn-music').title = t('btn-music-title'));
@@ -835,13 +848,26 @@ function applyStaticI18n() {
   $('lang-uk') && $('lang-uk').classList.toggle('active', curLang === 'uk');
   $('lang-en') && $('lang-en').classList.toggle('active', curLang === 'en');
   $('lang-ru') && $('lang-ru').classList.toggle('active', curLang === 'ru');
+  translateMenuDOM();
+  translateMenuAttributes();
 }
+
 function setLang(lang) {
   if (lang !== 'uk' && lang !== 'en' && lang !== 'ru') return;
   curLang = lang;
   try { localStorage.setItem('lang', lang); } catch (e) {}
   applyStaticI18n();
-  if (typeof uiDirty !== 'undefined') uiDirty = true;
+  // Re-render open/visible panels so dynamically generated text is translated too.
+  try {
+    if (typeof renderQuests === 'function') renderQuests();
+    if (typeof renderWeapons === 'function') renderWeapons();
+    if (typeof renderArmor === 'function') renderArmor();
+    if (typeof renderSkins === 'function') renderSkins();
+    if (typeof renderMoreUps === 'function') renderMoreUps();
+    if (typeof renderMusicList === 'function') renderMusicList();
+    if (typeof curTab !== 'undefined' && curTab === 'lb' && typeof renderLeaderboard === 'function') renderLeaderboard();
+    if (typeof uiDirty !== 'undefined') uiDirty = true;
+  } catch (e) { console.warn('Language refresh:', e); }
 }
 
 /* ==========================================================================
@@ -3031,6 +3057,7 @@ settingsCloseBtn.addEventListener('click', closeSettings);
 settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettings(); });
 $('lang-uk').addEventListener('click', () => { haptic('light'); setLang('uk'); });
 $('lang-en').addEventListener('click', () => { haptic('light'); setLang('en'); });
+$('lang-ru').addEventListener('click', () => { haptic('light'); setLang('ru'); });
 applyStaticI18n();
 
 /* ===== Реклама за нагороду (AdsGram) =====
@@ -3402,11 +3429,6 @@ $('btn-view').addEventListener('click', () => {
 });
 
 /* --- тимчасова кнопка чіту: +1 000 000 за клік +10 000 💎 --- */
-$('btn-cheat').addEventListener('click', () => {
-  cheatOn = !cheatOn;
-  $('btn-cheat').classList.toggle('on', cheatOn);
-  haptic(cheatOn ? 'rigid' : 'light');
-});
 
 /* --- інтерфейс --- */
 const scoreEl = $('score'), diamondsEl = $('diamonds');
@@ -3518,3 +3540,9 @@ requestAnimationFrame(frame);
 </script>
 </body>
 </html>
+
+<style>
+#btn-settings{left:10px!important;right:auto!important}
+#btn-music{left:10px!important;right:auto!important;width:46px!important;height:46px!important}
+#ads-label{font-size:9px!important}
+</style>
