@@ -199,6 +199,58 @@
   .don-buy[disabled]{opacity:.5}
   .don-note{font-size:8px;color:var(--dim);line-height:1.7;padding:2px 4px 4px}
 
+  /* ---------- кнопка-платівка (плейлист) ---------- */
+  #btn-music{
+    position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 136px);
+    right:10px;width:36px;height:36px;border:0;border-radius:50%;pointer-events:auto;cursor:pointer;
+    overflow:hidden;background:radial-gradient(circle at 50% 50%,#1a1230 0 22%,#0d0a1a 23% 26%,#2c1f5c 27% 100%);
+    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -4px 0 0 #241a52,0 0 8px -2px rgba(126,227,255,.4);
+    display:flex;align-items:center;justify-content:center;touch-action:manipulation;
+  }
+  #btn-music:active{transform:translateY(1px)}
+  #btn-music-img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none}
+  #btn-music.has-cover #btn-music-img{display:block}
+  #btn-music.has-cover #btn-music-fb{display:none}
+  #btn-music-fb{font-size:15px}
+  #btn-music.spin #btn-music-img,#btn-music.spin #btn-music-fb{animation:disc-spin 3.4s linear infinite}
+  @keyframes disc-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+  /* ---------- модалка плейлиста ---------- */
+  #music-modal{position:fixed;inset:0;z-index:9997;display:flex;align-items:flex-end;justify-content:center;
+    background:rgba(10,6,24,.72)}
+  #music-modal.off{display:none}
+  .music-now{display:flex;align-items:center;gap:12px;padding:4px 2px 14px}
+  .music-cover-wrap{width:56px;height:56px;border-radius:50%;flex:none;overflow:hidden;position:relative;
+    background:radial-gradient(circle at 50% 50%,#1a1230 0 22%,#0d0a1a 23% 26%,#2c1f5c 27% 100%);
+    box-shadow:inset 0 0 0 2px #5b47b0}
+  .music-cover-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none}
+  .music-cover-wrap.has-cover img{display:block}
+  .music-cover-wrap.spin img,.music-cover-wrap.spin .music-cover-fb{animation:disc-spin 3.4s linear infinite}
+  .music-cover-fb{font-size:20px;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+  .music-cover-wrap.has-cover .music-cover-fb{display:none}
+  .music-now-info{min-width:0;flex:1 1 auto}
+  .music-now-title{font-family:var(--pixel);font-size:10px;color:var(--paper);text-shadow:var(--o2);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .music-now-artist{font-size:9px;color:var(--dim);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .music-progress{display:flex;align-items:center;gap:8px;padding:0 2px 10px}
+  .music-progress span{font-size:8px;color:var(--dim);flex:none;min-width:26px}
+  .music-progress span:last-child{text-align:right}
+  #music-seek{flex:1 1 auto;accent-color:var(--gold);height:4px}
+  .music-controls{display:flex;align-items:center;justify-content:center;gap:16px;padding-bottom:14px}
+  .music-controls button{border:0;border-radius:50%;background:#2c1f5c;color:var(--paper);cursor:pointer;
+    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 0 #241a52;touch-action:manipulation}
+  .music-controls button:active{transform:translateY(1px)}
+  #music-play{width:46px;height:46px;font-size:16px}
+  #music-prev,#music-next{width:36px;height:36px;font-size:13px}
+  #music-list{display:flex;flex-direction:column;gap:6px;max-height:34vh;overflow-y:auto;padding:2px 2px 4px}
+  .music-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border:0;border-radius:9px;
+    background:#241a52;color:var(--dim);cursor:pointer;text-align:left;box-shadow:inset 0 0 0 2px #3a2d70;touch-action:manipulation}
+  .music-item.active{background:linear-gradient(180deg,#4a3793 0%,#3d2a7a 100%);color:var(--paper);
+    box-shadow:inset 0 0 0 2px var(--gold)}
+  .music-item-ic{font-size:12px;flex:none}
+  .music-item-name{font-size:9px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .music-empty{font-size:9px;color:var(--dim);line-height:1.8;padding:8px 4px}
+
   /* ---------- модалка магазину ---------- */
   #shop-modal{position:fixed;inset:0;z-index:9997;display:flex;align-items:flex-end;justify-content:center;
     background:rgba(10,6,24,.72)}
@@ -353,6 +405,11 @@
       <div id="ads-label">+1💎 за рекламу</div>
     </div>
 
+    <button id="btn-music" type="button" title="Плейлист">
+      <img id="btn-music-img" src="" alt="">
+      <span id="btn-music-fb">💿</span>
+    </button>
+
     <div id="hud">
       <div id="score-row">
         <img id="score-star" data-icon="star" alt=""><span id="score">0</span>
@@ -425,6 +482,35 @@
   <div id="panel-skn" class="off"></div>
   <div id="panel-qst" class="off"></div>
   <div id="panel-lb" class="off"></div>
+
+  <div id="music-modal" class="off">
+    <div class="shop-box">
+      <div class="shop-head"><span class="shop-title">🎵 Плейлист</span><button class="shop-close" id="music-close" type="button">✕</button></div>
+      <div class="music-now">
+        <div class="music-cover-wrap" id="music-cover-wrap">
+          <span class="music-cover-fb">💿</span>
+          <img id="music-now-cover" src="" alt="">
+        </div>
+        <div class="music-now-info">
+          <div class="music-now-title" id="music-now-title">Трек не обрано</div>
+          <div class="music-now-artist" id="music-now-artist"></div>
+        </div>
+      </div>
+      <div class="music-progress">
+        <span id="music-cur-time">0:00</span>
+        <input type="range" id="music-seek" min="0" max="1000" value="0">
+        <span id="music-dur-time">0:00</span>
+      </div>
+      <div class="music-controls">
+        <button id="music-prev" type="button">⏮</button>
+        <button id="music-play" type="button">▶</button>
+        <button id="music-next" type="button">⏭</button>
+      </div>
+      <div id="music-list"></div>
+    </div>
+  </div>
+
+  <audio id="bg-audio" preload="none"></audio>
 
   <div id="shop-modal" class="off">
     <div class="shop-box">
@@ -2701,6 +2787,105 @@ btnAds.addEventListener('click', () => {
       btnAds.disabled = false;
     });
 });
+
+/* ===== Плейлист (музика) =====
+   Як додати свою музику:
+   1) Заливай mp3-файли (і, за бажанням, обкладинки-картинки) у папку
+      /music/ поруч із index.html на своєму хостингу.
+   2) Впиши кожен трек у список TRACKS нижче: title — назва, artist —
+      виконавець (необов'язково), src — шлях до mp3, cover — шлях до
+      картинки обкладинки (необов'язково, можна лишити '').
+   Приклади рядків нижче — заглушки, познач/заміни їх своїми файлами. */
+const TRACKS = [
+  { title: 'Subaru — Climb the stairs (RE:ZERO)', artist: '', src: 'music/track1auramonster.mp3', cover: 'music/cover1.jpg' },
+  // додавай наступні треки так само новим рядком:
+  // { title: 'Другий трек', artist: '', src: 'music/track2.mp3', cover: '' },
+];
+
+const bgAudio      = $('bg-audio');
+const btnMusic     = $('btn-music');
+const btnMusicImg  = $('btn-music-img');
+const musicModal   = $('music-modal');
+const musicClose   = $('music-close');
+const musicCoverWrap = $('music-cover-wrap');
+const musicNowCover  = $('music-now-cover');
+const musicNowTitle  = $('music-now-title');
+const musicNowArtist = $('music-now-artist');
+const musicPlayBtn   = $('music-play');
+const musicPrevBtn   = $('music-prev');
+const musicNextBtn   = $('music-next');
+const musicSeek      = $('music-seek');
+const musicCurTime   = $('music-cur-time');
+const musicDurTime   = $('music-dur-time');
+const musicListEl    = $('music-list');
+
+let curTrack = -1, seekDragging = false;
+
+function fmtTime(s) {
+  if (!isFinite(s) || s < 0) return '0:00';
+  const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+  return m + ':' + String(sec).padStart(2, '0');
+}
+function setSpinning(on) {
+  btnMusic.classList.toggle('spin', on);
+  musicCoverWrap.classList.toggle('spin', on);
+}
+function setCoverImg(imgEl, wrapEl, src) {
+  if (!src) { imgEl.removeAttribute('src'); wrapEl.classList.remove('has-cover'); return; }
+  imgEl.onload  = () => wrapEl.classList.add('has-cover');
+  imgEl.onerror = () => wrapEl.classList.remove('has-cover');
+  imgEl.src = src;
+}
+function renderMusicList() {
+  if (!TRACKS.length) {
+    musicListEl.innerHTML = '<div class="music-empty">Треків ще немає.<br>Додай свою музику у список TRACKS у коді гри.</div>';
+    return;
+  }
+  musicListEl.innerHTML = TRACKS.map((t, i) => `<button class="music-item${i === curTrack ? ' active' : ''}" type="button" data-idx="${i}">
+      <span class="music-item-ic">${i === curTrack && !bgAudio.paused ? '🔊' : '🎵'}</span>
+      <span class="music-item-name">${t.title || 'Трек ' + (i + 1)}</span></button>`).join('');
+  musicListEl.querySelectorAll('[data-idx]').forEach(b => b.addEventListener('click', () => loadTrack(+b.dataset.idx, true)));
+}
+function loadTrack(i, autoplay) {
+  if (!TRACKS.length) return;
+  curTrack = (i + TRACKS.length) % TRACKS.length;
+  const t = TRACKS[curTrack];
+  bgAudio.src = t.src;
+  musicNowTitle.textContent = t.title || 'Трек ' + (curTrack + 1);
+  musicNowArtist.textContent = t.artist || '';
+  setCoverImg(musicNowCover, musicCoverWrap, t.cover);
+  setCoverImg(btnMusicImg, btnMusic, t.cover);
+  renderMusicList();
+  if (autoplay) bgAudio.play().catch(() => {});
+}
+function togglePlay() {
+  if (!TRACKS.length) return;
+  if (curTrack < 0) { loadTrack(0, true); return; }
+  if (bgAudio.paused) bgAudio.play().catch(() => {}); else bgAudio.pause();
+}
+musicPlayBtn.addEventListener('click', () => { togglePlay(); haptic('light'); });
+musicNextBtn.addEventListener('click', () => { loadTrack(curTrack + 1, true); haptic('light'); });
+musicPrevBtn.addEventListener('click', () => { loadTrack(curTrack - 1, true); haptic('light'); });
+
+bgAudio.addEventListener('play',  () => { musicPlayBtn.textContent = '⏸'; setSpinning(true);  renderMusicList(); });
+bgAudio.addEventListener('pause', () => { musicPlayBtn.textContent = '▶'; setSpinning(false); renderMusicList(); });
+bgAudio.addEventListener('ended', () => loadTrack(curTrack + 1, true));
+bgAudio.addEventListener('loadedmetadata', () => { musicDurTime.textContent = fmtTime(bgAudio.duration); });
+bgAudio.addEventListener('timeupdate', () => {
+  musicCurTime.textContent = fmtTime(bgAudio.currentTime);
+  if (!seekDragging && bgAudio.duration) musicSeek.value = (bgAudio.currentTime / bgAudio.duration) * 1000;
+});
+musicSeek.addEventListener('input', () => { seekDragging = true; });
+musicSeek.addEventListener('change', () => {
+  if (bgAudio.duration) bgAudio.currentTime = (musicSeek.value / 1000) * bgAudio.duration;
+  seekDragging = false;
+});
+
+btnMusic.addEventListener('click', () => { musicModal.classList.remove('off'); renderMusicList(); haptic('light'); });
+musicClose.addEventListener('click', () => { musicModal.classList.add('off'); haptic('light'); });
+musicModal.addEventListener('click', e => { if (e.target === musicModal) musicModal.classList.add('off'); });
+
+renderMusicList();
 
 /* --- додаткові прокачки (за зірки та діаманти) --- */
 const panelMore = $('more-ups');
