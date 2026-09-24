@@ -406,13 +406,36 @@
   }
   .lb-refresh:active{transform:translateY(1px)}
   .lb-row{
-    display:flex;align-items:center;gap:6px;padding:8px 9px;border-radius:9px;background:var(--card);
-    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -4px 0 0 #241a52;
+    position:relative;display:flex;align-items:center;gap:6px;padding:9px 9px;border-radius:10px;background:linear-gradient(180deg,#241b43,#191331);
+    box-shadow:inset 0 0 0 2px #4a397f,inset 0 -4px 0 0 #0f0a20,0 3px 0 rgba(0,0,0,.18);
+    overflow:hidden;isolation:isolate;transition:transform .15s ease,box-shadow .2s ease;
   }
-  .lb-row.top1{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -4px 0 0 #8a5a0a}
-  .lb-row.top2{box-shadow:inset 0 0 0 2px #c9d3e0,inset 0 -4px 0 0 #6b7684}
-  .lb-row.top3{box-shadow:inset 0 0 0 2px #d9925a,inset 0 -4px 0 0 #8a4d1f}
-  .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55}
+  .lb-row:active{transform:translateY(1px)}
+  .lb-row.top1{box-shadow:inset 0 0 0 2px #f5c95b,inset 0 -4px 0 0 #76500b,0 3px 0 rgba(0,0,0,.2)}
+  .lb-row.top2{box-shadow:inset 0 0 0 2px #c9d3e0,inset 0 -4px 0 0 #56616f,0 3px 0 rgba(0,0,0,.2)}
+  .lb-row.top3{box-shadow:inset 0 0 0 2px #d9925a,inset 0 -4px 0 0 #75431f,0 3px 0 rgba(0,0,0,.2)}
+  .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55,0 3px 0 rgba(0,0,0,.2)}
+  .lb-row.creator{
+    background:linear-gradient(115deg,#24134d,#30206b,#152e68,#40206f,#21144b);
+    background-size:300% 300%;animation:creatorGradient 5s ease infinite;
+    box-shadow:inset 0 0 0 2px #8b6cff,inset 0 -4px 0 0 #24124f,0 0 14px rgba(111,78,255,.38);
+  }
+  .lb-row.creator::before{
+    content:'';position:absolute;inset:-45%;z-index:-1;pointer-events:none;
+    background:radial-gradient(circle at 15% 20%,rgba(255,255,255,.95) 0 1px,transparent 2px),radial-gradient(circle at 70% 75%,rgba(255,255,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 88% 25%,rgba(180,170,255,.95) 0 1.5px,transparent 2.5px);
+    background-size:55px 55px,72px 72px,91px 91px;animation:creatorStars 4s linear infinite;opacity:.9;
+  }
+  .lb-row.creator::after{
+    content:'✦  ✧  ✦  ✧';position:absolute;right:7px;top:-3px;z-index:-1;
+    font-size:9px;letter-spacing:7px;color:#d9d1ff;opacity:.8;transform:rotate(-8deg);animation:creatorSparkles 2.5s ease-in-out infinite;pointer-events:none;
+  }
+  @keyframes creatorGradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  @keyframes creatorStars{0%{transform:translateY(-8px) rotate(0deg)}100%{transform:translateY(16px) rotate(5deg)}}
+  @keyframes creatorSparkles{0%,100%{opacity:.35;transform:translateY(0) rotate(-8deg)}50%{opacity:1;transform:translateY(8px) rotate(-8deg)}}
+  .lb-name{font-weight:700;min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--o2)}
+  .lb-name.creator-name{color:#fff;text-shadow:0 0 5px #9d8cff,0 0 10px rgba(128,100,255,.7)}
+  .lb-crown{display:inline-block;margin-right:3px;font-size:11px;filter:drop-shadow(0 0 3px rgba(255,215,75,.75));animation:crownFloat 2s ease-in-out infinite}
+  @keyframes crownFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
   .lb-rank{width:18px;flex:none;font-size:8px;color:var(--dim);text-align:center}
   .lb-award{width:16px;flex:none;font-size:13px;text-align:center;line-height:1}
   .lb-av{position:relative;flex:none;width:18px;height:18px}
@@ -426,6 +449,9 @@
   .lb-name{flex:1 1 auto;min-width:0;font-size:9px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .lb-score{flex:none;font-size:9px;color:var(--gold);text-shadow:var(--o2);min-width:40px;text-align:right}
   .lb-empty{font-size:8px;color:var(--dim);text-align:center;line-height:1.8;padding:20px 8px}
+  .referral-info{padding:9px 10px;margin-bottom:1px;border-radius:9px;background:linear-gradient(135deg,#2c1f5c,#241a52);box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 0 #241a52;text-align:center}
+  .referral-info-title{font-size:9px;color:var(--gold);line-height:1.5;text-shadow:var(--o2);margin-bottom:5px}
+  .referral-info-desc{font-size:7px;color:var(--paper);line-height:1.7}
   .quest-bar{height:6px;background:#1a1030;border:1px solid #000;box-shadow:inset 0 0 0 1px #4b3a8f;margin-top:5px}
   .quest-bar-fill{height:100%;background:linear-gradient(#7be0a4,#4ea83a)}
   .wpn.done{--edge:#4ea83a;--edge-dark:#215c1e;opacity:.75}
@@ -1106,6 +1132,8 @@ const I18N = {
     'settings-lang-label': 'МОВА / LANGUAGE',
     'music-now-title-empty': 'Трек не обрано',
     'ref-modal-ok': 'OK',
+    'referral-title': '👥 Реферальна система',
+    'referral-desc': 'Запроси друга в гру. Якщо він дійде до 3-го поверху — ти отримаєш 20💎!',
     perClick: 'за клік', autoSuffix: 'авто', perSec: '/с',
     lvl: 'рів.', click: 'Клік', auto: 'Авто',
     floor: 'Поверх', top: 'Вершина вежі'
@@ -1135,6 +1163,8 @@ const I18N = {
     'settings-lang-label': 'LANGUAGE / МОВА',
     'music-now-title-empty': 'No track selected',
     'ref-modal-ok': 'OK',
+    'referral-title': '👥 Referral system',
+    'referral-desc': 'Invite a friend to the game. If they reach the 3rd floor, you will receive 20💎!',
     perClick: 'per tap', autoSuffix: 'auto', perSec: '/s',
     lvl: 'lvl', click: 'Click', auto: 'Auto',
     floor: 'Floor', top: 'Top of the tower'
@@ -1150,6 +1180,8 @@ const I18N = {
     'up-power-name': 'Сила клика', 'up-auto-name': 'Автоклик', 'music-title': '🎵 Плейлист',
     'shop-title': '🛒 Магазин', 'settings-title': '⚙️ Настройки', 'settings-lang-label': 'ЯЗЫК / LANGUAGE',
     'music-now-title-empty': 'Трек не выбран', 'ref-modal-ok': 'OK',
+    'referral-title': '👥 Реферальная система',
+    'referral-desc': 'Пригласи друга в игру. Если он дойдёт до 3-го этажа — ты получишь 20💎!',
     perClick: 'за клик', autoSuffix: 'авто', perSec: '/с', lvl: 'ур.', click: 'Клик', auto: 'Авто',
     floor: 'Этаж', top: 'Вершина башни'
   }
@@ -3310,7 +3342,8 @@ function awardFor(rank) {
   return '';
 }
 
-const inviteBtnHtml = () => '<button class="lb-refresh" id="lb-invite-btn" type="button">👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')</button>';
+const referralInfoHtml = () => '<div class="referral-info"><div class="referral-info-title">' + uiText('referral-title') + '</div><div class="referral-info-desc">' + uiText('referral-desc') + '</div></div>';
+const inviteBtnHtml = () => referralInfoHtml() + '<button class="lb-refresh" id="lb-invite-btn" type="button">👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')</button>';
 function bindInviteBtn() { const b = $('lb-invite-btn'); if (b) b.addEventListener('click', shareReferralLink); }
 function refreshInviteBtn() { const b = $('lb-invite-btn'); if (b) b.textContent = '👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')'; }
 
@@ -3357,9 +3390,12 @@ async function renderLeaderboard() {
     const rank = i + 1;
     const award = awardFor(rank);
     const isMe = (p.username || '') === playerName;
-    const cls = ['lb-row']; if (rank <= 3) cls.push('top' + rank); if (isMe) cls.push('me');
-    const name = escapeHtml(String(p.username || uiText('Анонім'))).slice(0, 20);
-    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span><span class="lb-name">${name}</span><span class="lb-score">${fmt(p.score || 0)}</span></div>`;
+    const rawName = String(p.username || uiText('Анонім'));
+    const isCreator = rawName.replace(/^@/, '').toLowerCase() === 'sergixlol';
+    const cls = ['lb-row']; if (rank <= 3) cls.push('top' + rank); if (isMe) cls.push('me'); if (isCreator) cls.push('creator');
+    const name = escapeHtml(rawName).slice(0, 20);
+    const creatorName = isCreator ? '<span class="lb-crown">👑</span><span class="lb-name creator-name">' + name + '</span>' : '<span class="lb-name">' + name + '</span>';
+    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span>${creatorName}<span class="lb-score">${fmt(p.score || 0)}</span></div>`;
   }).join('');
   panelLb.innerHTML = inviteBtnHtml() + onlineHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
   bindInviteBtn();
