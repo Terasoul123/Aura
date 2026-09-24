@@ -2990,6 +2990,7 @@ const DONATE_TIERS = [
   { id:'large',   stars:500,  diamonds:4500,  game:90000,  ic:'💎' },
   { id:'mega',    stars:1000, diamonds:10000, game:220000, ic:'👑' }
 ];
+let dnSeen = false;   // підказка «гортай вниз» показується, доки гравець не дійшов до низу
 function renderDonate() {
   const card = t => `<div class="don-card"><div class="don-ic">${t.ic}</div>
     <div class="don-mid"><div class="don-name">${fmt(t.diamonds)}💎 + ${fmt(t.game)}★</div>
@@ -2997,12 +2998,11 @@ function renderDonate() {
     <button class="don-buy" type="button" data-tier="${t.id}">⭐ ${fmt(t.stars)}</button></div>`;
   const keepTop = panelDon.scrollTop;   // перемальовування не має скидати прокрутку
   panelDon.innerHTML = caseCardHtml() + `<div class="don-note">${uiText('Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.')}</div>`
-    + DONATE_TIERS.map(card).join('') + converterHtml() + `<div class="dn-hint" id="dn-hint"><b>▼</b>${t('dnHint')}</div>`;
+    + DONATE_TIERS.map(card).join('') + converterHtml() + (dnSeen ? '' : `<div class="dn-hint" id="dn-hint"><b>▼</b>${t('dnHint')}</div>`);
   panelDon.scrollTop = keepTop;
   panelDon.querySelectorAll('[data-conv]').forEach(b => b.addEventListener('click', () => convertDiamonds(Number(b.dataset.conv))));
-  const dnHint = () => { const h = $('dn-hint'); if (h) h.classList.toggle('gone', panelDon.scrollTop + panelDon.clientHeight >= panelDon.scrollHeight - 12); };
+  const dnHint = () => { if (dnSeen || !panelDon.clientHeight) return; if (panelDon.scrollTop + panelDon.clientHeight >= panelDon.scrollHeight - 12) { dnSeen = true; const h = $('dn-hint'); if (h) h.remove(); } };
   if (!panelDon._dn) { panelDon._dn = true; panelDon.addEventListener('scroll', dnHint, { passive: true }); }
-  setTimeout(dnHint, 0);
   panelDon.querySelectorAll('[data-buy-case]').forEach(b => b.addEventListener('click', buyCaseDiamonds));
   panelDon.querySelectorAll('[data-open-case]').forEach(b => b.addEventListener('click', openCase));
   panelDon.querySelectorAll('[data-case-stars]').forEach(b => b.addEventListener('click', () => buyTier('case', b)));
@@ -4368,6 +4368,55 @@ function openCase() {
   dirty = true; uiDirty = true; shopSig = ''; save();
   csScene(tier, prize, comp);
 }
+/* ===== Звуки кейса та інтерфейсу (синтез WebAudio, поважає повзунок гучності звуків) ===== */
+function sfxCtx() { try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {}); return audioCtx; } catch (e) { return null; } }
+function sfxTone(f, d, type, v, t0, slide) {
+  if (soundVolume <= 0) return; const c = sfxCtx(); if (!c) return;
+  try {
+    const o = c.createOscillator(), gn = c.createGain(), t = c.currentTime + (t0 || 0);
+    o.type = type || 'square'; o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(20, f * slide), t + d);
+    gn.gain.setValueAtTime(.0001, t); gn.gain.exponentialRampToValueAtTime(Math.max(.0002, (soundVolume / 100) * (v || .05)), t + .01); gn.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(gn); gn.connect(c.destination); o.start(t); o.stop(t + d + .03);
+  } catch (e) {}
+}
+function sfxNoise(d, v, f0, f1, t0) {   // «вуш»: шум через смуговий фільтр із зсувом частоти
+  if (soundVolume <= 0) return; const c = sfxCtx(); if (!c) return;
+  try {
+    const n = Math.floor(c.sampleRate * d), buf = c.createBuffer(1, n, c.sampleRate), ch = buf.getChannelData(0); for (let i = 0; i < n; i++) ch[i] = Math.random() * 2 - 1;
+    const src = c.createBufferSource(), fl = c.createBiquadFilter(), gn = c.createGain(), t = c.currentTime + (t0 || 0);
+    src.buffer = buf; fl.type = 'bandpass'; fl.Q.value = 3; fl.frequency.setValueAtTime(f0, t); fl.frequency.exponentialRampToValueAtTime(f1, t + d);
+    gn.gain.setValueAtTime(.0001, t); gn.gain.exponentialRampToValueAtTime(Math.max(.0002, (soundVolume / 100) * v), t + d * .3); gn.gain.exponentialRampToValueAtTime(.0001, t + d);
+    src.connect(fl); fl.connect(gn); gn.connect(c.destination); src.start(t); src.stop(t + d + .02);
+  } catch (e) {}
+}
+const sfxArp = (notes, gap, type, v, len) => notes.forEach((f, i) => sfxTone(f, len || .35, type, v, i * gap));
+let _lastUi = 0;
+function uiClick() { const n = performance.now(); if (n - _lastUi < 45) return; _lastUi = n; sfxTone(520, .05, 'square', .035); sfxTone(780, .07, 'triangle', .03, .03); }
+document.addEventListener('pointerdown', e => {   // звук натискання на будь-яку кнопку інтерфейсу
+  const b = e.target.closest && e.target.closest('button,a,[role="button"],.tab,.subtab,label.sw,summary');
+  if (b && !b.disabled) uiClick();
+}, true);
+const csSnd = {
+  whoosh() { sfxNoise(.4, .05, 1600, 250); },
+  hit() { sfxTone(180, .12, 'sine', .06, 0, .5); },
+  tap(n, tier) { sfxTone(200 + n * 45, .13, 'triangle', .08, 0, 1.6); sfxTone(700 + n * 70, .09, 'sine', .045, .02); if (tier === 3 && n > 9) sfxArp([1200, 1500, 1800].map(f => f + n * 20), .04, 'sine', .03, .12); },
+  charge(tier) { sfxTone(300, .7, 'sawtooth', .04, 0, 4); if (tier === 2) sfxTone(120, .7, 'sine', .07, 0, 2); },
+  burst(tier) {
+    if (tier === 0) { sfxArp([392, 523], .09, 'triangle', .07, .3); sfxNoise(.25, .03, 900, 300); }
+    else if (tier === 1) { sfxArp([523, 659, 784, 1047, 1319], .075, 'triangle', .07, .45); sfxNoise(.5, .035, 500, 3000); }
+    else if (tier === 2) { sfxTone(90, .7, 'sine', .16, 0, .35); sfxNoise(.8, .06, 300, 80); sfxArp([440, 523, 659, 880, 1047], .09, 'sawtooth', .045, .5); }
+    else { sfxNoise(1.1, .06, 200, 5000); sfxTone(110, 1.2, 'sine', .14, 0, 3); sfxArp([523, 659, 784, 988, 1319, 1568, 2093], .11, 'sine', .07, 1.1); sfxArp([1046, 1318, 1568, 1976, 2637], .16, 'triangle', .04, .9); }
+  },
+  spin() { sfxNoise(1.2, .05, 300, 2500); },
+  tick() { sfxTone(1500, .03, 'square', .03); },
+  win(r) {
+    sfxTone(80, .3, 'sine', .12, 0, .4);
+    if (r === 0) sfxArp([523, 659], .1, 'triangle', .07, .3);
+    else if (r === 1) sfxArp([523, 659, 784], .1, 'triangle', .08, .4);
+    else if (r === 2) sfxArp([392, 523, 659, 784, 1047], .09, 'sawtooth', .05, .5);
+    else { sfxArp([523, 659, 784, 1047, 1319, 1568, 2093], .09, 'sine', .08, .9); sfxNoise(.9, .05, 400, 6000); }
+  }
+};
 function csMoonCv(h) {   // піксельний Місяць потрібного відтінку (космічний кейс)
   const c = document.createElement('canvas'); c.width = c.height = 20; const g = c.getContext('2d');
   for (let y = 0; y < 20; y++) for (let x = 0; x < 20; x++) {
@@ -4383,6 +4432,10 @@ const CS_FX = [{ fl: .6, rings: 1, n: 40, up: 0, dur: 1.6 }, { fl: 1, rings: 2, 
 function csScene(tier, prize, comp) {
   const m = $('case-modal'), sp = csSprites(), col = CS_COL[tier], N = 60, RW = 9, CW = 92, FX = CS_FX[tier], BASE = 9, TOTAL = BASE + (tier === 3 ? 6 : 0);
   const imgCase = new Image(); imgCase.src = sp.caseUrl;
+  const wasPlaying = !bgAudio.paused;   // музика з платівки не має зникати: притишуємо на час сцени і страхуємо від автопаузи
+  bgAudio.volume = Math.max(0, musicVolume / 100 * .5);
+  const keepMusic = () => { if (wasPlaying && !document.hidden) bgAudio.play().catch(() => {}); };
+  bgAudio.addEventListener('pause', keepMusic);
   const items = Array.from({ length: N }, (_, i) => i === RW ? prize : csRollFrom(tier));   // у рулетці кейса кращої рідкості — кращий дроп
   m.className = '';
   m.innerHTML = `<canvas id="cs-cv"></canvas><div class="cs-hint" id="cs-hint">${t('csTap')}</div><div class="cs-tier" id="cs-tier" style="color:${col}"></div>
@@ -4400,23 +4453,23 @@ function csScene(tier, prize, comp) {
   let cometHits = 0, taps = 0, eS = 0, bounce = 0, stage = 'intro', tBurst = 0, tSeal = 0, flash = 0, chestA = 1, nextC = 0, x0 = 0, x1 = 0, wW = 0;
   const cxy = () => [W / 2, H * 0.40];
   const boom = (x, y, n, c, sp0, up) => { for (let i = 0; i < n; i++) { const a = rnd(0, 6.28), v = rnd(30, sp0); sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - (up || 0) * rnd(.3, 1), l: rnd(.5, 1.1), c: typeof c === 'function' ? c() : c, s: Math.random() < .5 ? 3 : 4 }); } };
-  const spawnComet = () => { const [tx, ty] = cxy(), left = Math.random() < .6; comets.push({ x0: left ? -30 : rnd(0, W), y0: left ? rnd(H * .1, H * .8) : -30, tx, ty, u: 0, d: rnd(.45, .75), tr: [], c: pick(cols.slice(1)), x: 0, y: 0 }); };
+  const spawnComet = () => { csSnd.whoosh(); const [tx, ty] = cxy(), left = Math.random() < .6; comets.push({ x0: left ? -30 : rnd(0, W), y0: left ? rnd(H * .1, H * .8) : -30, tx, ty, u: 0, d: rnd(.45, .75), tr: [], c: pick(cols.slice(1)), x: 0, y: 0 }); };
   const hue = () => `hsl(${rnd(200, 300)},95%,65%)`;
   const doBurst = () => {
-    stage = 'burst'; tBurst = T; flash = FX.fl; hapticNote('success'); $('cs-hint').classList.remove('on');
+    stage = 'burst'; tBurst = T; flash = FX.fl; hapticNote('success'); csSnd.burst(tier); $('cs-hint').classList.remove('on');
     const el = $('cs-tier'); el.textContent = `${t('csR' + tier)} ${t('csCase')}`; el.classList.add('show');
     for (let i = 0; i < FX.rings; i++) rings.push({ p: -i * .22 });
     const [cx, cy] = cxy(); boom(cx, cy, FX.n, tier === 3 ? hue : (tier === 2 ? () => pick(['#ff3d4d', '#ff8a3d', '#ffd23f']) : col), tier === 3 ? 520 : 420, FX.up);
   };
   cv.addEventListener('pointerdown', () => {
     if (stage !== 'charge' && !(stage === 'seal' && false)) return;
-    taps++; bounce = 1; haptic('light');
+    taps++; bounce = 1; haptic('light'); csSnd.tap(taps, tier);
     for (let i = 0, tries = 0; i < 9 && tries < 80; tries++) { const st = pick(stars); if (st.fl || st.ta < 1) continue; st.fl = { x0: st.x, y0: st.y, u: 0, d: rnd(.5, .9), k: rnd(-110, 110) }; i++; }
     if (tier === 0) { for (let i = 0, tries = 0; i < 8 && tries < 80; tries++) { const st = pick(stars); if (!st.fl && st.ta === 1) { st.ta = 0; i++; } } }              // звичайний: небо порожніє
     else if (tier === 1) { for (let i = 0; i < 12; i++) stars.push(mk(rnd(0, W), rnd(0, H), pick([2, 2, 3]), pick(['#b56bff', '#d9a8ff', '#8f4dff']), 0)); }               // фіолетовий: більше зірок + фіолетові
     else if (tier === 2) { for (let i = 0, n = 6 + taps * 3; i < n; i++) stars.push(mk(rnd(0, W), rnd(0, H), pick([2, 3, 3, 4]), pick(['#ff3d4d', '#ff7a5c', '#ff1f3a']), 0)); }   // червоний: з кожним тапом дедалі більше червоних
     else { const h = rnd(0, 360); moons.push({ x: rnd(50, W - 50), y: rnd(50, H - 50), r: 0, tr: rnd(16, 30), ph: rnd(0, 6.28), cv: csMoonCv(h) }); boom(moons[moons.length - 1].x, moons[moons.length - 1].y, 10, hue, 200); }   // космічний: різнокольорові місяці
-    if (tier < 3 && taps >= BASE) { stage = 'seal'; tSeal = T; }        // шкала повна → фарбується в колір кейса, потім відкриття
+    if (tier < 3 && taps >= BASE) { stage = 'seal'; tSeal = T; csSnd.charge(tier); }        // шкала повна → фарбується в колір кейса, потім відкриття
     else if (tier === 3 && taps >= TOTAL) doBurst();                    // космічний: повна шкала НЕ відкриває, треба ще тапати — шкала виходить за межі
   });
   const update = dt => {
@@ -4434,7 +4487,7 @@ function csScene(tier, prize, comp) {
     for (let i = comets.length - 1; i >= 0; i--) {
       const c = comets[i]; c.u += dt / c.d; const u = Math.min(1, c.u), e = u * u;
       c.x = c.x0 + (c.tx - c.x0) * e; c.y = c.y0 + (c.ty - c.y0) * e; c.tr.push([c.x, c.y]); if (c.tr.length > 16) c.tr.shift();
-      if (u >= 1) { cometHits++; bounce = 1; boom(cx, cy, 14, c.c, 260); haptic('light'); comets.splice(i, 1); }
+      if (u >= 1) { cometHits++; bounce = 1; csSnd.hit(); boom(cx, cy, 14, c.c, 260); haptic('light'); comets.splice(i, 1); }
     }
     for (let i = sparks.length - 1; i >= 0; i--) { const p = sparks[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= .985; p.vy *= .985; if ((p.l -= dt) <= 0) sparks.splice(i, 1); }
     for (const mo of moons) mo.r += (mo.tr - mo.r) * Math.min(1, dt * 5);
@@ -4492,14 +4545,14 @@ function csScene(tier, prize, comp) {
   const loop = now => { const dt = Math.min(.05, (now - last) / 1000); last = now; update(dt); draw(); raf = requestAnimationFrame(loop); };
   raf = requestAnimationFrame(loop);
   go.addEventListener('click', () => {
-    go.disabled = true; go.style.display = 'none'; haptic('heavy');
+    go.disabled = true; go.style.display = 'none'; haptic('heavy'); csSnd.spin();
     const D = 6800, t0 = performance.now(); let lastI = -1;
     const ease = u => { const e = 1 - Math.pow(1 - u, 4); return u < .08 ? e * (u / .08) * (u / .08) : e; };
     (function frame(now) {
       const u = Math.min(1, (now - t0) / D), x = x0 + (x1 - x0) * ease(u); strip.style.transform = `translate3d(${x}px,0,0)`;
-      const idx = Math.floor((wW / 2 - x) / CW); if (idx !== lastI) { lastI = idx; haptic('light'); }
+      const idx = Math.floor((wW / 2 - x) / CW); if (idx !== lastI) { lastI = idx; haptic('light'); csSnd.tick(); }
       if (u < 1) return requestAnimationFrame(frame);
-      strip.children[RW].classList.add('win'); hapticNote('success');
+      strip.children[RW].classList.add('win'); hapticNote('success'); csSnd.win(prize.r);
       const [ic, tx] = csLabel(prize), pc = CS_COL[prize.r];
       const big = prize.skin
         ? `<img src="${skinPreviewUrl(prize.skin)}" alt="" style="height:120px;width:auto;image-rendering:pixelated;display:block;margin:8px auto;filter:drop-shadow(0 0 14px ${pc})">`
@@ -4507,7 +4560,7 @@ function csScene(tier, prize, comp) {
       $('cs-res').style.setProperty('--rc', pc);
       $('cs-res').innerHTML = `${t('csWin')}:${big}<b>${ic} ${escapeHtml(tx)}</b>${t('csR' + prize.r)}${comp ? '<br>' + t('csDupe') + ' ' + comp : ''}<br><button class="ref-ok" id="cs-ok" type="button" style="margin-top:14px;max-width:200px">OK</button>`;
       floater('🎁 ' + ic + ' ' + tx, cx * S, (cy - 70) * S); burst(cx, cy - 10, 30, 110, SPARK);
-      $('cs-ok').addEventListener('click', () => { cancelAnimationFrame(raf); removeEventListener('resize', fit); m.classList.add('off'); csBusy = false; uiDirty = true; shopSig = ''; });
+      $('cs-ok').addEventListener('click', () => { bgAudio.removeEventListener('pause', keepMusic); applyMusicVolume(); cancelAnimationFrame(raf); removeEventListener('resize', fit); m.classList.add('off'); csBusy = false; uiDirty = true; shopSig = ''; });
     })(t0);
   }, { once: true });
 }
