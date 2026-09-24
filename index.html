@@ -3007,15 +3007,42 @@ async function fetchLeaderboard(limit) {
 /* Раз на 5 секунд (і при виході з гри) відправляємо свій рахунок і
    прогрес у Supabase — upsert по telegram_id: якщо рядка гравця ще нема,
    Supabase створить новий, якщо є — оновить score і progress. */
+function adminVersionOf(progress) {
+  const v = Number(progress && progress.__adminVersion);
+  return Number.isFinite(v) ? v : 0;
+}
+
 async function syncProgressToCloud(force) {
   if (!keyReady() || !telegramId) return;
-  if (!resetReady && !force) return;            // поки не перевірили прапорець скидання — старий локальний прогрес у хмару не шлемо
+  if (!resetReady && !force) return;
   if (cloudSaving) {
     if (!force) return;
     for (let i = 0; i < 30 && cloudSaving; i++) await new Promise(r => setTimeout(r, 100));
   }
   cloudSaving = true;
   try {
+    // Якщо адмін уже змінив акаунт, спочатку приймаємо адмінську версію.
+    try {
+      const check = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?telegram_id=eq.${telegramId}&select=progress,reset_progress&limit=1`, {
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+      });
+      if (check.ok) {
+        const rows = await check.json();
+        const remote = rows && rows[0];
+        const remoteVersion = adminVersionOf(remote && remote.progress);
+        const localVersion = adminVersionOf(state);
+        if (remoteVersion > localVersion && remote && remote.progress) {
+          const cloud = sanitizeState(remote.progress);
+          Object.assign(state, cloud);
+          state.__adminVersion = remoteVersion;
+          dirty = false; uiDirty = true;
+          try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {}
+          renderUI();
+          return;
+        }
+      }
+    } catch (e) {}
+
     await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?on_conflict=telegram_id`, {
       method: 'POST',
       headers: {
@@ -3057,7 +3084,8 @@ async function loadProgressFromCloud() {
   const row = await fetchCloudProgress();
   if (!row || !row.progress || row.reset_progress === true) return;   // reset_progress = true → старий прогрес з хмари не відновлюємо
   const cloud = sanitizeState(row.progress);
-  if (cloud.totalStars > state.totalStars) {
+  // Адмінська версія має пріоритет навіть якщо totalStars стало менше.
+  if (adminVersionOf(cloud) > adminVersionOf(state) || cloud.totalStars > state.totalStars) {
     const keepDaily = (cloud.daily.n > state.daily.n || (cloud.daily.n === state.daily.n && cloud.daily.day > state.daily.day)) ? cloud.daily : state.daily;
     Object.assign(state, cloud);
     state.daily = { n: keepDaily.n, day: keepDaily.day };
