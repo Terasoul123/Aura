@@ -237,6 +237,15 @@
   .cs-shop .cs-o{font-size:8px;line-height:2;display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
   .cs-shop .cs-b{display:flex;flex-direction:column;gap:8px;width:100%;max-width:240px}
 
+  #cs-cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+  .cs-hint{position:absolute;left:0;right:0;bottom:16%;text-align:center;font:11px var(--pixel);color:#fff;text-shadow:var(--o2);pointer-events:none;opacity:0;transition:opacity .5s}
+  .cs-hint.on{opacity:1;animation:cs-blink 1s ease-in-out infinite alternate}
+  @keyframes cs-blink{to{opacity:.35}}
+  .cs-tier{position:absolute;left:0;right:0;top:11%;text-align:center;font:17px/1.6 var(--pixel);pointer-events:none;opacity:0;transform:scale(.4);text-shadow:0 0 18px currentColor,var(--o2);text-transform:uppercase}
+  .cs-tier.show{opacity:1;transform:none;transition:transform .7s cubic-bezier(.2,1.5,.4,1),opacity .4s}
+  .cs-go,.cs-it.win{will-change:transform}
+  .cs-strip{transform:translate3d(0,0,0)}
+
   /* ---------- щоденні нагороди ---------- */
   #daily-modal{position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;background:rgba(10,6,24,.72);padding:24px}
   #daily-modal.off{display:none}
@@ -737,7 +746,6 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
     <button class="subtab" id="sub-wpn" type="button"><span class="subtab-ic">⚔</span>Зброя</button>
     <button class="subtab" id="sub-arm" type="button"><span class="subtab-ic">🛡</span>Броня</button>
     <button class="subtab" id="sub-skn" type="button"><span class="subtab-ic">🎭</span>Образи</button>
-    <button class="subtab" id="sub-case" type="button"><span class="subtab-ic">🎁</span>Кейс</button>
   </div>
 
   <div id="ref-modal" class="off">
@@ -782,7 +790,6 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
   <div id="panel-wpn" class="off"></div>
   <div id="panel-arm" class="off"></div>
   <div id="panel-skn" class="off"></div>
-  <div id="panel-case" class="off"></div>
   <div id="panel-qst" class="off"></div>
   <div id="panel-lb" class="off"></div>
 
@@ -1231,6 +1238,9 @@ Object.assign(I18N.ru, { csName: 'Космический кейс', csDesc: 'Ш�
 Object.assign(I18N.uk, { csOpen: 'Відкрити', csOdds: 'Шанси випадіння' });
 Object.assign(I18N.en, { csOpen: 'Open', csOdds: 'Drop chances' });
 Object.assign(I18N.ru, { csOpen: 'Открыть', csOdds: 'Шансы выпадения' });
+Object.assign(I18N.uk, { csR1: 'Фіолетовий', csR2: 'Червоний', csCase: 'кейс', csTap: 'Тапай по кейсу!', csDesc: 'Чим рідкісніший кейс — тим кращий дроп у рулетці!', csOdds: 'Шанс випадіння кейса' });
+Object.assign(I18N.en, { csR1: 'Purple', csR2: 'Red', csCase: 'case', csTap: 'Tap the case!', csDesc: 'The rarer the case, the better the roulette drop!', csOdds: 'Case rarity chances' });
+Object.assign(I18N.ru, { csR1: 'Фиолетовый', csR2: 'Красный', csCase: 'кейс', csTap: 'Тапай по кейсу!', csDesc: 'Чем реже кейс — тем лучше дроп в рулетке!', csOdds: 'Шанс выпадения кейса' });
 Object.assign(I18N.ru, { maintTitle: 'Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Возвращайся чуть позже — прогресс никуда не денется.' });
 let curLang = (() => {
   try {
@@ -2970,8 +2980,11 @@ function renderDonate() {
     <div class="don-mid"><div class="don-name">${fmt(t.diamonds)}💎 + ${fmt(t.game)}★</div>
     <div class="don-get">${uiText('одноразова покупка')}</div></div>
     <button class="don-buy" type="button" data-tier="${t.id}">⭐ ${fmt(t.stars)}</button></div>`;
-  panelDon.innerHTML = `<div class="don-note">${uiText('Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.')}</div>`
+  panelDon.innerHTML = caseCardHtml() + `<div class="don-note">${uiText('Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.')}</div>`
     + DONATE_TIERS.map(card).join('');
+  panelDon.querySelectorAll('[data-buy-case]').forEach(b => b.addEventListener('click', buyCaseDiamonds));
+  panelDon.querySelectorAll('[data-open-case]').forEach(b => b.addEventListener('click', openCase));
+  panelDon.querySelectorAll('[data-case-stars]').forEach(b => b.addEventListener('click', () => buyTier('case', b)));
   panelDon.querySelectorAll('[data-tier]').forEach(b => b.addEventListener('click', () => buyTier(b.dataset.tier, b)));
 }
 async function buyTier(tierId, btn) {
@@ -3748,12 +3761,12 @@ btnAuto.addEventListener('click', () => {
    а всередині "Прокачки" — свої підвкладки: основне / зброя / броня / образи */
 const tabsBar = $('tabs');
 const tabUpg = $('tab-upg'), tabQst = $('tab-qst'), tabLb = $('tab-lb');
-const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelCase = $('panel-case'), panelQst = $('panel-qst'), panelLb = $('panel-lb'), panelDon = $('panel-don');
+const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelQst = $('panel-qst'), panelLb = $('panel-lb'), panelDon = $('panel-don');
 const subtabsBar = $('subtabs');
-const subUps = $('sub-ups'), subWpn = $('sub-wpn'), subArm = $('sub-arm'), subSkn = $('sub-skn'), subCase = $('sub-case');
+const subUps = $('sub-ups'), subWpn = $('sub-wpn'), subArm = $('sub-arm'), subSkn = $('sub-skn');
 
 const mainTabs = [['upg', tabUpg], ['qst', tabQst], ['lb', tabLb]];
-const subTabs  = [['ups', subUps, panelUpg], ['wpn', subWpn, panelWpn], ['arm', subArm, panelArm], ['skn', subSkn, panelSkn], ['case', subCase, panelCase]];
+const subTabs  = [['ups', subUps, panelUpg], ['wpn', subWpn, panelWpn], ['arm', subArm, panelArm], ['skn', subSkn, panelSkn]];
 let curSub = 'ups';
 let tabsCollapsed = false;   // сховані всі панелі — лишаються тільки 3 кнопки внизу
 
@@ -4054,7 +4067,7 @@ function renderShops() {
   const sig = shopSignature();
   if (sig === shopSig) return;
   shopSig = sig;
-  renderWeapons(); renderArmor(); renderSkins(); renderCase(); renderMoreUps(); renderQuests();
+  renderWeapons(); renderArmor(); renderSkins(); renderDonate(); renderMoreUps(); renderQuests();
 }
 
 /* --- Завдання --- */
@@ -4258,17 +4271,14 @@ function csStarsHtml() {   // піксельні зірки (квадрати) �
   const layer = (n, sz, dur) => { const a = []; for (let i = 0; i < n; i++) a.push(`${(Math.random() * 100).toFixed(1)}vw ${(Math.random() * 100).toFixed(1)}vh 0 0 ${cols[i % 4]}`); return `<i class="cs-px" style="width:${sz}px;height:${sz}px;box-shadow:${a.join(',')};animation-duration:${dur}s"></i>`; };
   return layer(50, 2, 1.7) + layer(28, 3, 2.3) + layer(12, 4, 3.1);
 }
-function renderCase() {
+function caseCardHtml() {
   const can = state.diamonds >= CASE_DIAMONDS;
-  const odds = [0, 1, 2, 3].map(r => `<div style="color:${CS_COL[r]}">${t('csR' + r)} — ${Math.round(CS_ITEMS.filter(i => i.r === r).reduce((a, i) => a + i.w, 0) * 10) / 10}%</div>`).join('');
-  panelCase.innerHTML = `<div class="cs-shop"><img class="cs-sp" src="${csSprites().caseUrl}" width="96" height="96" alt="">
+  const odds = [0, 1, 2, 3].map(r => `<div style="color:${CS_COL[r]}">${t('csR' + r)} — ${CS_TIER_P[r]}%</div>`).join('');
+  return `<div class="cs-shop"><img class="cs-sp" src="${csSprites().caseUrl}" width="96" height="96" alt="">
     <div class="cs-t">${t('csName')}</div><div class="cs-d">${t('csDesc')}</div>
     <div class="cs-d">${t('csOdds')}:</div><div class="cs-o">${odds}</div>
     <div class="cs-b">${state.cases > 0 ? `<button class="wpn-btn" type="button" data-open-case>🎁 ${t('csOpen')} ×${state.cases}</button>` : ''}
     ${priceBtn('diamond', CASE_DIAMONDS, can, 'data-buy-case', '1')}<button class="don-buy" type="button" data-case-stars>⭐ 50</button></div></div>`;
-  panelCase.querySelectorAll('[data-buy-case]').forEach(b => b.addEventListener('click', buyCaseDiamonds));
-  panelCase.querySelectorAll('[data-open-case]').forEach(b => b.addEventListener('click', openCase));
-  panelCase.querySelectorAll('[data-case-stars]').forEach(b => b.addEventListener('click', () => buyTier('case', b)));
 }
 const CASE_DIAMONDS = 150;   // ціна кейса в 💎; за справжні Telegram Stars — 50 ⭐ (тариф 'case' на сервері)
 const CS_COL = ['#9aa0ac', '#a44bff', '#ff3d4d', '#3fa7ff'];
@@ -4280,7 +4290,11 @@ const CS_ITEMS = [
 ];
 let csBusy = false;
 document.body.insertAdjacentHTML('beforeend', '<div id="case-modal" class="off"></div>');
-function csRoll() { let x = Math.random() * 100; for (const it of CS_ITEMS) { if ((x -= it.w) < 0) return it; } return CS_ITEMS[0]; }
+/* Два розіграші: 1) яка рідкість КЕЙСА (CS_TIER_P), 2) приз з рулетки — чим рідкісніший кейс, тим кращі шанси на дроп (CS_DROP). */
+const CS_TIER_P = [60, 27, 10, 3];                                                   // шанс (%) кейса: звичайний / фіолетовий / червоний / космічний
+const CS_DROP = [[80, 17, 3, 0], [40, 45, 13, 2], [15, 40, 38, 7], [0, 20, 50, 30]];   // шанс (%) призу кожної рідкості всередині кейса
+function csPick(w) { let x = Math.random() * w.reduce((a, b) => a + b, 0); for (let i = 0; i < w.length; i++) { if ((x -= w[i]) < 0) return i; } return w.length - 1; }
+function csRollFrom(tier) { const r = csPick(CS_DROP[tier]), pool = CS_ITEMS.filter(i => i.r === r); return pool[csPick(pool.map(i => i.w))]; }
 function csLabel(it) {
   if (it.skin) return ['🎭', uiText(SKINS.find(x => x.id === it.skin).name)];
   return it.d ? ['💎', '+' + fmt(it.d)] : ['★', '+' + fmt(it.s)];
@@ -4318,46 +4332,111 @@ async function claimCases() {   // забирає кейси, оплачені T
 setTimeout(claimCases, 2500);
 function openCase() {
   if (csBusy || state.cases < 1) return;
-  csBusy = true;
-  state.cases--;
-  const prize = csRoll(), comp = csGrant(prize);
+  csBusy = true; state.cases--;
+  const tier = csPick(CS_TIER_P), prize = csRollFrom(tier), comp = csGrant(prize);   // приз нараховано одразу — анімація лише «показує» його
   dirty = true; uiDirty = true; shopSig = ''; save();
-  const W = 9, N = 60, CW = 92, m = $('case-modal');
-  const items = Array.from({ length: N }, (_, i) => i === W ? prize : csRoll());
-  m.className = ''; 
-  const sp = csSprites();
-  m.innerHTML = `${csStarsHtml()}<div class="cs-ring" id="cs-ring"></div><img class="cs-case cs-sp" id="cs-box" src="${sp.caseUrl}" alt="">
-    <div class="cs-fly" id="cs-pl"><img class="cs-earth cs-sp" src="${sp.earthUrl}" alt=""><img class="cs-moonw cs-sp" src="${sp.moonUrl}" alt=""></div>
+  csScene(tier, prize, comp);
+}
+function csScene(tier, prize, comp) {
+  const m = $('case-modal'), sp = csSprites(), col = CS_COL[tier], N = 60, RW = 9, CW = 92;
+  const imgCase = new Image(); imgCase.src = sp.caseUrl;
+  const items = Array.from({ length: N }, (_, i) => i === RW ? prize : csRollFrom(tier));   // у рулетці кейса кращої рідкості — кращий дроп
+  m.className = '';
+  m.innerHTML = `<canvas id="cs-cv"></canvas><div class="cs-hint" id="cs-hint">${t('csTap')}</div><div class="cs-tier" id="cs-tier" style="color:${col}"></div>
     <div class="cs-roul"><div class="cs-win"><div class="cs-strip" id="cs-strip">${items.map(it => csCard(it, false)).join('')}</div><div class="cs-mark"></div></div>
-    <button class="cs-go" id="cs-go" type="button">${t('csSpin')}</button><div class="cs-res" id="cs-res"></div></div><div class="cs-flash" id="cs-fl"></div>`;
-  const strip = $('cs-strip'), win = m.querySelector('.cs-win'), go = $('cs-go');
-  let wW = 0, x0 = 0, x1 = 0; const setX = x => { strip.style.transform = `translateX(${x}px)`; };
-  const later = (fn, ms) => setTimeout(fn, ms);
-  later(() => { $('cs-pl').classList.add('go'); }, 1100);                                   // Земля з Місяцем летять зліва направо, ростуть до центру
-  later(() => { $('cs-box').classList.add('shake'); haptic('medium'); }, 2300);
-  later(() => { $('cs-fl').classList.add('go'); $('cs-ring').classList.add('go'); hapticNote('success'); }, 2900);
-  later(() => {
-    m.classList.add('roul'); wW = win.clientWidth;   // (Земля вже пролетіла)
-    x1 = wW / 2 - (W * CW + CW / 2 + (Math.random() - .5) * CW * .7);     // фінальне положення: приз під стрілкою
-    x0 = x1 - (N - 14) * CW; setX(x0);                                   // старт далеко ліворуч → рухається ВПРАВО
-  }, 4500);
+    <button class="cs-go" id="cs-go" type="button">${t('csSpin')}</button><div class="cs-res" id="cs-res"></div></div>`;
+  const cv = $('cs-cv'), g = cv.getContext('2d'), strip = $('cs-strip'), win = m.querySelector('.cs-win'), go = $('cs-go');
+  let W = 0, H = 0, raf = 0, last = performance.now(), T = 0;
+  const fit = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
+  fit(); addEventListener('resize', fit);
+  const rnd = (a, b) => a + Math.random() * (b - a), cols = ['#ffffff', '#9fe8ff', '#ffb3f0', '#ffe58a'];
+  const rgb = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16)).join(',');
+  const stars = Array.from({ length: 90 }, () => ({ x: rnd(0, innerWidth), y: rnd(0, innerHeight), s: [2, 2, 2, 3, 3, 4][Math.floor(Math.random() * 6)], v: rnd(4, 20), ph: rnd(0, 6.28), c: cols[Math.floor(Math.random() * 4)], fl: null }));
+  const comets = [], sparks = [], NEED = 9;
+  let cometHits = 0, taps = 0, eS = 0, bounce = 0, stage = 'intro', tBurst = 0, flash = 0, ring = -1, chestA = 1, nextC = 0, x0 = 0, x1 = 0, wW = 0;
+  const cxy = () => [W / 2, H * 0.40];
+  const boom = (x, y, n, c, sp0) => { for (let i = 0; i < n; i++) { const a = rnd(0, 6.28), v = rnd(30, sp0); sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, l: rnd(.5, 1.1), c, s: Math.random() < .5 ? 3 : 4 }); } };
+  const spawnComet = () => { const [tx, ty] = cxy(), left = Math.random() < .6; comets.push({ x0: left ? -30 : rnd(0, W), y0: left ? rnd(H * .1, H * .8) : -30, tx, ty, u: 0, d: rnd(.45, .75), tr: [], c: cols[1 + Math.floor(Math.random() * 3)], x: 0, y: 0 }); };
+  const doBurst = () => {
+    stage = 'burst'; tBurst = T; flash = 1; ring = 0; hapticNote('success'); $('cs-hint').classList.remove('on');
+    const el = $('cs-tier'); el.textContent = `${t('csR' + tier)} ${t('csCase')}`; el.classList.add('show');
+    const [cx, cy] = cxy(); boom(cx, cy, 80, col, 420);
+  };
+  cv.addEventListener('pointerdown', () => {
+    if (stage !== 'charge') return;
+    taps++; bounce = 1; haptic('light');
+    for (let i = 0, tries = 0; i < 9 && tries < 60; tries++) { const st = stars[Math.floor(Math.random() * stars.length)]; if (st.fl) continue; st.fl = { x0: st.x, y0: st.y, u: 0, d: rnd(.5, .9), k: rnd(-110, 110) }; i++; }
+    if (taps >= NEED) doBurst();
+  });
+  const update = dt => {
+    T += dt; const [cx, cy] = cxy();
+    if (stage === 'intro') { while (nextC < 8 && T > .5 + nextC * .3) { spawnComet(); nextC++; } if (T > 1.6) { stage = 'charge'; $('cs-hint').classList.add('on'); } }
+    for (const st of stars) {
+      if (st.fl) {
+        const f = st.fl; f.u += dt / f.d; const u = Math.min(1, f.u), e = u * u * (.4 + .6 * u), mx = (f.x0 + cx) / 2 + f.k, my = (f.y0 + cy) / 2 - f.k;
+        st.x = (1 - e) * (1 - e) * f.x0 + 2 * (1 - e) * e * mx + e * e * cx; st.y = (1 - e) * (1 - e) * f.y0 + 2 * (1 - e) * e * my + e * e * cy;
+        if (u >= 1) { boom(cx, cy, 3, '#fff', 120); bounce = Math.max(bounce, .5); st.fl = null; st.x = rnd(0, W); st.y = rnd(0, H); }
+      } else { st.x += st.v * dt; if (st.x > W + 4) st.x = -4; }
+    }
+    for (let i = comets.length - 1; i >= 0; i--) {
+      const c = comets[i]; c.u += dt / c.d; const u = Math.min(1, c.u), e = u * u;
+      c.x = c.x0 + (c.tx - c.x0) * e; c.y = c.y0 + (c.ty - c.y0) * e; c.tr.push([c.x, c.y]); if (c.tr.length > 16) c.tr.shift();
+      if (u >= 1) { cometHits++; bounce = 1; boom(cx, cy, 14, c.c, 260); haptic('light'); comets.splice(i, 1); }
+    }
+    for (let i = sparks.length - 1; i >= 0; i--) { const p = sparks[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= .985; p.vy *= .985; if ((p.l -= dt) <= 0) sparks.splice(i, 1); }
+    const target = Math.min(.25, cometHits * .03) + Math.min(.75, taps / NEED * .75);
+    eS += (target - eS) * Math.min(1, dt * 6); bounce *= Math.exp(-dt * 7);
+    if (flash > 0) flash -= dt * 1.4; if (ring >= 0) { ring += dt * 1.4; if (ring > 1) ring = -1; }
+    if (stage === 'burst' && T - tBurst > 2.6) {
+      stage = 'roul'; m.classList.add('roul'); wW = win.clientWidth;
+      x1 = wW / 2 - (RW * CW + CW / 2 + (Math.random() - .5) * CW * .7); x0 = x1 - (N - 14) * CW; strip.style.transform = `translate3d(${x0}px,0,0)`;
+    }
+    if (stage === 'roul' || (stage === 'burst' && T - tBurst > 2)) chestA = Math.max(0, chestA - dt * 2);
+  };
+  const draw = () => {
+    g.clearRect(0, 0, W, H); const [cx, cy] = cxy();
+    for (const st of stars) { g.globalAlpha = st.fl ? 1 : .45 + .55 * Math.sin(T * 2 + st.ph); g.fillStyle = st.c; g.fillRect(Math.round(st.x), Math.round(st.y), st.s, st.s); }
+    g.globalAlpha = 1;
+    for (const c of comets) {
+      c.tr.forEach(([x, y], i) => { const k = i / c.tr.length; g.globalAlpha = k * .8; g.fillStyle = c.c; g.fillRect(Math.round(x) - 3, Math.round(y) - 3, 3 + Math.round(k * 5), 3 + Math.round(k * 5)); });
+      g.globalAlpha = 1; g.fillStyle = '#fff'; g.fillRect(Math.round(c.x) - 5, Math.round(c.y) - 5, 10, 10);
+    }
+    g.globalAlpha = 1;
+    if (chestA > 0) {
+      const S = Math.min(W * .5, 190), k = Math.min(1, T / .8), sc = 1 + 2.7 * Math.pow(k - 1, 3) + 1.7 * Math.pow(k - 1, 2) - (1 - k) * .0;   // легкий «виліт» з перебором
+      const shake = stage === 'charge' ? eS * 3 : 0, gc = stage === 'intro' || stage === 'charge' ? '138,92,255' : rgb(col);
+      g.save(); g.globalAlpha = chestA * Math.min(1, T * 2); g.globalCompositeOperation = 'lighter';
+      const rad = S * (.9 + eS * 1.7), gr = g.createRadialGradient(cx, cy, 8, cx, cy, rad); gr.addColorStop(0, `rgba(${gc},${.25 + .55 * eS})`); gr.addColorStop(1, `rgba(${gc},0)`);
+      g.fillStyle = gr; g.fillRect(cx - rad, cy - rad, rad * 2, rad * 2); g.restore();
+      g.save(); g.globalAlpha = chestA; g.imageSmoothingEnabled = false; g.translate(cx + Math.sin(T * 53) * shake, cy + Math.cos(T * 47) * shake);
+      const z = Math.max(.01, sc) * (1 + bounce * .1 + eS * .05); g.scale(z, z); if (imgCase.complete) g.drawImage(imgCase, -S / 2, -S / 2, S, S); g.restore();
+      if (stage === 'intro' || stage === 'charge') { const seg = 10, w = 16, gp = 5, x = cx - (seg * (w + gp) - gp) / 2, y = cy + S / 2 + 28;
+        for (let i = 0; i < seg; i++) { g.fillStyle = i < Math.round(eS * seg) ? '#ffd23f' : 'rgba(255,255,255,.18)'; g.fillRect(Math.round(x + i * (w + gp)), Math.round(y), w, 10); } }
+    }
+    for (const p of sparks) { g.globalAlpha = Math.min(1, p.l * 1.6); g.fillStyle = p.c; g.fillRect(Math.round(p.x), Math.round(p.y), p.s, p.s); }
+    g.globalAlpha = 1;
+    if (ring >= 0) { g.strokeStyle = col; g.globalAlpha = 1 - ring; g.lineWidth = 6; g.beginPath(); g.arc(cx, cy, ring * Math.max(W, H), 0, 6.283); g.stroke(); g.globalAlpha = 1; }
+    if (flash > 0) { g.fillStyle = `rgba(255,255,255,${Math.min(1, flash)})`; g.fillRect(0, 0, W, H); }
+  };
+  const loop = now => { const dt = Math.min(.05, (now - last) / 1000); last = now; update(dt); draw(); raf = requestAnimationFrame(loop); };
+  raf = requestAnimationFrame(loop);
   go.addEventListener('click', () => {
     go.disabled = true; go.style.display = 'none'; haptic('heavy');
-    const T = 6800, t0 = performance.now(); let lastI = -1;
+    const D = 6800, t0 = performance.now(); let lastI = -1;
     const ease = u => { const e = 1 - Math.pow(1 - u, 4); return u < .08 ? e * (u / .08) * (u / .08) : e; };
     (function frame(now) {
-      const u = Math.min(1, (now - t0) / T), x = x0 + (x1 - x0) * ease(u); setX(x);
+      const u = Math.min(1, (now - t0) / D), x = x0 + (x1 - x0) * ease(u); strip.style.transform = `translate3d(${x}px,0,0)`;
       const idx = Math.floor((wW / 2 - x) / CW); if (idx !== lastI) { lastI = idx; haptic('light'); }
       if (u < 1) return requestAnimationFrame(frame);
-      strip.children[W].classList.add('win'); hapticNote('success');
-      const [ic, tx] = csLabel(prize);
-      $('cs-res').style.setProperty('--rc', CS_COL[prize.r]);
-      const col = CS_COL[prize.r], big = prize.skin
-        ? `<img src="${skinPreviewUrl(prize.skin)}" alt="" style="height:120px;width:auto;image-rendering:pixelated;display:block;margin:8px auto;filter:drop-shadow(0 0 14px ${col})">`
-        : `<div style="font-size:64px;line-height:1.2;margin:8px 0;filter:drop-shadow(0 0 14px ${col})">${prize.d ? '💎' : '★'}</div>`;
+      strip.children[RW].classList.add('win'); hapticNote('success');
+      const [ic, tx] = csLabel(prize), pc = CS_COL[prize.r];
+      const big = prize.skin
+        ? `<img src="${skinPreviewUrl(prize.skin)}" alt="" style="height:120px;width:auto;image-rendering:pixelated;display:block;margin:8px auto;filter:drop-shadow(0 0 14px ${pc})">`
+        : `<div style="font-size:64px;line-height:1.2;margin:8px 0;filter:drop-shadow(0 0 14px ${pc})">${prize.d ? '💎' : '★'}</div>`;
+      $('cs-res').style.setProperty('--rc', pc);
       $('cs-res').innerHTML = `${t('csWin')}:${big}<b>${ic} ${escapeHtml(tx)}</b>${t('csR' + prize.r)}${comp ? '<br>' + t('csDupe') + ' ' + comp : ''}<br><button class="ref-ok" id="cs-ok" type="button" style="margin-top:14px;max-width:200px">OK</button>`;
       floater('🎁 ' + ic + ' ' + tx, cx * S, (cy - 70) * S); burst(cx, cy - 10, 30, 110, SPARK);
-      $('cs-ok').addEventListener('click', () => { m.classList.add('off'); csBusy = false; uiDirty = true; shopSig = ''; });
+      $('cs-ok').addEventListener('click', () => { cancelAnimationFrame(raf); removeEventListener('resize', fit); m.classList.add('off'); csBusy = false; uiDirty = true; shopSig = ''; });
     })(t0);
   }, { once: true });
 }
