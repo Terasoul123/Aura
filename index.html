@@ -243,6 +243,7 @@
   @keyframes cs-blink{to{opacity:.35}}
   .cs-tier{position:absolute;left:0;right:0;top:11%;text-align:center;font:17px/1.6 var(--pixel);pointer-events:none;opacity:0;transform:scale(.4);text-shadow:0 0 18px currentColor,var(--o2);text-transform:uppercase}
   .cs-tier.show{opacity:1;transform:none;transition:transform .7s cubic-bezier(.2,1.5,.4,1),opacity .4s}
+  .cs-tb{border-collapse:collapse;font-size:8px;width:100%}.cs-tb td,.cs-tb th{padding:4px 2px;text-align:center;font-weight:normal}.cs-tb td:first-child{text-align:left}
   .cs-go,.cs-it.win{will-change:transform}
   .cs-strip{transform:translate3d(0,0,0)}
 
@@ -1241,6 +1242,9 @@ Object.assign(I18N.ru, { csOpen: 'Открыть', csOdds: 'Шансы выпа�
 Object.assign(I18N.uk, { csR1: 'Фіолетовий', csR2: 'Червоний', csCase: 'кейс', csTap: 'Тапай по кейсу!', csDesc: 'Чим рідкісніший кейс — тим кращий дроп у рулетці!', csOdds: 'Шанс випадіння кейса' });
 Object.assign(I18N.en, { csR1: 'Purple', csR2: 'Red', csCase: 'case', csTap: 'Tap the case!', csDesc: 'The rarer the case, the better the roulette drop!', csOdds: 'Case rarity chances' });
 Object.assign(I18N.ru, { csR1: 'Фиолетовый', csR2: 'Красный', csCase: 'кейс', csTap: 'Тапай по кейсу!', csDesc: 'Чем реже кейс — тем лучше дроп в рулетке!', csOdds: 'Шанс выпадения кейса' });
+Object.assign(I18N.uk, { csOdds: 'Шанси кейса та призів у рулетці', csDropOdds: 'Рядок: рідкість кейса (його шанс). Колонки: шанс призу в рулетці цього кейса.' });
+Object.assign(I18N.en, { csOdds: 'Case & roulette drop chances', csDropOdds: 'Row: case rarity (its chance). Columns: chance of each prize rarity in that case’s roulette.' });
+Object.assign(I18N.ru, { csOdds: 'Шансы кейса и призов в рулетке', csDropOdds: 'Строка: редкость кейса (его шанс). Столбцы: шанс приза в рулетке этого кейса.' });
 Object.assign(I18N.ru, { maintTitle: 'Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Возвращайся чуть позже — прогресс никуда не денется.' });
 let curLang = (() => {
   try {
@@ -4273,10 +4277,10 @@ function csStarsHtml() {   // піксельні зірки (квадрати) �
 }
 function caseCardHtml() {
   const can = state.diamonds >= CASE_DIAMONDS;
-  const odds = [0, 1, 2, 3].map(r => `<div style="color:${CS_COL[r]}">${t('csR' + r)} — ${CS_TIER_P[r]}%</div>`).join('');
+  const odds = `<table class="cs-tb"><tr><th></th>${[0, 1, 2, 3].map(i => `<th style="color:${CS_COL[i]}">■</th>`).join('')}</tr>${[0, 1, 2, 3].map(r => `<tr><td style="color:${CS_COL[r]}">${t('csR' + r)} ${CS_TIER_P[r]}%</td>${CS_DROP[r].map((v, i) => `<td style="color:${CS_COL[i]}">${v ? v + '%' : '—'}</td>`).join('')}</tr>`).join('')}</table>`;
   return `<div class="cs-shop"><img class="cs-sp" src="${csSprites().caseUrl}" width="96" height="96" alt="">
     <div class="cs-t">${t('csName')}</div><div class="cs-d">${t('csDesc')}</div>
-    <div class="cs-d">${t('csOdds')}:</div><div class="cs-o">${odds}</div>
+    <div class="cs-d">${t('csOdds')}:</div>${odds}<div class="cs-d" style="font-size:7px">${t('csDropOdds')}</div>
     <div class="cs-b">${state.cases > 0 ? `<button class="wpn-btn" type="button" data-open-case>🎁 ${t('csOpen')} ×${state.cases}</button>` : ''}
     ${priceBtn('diamond', CASE_DIAMONDS, can, 'data-buy-case', '1')}<button class="don-buy" type="button" data-case-stars>⭐ 50</button></div></div>`;
 }
@@ -4337,8 +4341,20 @@ function openCase() {
   dirty = true; uiDirty = true; shopSig = ''; save();
   csScene(tier, prize, comp);
 }
+function csMoonCv(h) {   // піксельний Місяць потрібного відтінку (космічний кейс)
+  const c = document.createElement('canvas'); c.width = c.height = 20; const g = c.getContext('2d');
+  for (let y = 0; y < 20; y++) for (let x = 0; x < 20; x++) {
+    const d = Math.hypot(x - 9.5, y - 9.5); if (d > 9.5) continue;
+    let l = d > 8.6 ? 28 : (x + y > 20 ? 52 : 78);
+    for (const [a, b] of [[5, 5], [12, 9], [7, 12], [13, 4], [10, 14]]) if (Math.hypot(x - a, y - b) < 1.6 && d <= 8.6) l = 62;
+    g.fillStyle = `hsl(${h},65%,${l}%)`; g.fillRect(x, y, 1, 1);
+  }
+  return c;
+}
+/* Ефекти кейса за рідкістю: підказка в небі під час тапів + свій ефект відкриття. */
+const CS_FX = [{ fl: .6, rings: 1, n: 40, up: 0, dur: 1.6 }, { fl: 1, rings: 2, n: 80, up: 70, dur: 2.4 }, { fl: 1, rings: 3, n: 140, up: 240, dur: 2.9, shake: 1 }, { fl: 1, rings: 4, n: 200, up: 0, dur: 3.9, shim: 1 }];
 function csScene(tier, prize, comp) {
-  const m = $('case-modal'), sp = csSprites(), col = CS_COL[tier], N = 60, RW = 9, CW = 92;
+  const m = $('case-modal'), sp = csSprites(), col = CS_COL[tier], N = 60, RW = 9, CW = 92, FX = CS_FX[tier], BASE = 9, TOTAL = BASE + (tier === 3 ? 6 : 0);
   const imgCase = new Image(); imgCase.src = sp.caseUrl;
   const items = Array.from({ length: N }, (_, i) => i === RW ? prize : csRollFrom(tier));   // у рулетці кейса кращої рідкості — кращий дроп
   m.className = '';
@@ -4350,28 +4366,38 @@ function csScene(tier, prize, comp) {
   const fit = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
   fit(); addEventListener('resize', fit);
   const rnd = (a, b) => a + Math.random() * (b - a), cols = ['#ffffff', '#9fe8ff', '#ffb3f0', '#ffe58a'];
-  const rgb = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16)).join(',');
-  const stars = Array.from({ length: 90 }, () => ({ x: rnd(0, innerWidth), y: rnd(0, innerHeight), s: [2, 2, 2, 3, 3, 4][Math.floor(Math.random() * 6)], v: rnd(4, 20), ph: rnd(0, 6.28), c: cols[Math.floor(Math.random() * 4)], fl: null }));
-  const comets = [], sparks = [], NEED = 9;
-  let cometHits = 0, taps = 0, eS = 0, bounce = 0, stage = 'intro', tBurst = 0, flash = 0, ring = -1, chestA = 1, nextC = 0, x0 = 0, x1 = 0, wW = 0;
+  const rgb = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16)).join(','), pick = a => a[Math.floor(Math.random() * a.length)];
+  const mk = (x, y, s2, c, a0) => ({ x, y, s: s2, v: rnd(4, 20), ph: rnd(0, 6.28), c, fl: null, a: a0, ta: 1 });
+  const stars = Array.from({ length: 90 }, () => mk(rnd(0, innerWidth), rnd(0, innerHeight), pick([2, 2, 2, 3, 3, 4]), pick(cols), 1));
+  const comets = [], sparks = [], rings = [], moons = [];
+  let cometHits = 0, taps = 0, eS = 0, bounce = 0, stage = 'intro', tBurst = 0, tSeal = 0, flash = 0, chestA = 1, nextC = 0, x0 = 0, x1 = 0, wW = 0;
   const cxy = () => [W / 2, H * 0.40];
-  const boom = (x, y, n, c, sp0) => { for (let i = 0; i < n; i++) { const a = rnd(0, 6.28), v = rnd(30, sp0); sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, l: rnd(.5, 1.1), c, s: Math.random() < .5 ? 3 : 4 }); } };
-  const spawnComet = () => { const [tx, ty] = cxy(), left = Math.random() < .6; comets.push({ x0: left ? -30 : rnd(0, W), y0: left ? rnd(H * .1, H * .8) : -30, tx, ty, u: 0, d: rnd(.45, .75), tr: [], c: cols[1 + Math.floor(Math.random() * 3)], x: 0, y: 0 }); };
+  const boom = (x, y, n, c, sp0, up) => { for (let i = 0; i < n; i++) { const a = rnd(0, 6.28), v = rnd(30, sp0); sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - (up || 0) * rnd(.3, 1), l: rnd(.5, 1.1), c: typeof c === 'function' ? c() : c, s: Math.random() < .5 ? 3 : 4 }); } };
+  const spawnComet = () => { const [tx, ty] = cxy(), left = Math.random() < .6; comets.push({ x0: left ? -30 : rnd(0, W), y0: left ? rnd(H * .1, H * .8) : -30, tx, ty, u: 0, d: rnd(.45, .75), tr: [], c: pick(cols.slice(1)), x: 0, y: 0 }); };
+  const hue = () => `hsl(${rnd(200, 300)},95%,65%)`;
   const doBurst = () => {
-    stage = 'burst'; tBurst = T; flash = 1; ring = 0; hapticNote('success'); $('cs-hint').classList.remove('on');
+    stage = 'burst'; tBurst = T; flash = FX.fl; hapticNote('success'); $('cs-hint').classList.remove('on');
     const el = $('cs-tier'); el.textContent = `${t('csR' + tier)} ${t('csCase')}`; el.classList.add('show');
-    const [cx, cy] = cxy(); boom(cx, cy, 80, col, 420);
+    for (let i = 0; i < FX.rings; i++) rings.push({ p: -i * .22 });
+    const [cx, cy] = cxy(); boom(cx, cy, FX.n, tier === 3 ? hue : (tier === 2 ? () => pick(['#ff3d4d', '#ff8a3d', '#ffd23f']) : col), tier === 3 ? 520 : 420, FX.up);
   };
   cv.addEventListener('pointerdown', () => {
-    if (stage !== 'charge') return;
+    if (stage !== 'charge' && !(stage === 'seal' && false)) return;
     taps++; bounce = 1; haptic('light');
-    for (let i = 0, tries = 0; i < 9 && tries < 60; tries++) { const st = stars[Math.floor(Math.random() * stars.length)]; if (st.fl) continue; st.fl = { x0: st.x, y0: st.y, u: 0, d: rnd(.5, .9), k: rnd(-110, 110) }; i++; }
-    if (taps >= NEED) doBurst();
+    for (let i = 0, tries = 0; i < 9 && tries < 80; tries++) { const st = pick(stars); if (st.fl || st.ta < 1) continue; st.fl = { x0: st.x, y0: st.y, u: 0, d: rnd(.5, .9), k: rnd(-110, 110) }; i++; }
+    if (tier === 0) { for (let i = 0, tries = 0; i < 8 && tries < 80; tries++) { const st = pick(stars); if (!st.fl && st.ta === 1) { st.ta = 0; i++; } } }              // звичайний: небо порожніє
+    else if (tier === 1) { for (let i = 0; i < 12; i++) stars.push(mk(rnd(0, W), rnd(0, H), pick([2, 2, 3]), pick(['#b56bff', '#d9a8ff', '#8f4dff']), 0)); }               // фіолетовий: більше зірок + фіолетові
+    else if (tier === 2) { for (let i = 0, n = 6 + taps * 3; i < n; i++) stars.push(mk(rnd(0, W), rnd(0, H), pick([2, 3, 3, 4]), pick(['#ff3d4d', '#ff7a5c', '#ff1f3a']), 0)); }   // червоний: з кожним тапом дедалі більше червоних
+    else { const h = rnd(0, 360); moons.push({ x: rnd(50, W - 50), y: rnd(50, H - 50), r: 0, tr: rnd(16, 30), ph: rnd(0, 6.28), cv: csMoonCv(h) }); boom(moons[moons.length - 1].x, moons[moons.length - 1].y, 10, hue, 200); }   // космічний: різнокольорові місяці
+    if (tier < 3 && taps >= BASE) { stage = 'seal'; tSeal = T; }        // шкала повна → фарбується в колір кейса, потім відкриття
+    else if (tier === 3 && taps >= TOTAL) doBurst();                    // космічний: повна шкала НЕ відкриває, треба ще тапати — шкала виходить за межі
   });
   const update = dt => {
     T += dt; const [cx, cy] = cxy();
     if (stage === 'intro') { while (nextC < 8 && T > .5 + nextC * .3) { spawnComet(); nextC++; } if (T > 1.6) { stage = 'charge'; $('cs-hint').classList.add('on'); } }
+    if (stage === 'seal' && T - tSeal > .8) doBurst();
     for (const st of stars) {
+      st.a += (st.ta - st.a) * Math.min(1, dt * 4);
       if (st.fl) {
         const f = st.fl; f.u += dt / f.d; const u = Math.min(1, f.u), e = u * u * (.4 + .6 * u), mx = (f.x0 + cx) / 2 + f.k, my = (f.y0 + cy) / 2 - f.k;
         st.x = (1 - e) * (1 - e) * f.x0 + 2 * (1 - e) * e * mx + e * e * cx; st.y = (1 - e) * (1 - e) * f.y0 + 2 * (1 - e) * e * my + e * e * cy;
@@ -4384,39 +4410,57 @@ function csScene(tier, prize, comp) {
       if (u >= 1) { cometHits++; bounce = 1; boom(cx, cy, 14, c.c, 260); haptic('light'); comets.splice(i, 1); }
     }
     for (let i = sparks.length - 1; i >= 0; i--) { const p = sparks[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= .985; p.vy *= .985; if ((p.l -= dt) <= 0) sparks.splice(i, 1); }
-    const target = Math.min(.25, cometHits * .03) + Math.min(.75, taps / NEED * .75);
-    eS += (target - eS) * Math.min(1, dt * 6); bounce *= Math.exp(-dt * 7);
-    if (flash > 0) flash -= dt * 1.4; if (ring >= 0) { ring += dt * 1.4; if (ring > 1) ring = -1; }
-    if (stage === 'burst' && T - tBurst > 2.6) {
+    for (const mo of moons) mo.r += (mo.tr - mo.r) * Math.min(1, dt * 5);
+    for (let i = rings.length - 1; i >= 0; i--) { rings[i].p += dt * 1.3; if (rings[i].p > 1) rings.splice(i, 1); }
+    const target = Math.min(.25, cometHits * .03) + Math.min(.75, taps / BASE * .75);
+    eS += (target - eS) * Math.min(1, dt * 6); bounce *= Math.exp(-dt * 7); if (flash > 0) flash -= dt * 1.4;
+    if (stage === 'burst' && T - tBurst > FX.dur) {
       stage = 'roul'; m.classList.add('roul'); wW = win.clientWidth;
       x1 = wW / 2 - (RW * CW + CW / 2 + (Math.random() - .5) * CW * .7); x0 = x1 - (N - 14) * CW; strip.style.transform = `translate3d(${x0}px,0,0)`;
     }
-    if (stage === 'roul' || (stage === 'burst' && T - tBurst > 2)) chestA = Math.max(0, chestA - dt * 2);
+    if (stage === 'roul' || (stage === 'burst' && T - tBurst > FX.dur - .6)) chestA = Math.max(0, chestA - dt * 2);
   };
   const draw = () => {
-    g.clearRect(0, 0, W, H); const [cx, cy] = cxy();
-    for (const st of stars) { g.globalAlpha = st.fl ? 1 : .45 + .55 * Math.sin(T * 2 + st.ph); g.fillStyle = st.c; g.fillRect(Math.round(st.x), Math.round(st.y), st.s, st.s); }
+    g.clearRect(0, 0, W, H); const [cx, cy] = cxy(), kb = T - tBurst;
+    g.save(); if (FX.shake && stage === 'burst' && kb < .9) g.translate(rnd(-1, 1) * (1 - kb / .9) * 12, rnd(-1, 1) * (1 - kb / .9) * 12);
+    for (const st of stars) { g.globalAlpha = st.a * (st.fl ? 1 : .45 + .55 * Math.sin(T * 2 + st.ph)); g.fillStyle = st.c; g.fillRect(Math.round(st.x), Math.round(st.y), st.s, st.s); }
+    for (const mo of moons) { g.globalAlpha = .55 + .35 * Math.sin(T * 2 + mo.ph); g.imageSmoothingEnabled = false; g.drawImage(mo.cv, Math.round(mo.x - mo.r), Math.round(mo.y - mo.r), mo.r * 2, mo.r * 2); }
     g.globalAlpha = 1;
     for (const c of comets) {
       c.tr.forEach(([x, y], i) => { const k = i / c.tr.length; g.globalAlpha = k * .8; g.fillStyle = c.c; g.fillRect(Math.round(x) - 3, Math.round(y) - 3, 3 + Math.round(k * 5), 3 + Math.round(k * 5)); });
       g.globalAlpha = 1; g.fillStyle = '#fff'; g.fillRect(Math.round(c.x) - 5, Math.round(c.y) - 5, 10, 10);
     }
     g.globalAlpha = 1;
+    const cosmicNow = tier === 3 && (stage === 'burst' || stage === 'roul'), ov = Math.max(0, taps - BASE);
     if (chestA > 0) {
-      const S = Math.min(W * .5, 190), k = Math.min(1, T / .8), sc = 1 + 2.7 * Math.pow(k - 1, 3) + 1.7 * Math.pow(k - 1, 2) - (1 - k) * .0;   // легкий «виліт» з перебором
-      const shake = stage === 'charge' ? eS * 3 : 0, gc = stage === 'intro' || stage === 'charge' ? '138,92,255' : rgb(col);
+      const S = Math.min(W * .5, 190), k = Math.min(1, T / .8), sc = 1 + 2.70158 * Math.pow(k - 1, 3) + 1.70158 * Math.pow(k - 1, 2);   // легкий «виліт» з перебором
+      const shake = (stage === 'charge' || stage === 'seal') ? (eS + ov * .25) * 3 : 0;
+      const gcol = a => cosmicNow ? `hsla(${225 + 60 * Math.sin(T * 3)},95%,62%,${a})` : ((stage === 'burst' || stage === 'roul') ? `rgba(${rgb(col)},${a})` : `rgba(138,92,255,${a})`);
       g.save(); g.globalAlpha = chestA * Math.min(1, T * 2); g.globalCompositeOperation = 'lighter';
-      const rad = S * (.9 + eS * 1.7), gr = g.createRadialGradient(cx, cy, 8, cx, cy, rad); gr.addColorStop(0, `rgba(${gc},${.25 + .55 * eS})`); gr.addColorStop(1, `rgba(${gc},0)`);
+      const rad = S * (.9 + eS * 1.7 + ov * .25), gr = g.createRadialGradient(cx, cy, 8, cx, cy, rad); gr.addColorStop(0, gcol(Math.min(1, .25 + .55 * eS + ov * .06))); gr.addColorStop(1, gcol(0));
       g.fillStyle = gr; g.fillRect(cx - rad, cy - rad, rad * 2, rad * 2); g.restore();
       g.save(); g.globalAlpha = chestA; g.imageSmoothingEnabled = false; g.translate(cx + Math.sin(T * 53) * shake, cy + Math.cos(T * 47) * shake);
-      const z = Math.max(.01, sc) * (1 + bounce * .1 + eS * .05); g.scale(z, z); if (imgCase.complete) g.drawImage(imgCase, -S / 2, -S / 2, S, S); g.restore();
-      if (stage === 'intro' || stage === 'charge') { const seg = 10, w = 16, gp = 5, x = cx - (seg * (w + gp) - gp) / 2, y = cy + S / 2 + 28;
-        for (let i = 0; i < seg; i++) { g.fillStyle = i < Math.round(eS * seg) ? '#ffd23f' : 'rgba(255,255,255,.18)'; g.fillRect(Math.round(x + i * (w + gp)), Math.round(y), w, 10); } }
+      const z = Math.max(.01, sc) * (1 + bounce * .1 + eS * .05 + ov * .012); g.scale(z, z); if (imgCase.complete) g.drawImage(imgCase, -S / 2, -S / 2, S, S); g.restore();
+      if (stage === 'intro' || stage === 'charge' || stage === 'seal') {
+        const seg = 10, w = 16, gp = 5, bw = seg * (w + gp) - gp, x = cx - bw / 2, y = Math.round(cy + S / 2 + 28), sealed = stage === 'seal' && tier > 0 && tier < 3;
+        g.fillStyle = 'rgba(0,0,0,.45)'; g.fillRect(x - 6, y - 6, bw + 12, 22);   // рамка шкали
+        for (let i = 0; i < seg; i++) { g.fillStyle = i < Math.round(Math.min(1, eS) * seg) ? (sealed ? col : '#ffd23f') : 'rgba(255,255,255,.18)'; g.fillRect(Math.round(x + i * (w + gp)), y, w, 10); }   // червоний/фіолетовий кейс — шкала міняє колір
+        for (let j = 1; j <= ov; j++) { const kk = Math.ceil(j / 2), px = j % 2 ? x + bw + gp + (kk - 1) * (w + gp) : x - kk * (w + gp);   // космічний: шкала виходить за межі
+          g.fillStyle = `hsl(${225 + 60 * Math.sin(T * 3 + j)},95%,${58 + 8 * Math.sin(T * 5 + j)}%)`; g.fillRect(Math.round(px), y - 3, w, 16); }
+      }
     }
     for (const p of sparks) { g.globalAlpha = Math.min(1, p.l * 1.6); g.fillStyle = p.c; g.fillRect(Math.round(p.x), Math.round(p.y), p.s, p.s); }
     g.globalAlpha = 1;
-    if (ring >= 0) { g.strokeStyle = col; g.globalAlpha = 1 - ring; g.lineWidth = 6; g.beginPath(); g.arc(cx, cy, ring * Math.max(W, H), 0, 6.283); g.stroke(); g.globalAlpha = 1; }
-    if (flash > 0) { g.fillStyle = `rgba(255,255,255,${Math.min(1, flash)})`; g.fillRect(0, 0, W, H); }
+    for (const r of rings) if (r.p >= 0) { g.strokeStyle = tier === 3 ? `hsl(${(r.p * 300 + T * 120) % 360},90%,65%)` : col; g.globalAlpha = 1 - r.p; g.lineWidth = 6; g.beginPath(); g.arc(cx, cy, r.p * Math.max(W, H), 0, 6.283); g.stroke(); }
+    g.globalAlpha = 1;
+    if (FX.shim && (stage === 'burst' || stage === 'roul')) {   // космічне переливання синьо-фіолетовим на весь екран
+      const a = Math.min(.6, Math.sin(Math.min(1, kb / FX.dur) * Math.PI) * .7 + (stage === 'roul' ? 0 : 0));
+      for (let pass = 0; pass < 2; pass++) { const gr = pass ? g.createLinearGradient(W, 0, 0, H) : g.createLinearGradient(0, 0, W, H);
+        for (let i = 0; i <= 6; i++) gr.addColorStop(i / 6, `hsla(${225 + 60 * Math.sin(T * 2.2 + i * 1.1 + pass * 2)},95%,${55 + 10 * Math.sin(T * 3 + i)}%,${Math.max(0, a) * (pass ? .5 : .8)})`);
+        g.fillStyle = gr; g.fillRect(0, 0, W, H); }
+    }
+    g.restore();
+    if (flash > 0) { g.fillStyle = tier === 2 ? `rgba(255,70,70,${Math.min(1, flash)})` : (tier === 1 ? `rgba(200,150,255,${Math.min(1, flash)})` : `rgba(255,255,255,${Math.min(1, flash)})`); g.fillRect(0, 0, W, H); }
   };
   const loop = now => { const dt = Math.min(.05, (now - last) / 1000); last = now; update(dt); draw(); raf = requestAnimationFrame(loop); };
   raf = requestAnimationFrame(loop);
