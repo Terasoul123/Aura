@@ -339,6 +339,12 @@
     box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 0 #241a52;touch-action:manipulation}
   .music-controls button:active{transform:translateY(1px)}
   #music-play{width:46px;height:46px;font-size:16px}
+  .music-modes{display:flex;gap:8px;padding:0 4px 12px}
+  .music-modes button{flex:1;border:0;border-radius:9px;padding:9px 6px;background:#2c1f5c;color:var(--dim);font-family:var(--pixel);font-size:8px;cursor:pointer;touch-action:manipulation;
+    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 0 #241a52;display:flex;align-items:center;justify-content:center;gap:6px;line-height:1.4}
+  .music-modes button b{font-weight:normal}
+  .music-modes button.on{background:linear-gradient(180deg,#3d8a5a,#2a6a45);color:#fff;box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -3px 0 0 #1c4a30}
+  .music-modes button:active{transform:translateY(1px)}
   #music-prev,#music-next{width:36px;height:36px;font-size:13px}
   #music-list{display:flex;flex-direction:column;gap:6px;max-height:34vh;overflow-y:auto;padding:2px 2px 4px}
   .music-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border:0;border-radius:9px;
@@ -408,6 +414,13 @@
   .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55}
   .lb-rank{width:18px;flex:none;font-size:8px;color:var(--dim);text-align:center}
   .lb-award{width:16px;flex:none;font-size:13px;text-align:center;line-height:1}
+  .lb-av{position:relative;flex:none;width:18px;height:18px}
+  .lb-dot{position:absolute;right:-3px;bottom:-3px;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2px #1a1240}
+  .lb-dot.on{background:#3ddc6e}
+  .lb-dot.off{background:#7a7a8c}
+  .lb-online{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px;margin-bottom:6px;border-radius:9px;background:#241a52;color:var(--paper);font-family:var(--pixel);font-size:9px;box-shadow:inset 0 0 0 2px #3a2b7a}
+  .lb-online .lb-dot{position:static;box-shadow:none}
+  .lb-online b{color:#3ddc6e;font-weight:normal}
   .lb-avatar{width:18px;height:18px;flex:none;border-radius:3px;image-rendering:pixelated;box-shadow:inset 0 0 0 1px var(--edge-dark);background:#2c1f5c;object-fit:cover}
   .lb-name{flex:1 1 auto;min-width:0;font-size:9px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .lb-score{flex:none;font-size:9px;color:var(--gold);text-shadow:var(--o2);min-width:40px;text-align:right}
@@ -529,6 +542,48 @@
   .lk-txt b{font-weight:normal;font-size:10px}
   .lk-txt i{font-style:normal;font-size:8px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .lang-btn.active{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -3px 0 0 #8a5a0a;color:var(--gold)}
+
+  /* ---------- НОВИНИ (космічне вікно) ---------- */
+  #btn-news{position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 112px);left:10px;width:40px;height:40px;border:0;border-radius:11px;pointer-events:auto;cursor:pointer;z-index:6;
+    background:linear-gradient(135deg,#3a1d8f,#0b2a6b,#5b2bb8,#0b6b8f);background-size:300% 300%;animation:nw-btn 5s linear infinite;
+    box-shadow:inset 0 0 0 2px #8d75ff,inset 0 -4px 0 0 #1a1050,0 0 10px -2px rgba(126,227,255,.6);font-size:18px;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+  #btn-news:active{transform:translateY(1px)}
+  #btn-news .nw-dot{position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:#ff4d6d;box-shadow:0 0 0 2px #1a1050,0 0 8px #ff4d6d;animation:nw-pulse 1.2s ease-in-out infinite}
+  #btn-news .nw-dot.off{display:none}
+  @keyframes nw-btn{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+  @keyframes nw-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
+  #news-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(3,1,14,.8)}
+  #news-modal.off{display:none}
+  .nw-box{position:relative;width:100%;max-width:420px;max-height:90vh;max-height:90dvh;display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;overflow:hidden;color:#fff;font-family:var(--pixel);
+    background:radial-gradient(ellipse at 15% 0%,rgba(150,90,255,.6),transparent 55%),radial-gradient(ellipse at 95% 100%,rgba(0,210,255,.5),transparent 55%),radial-gradient(ellipse at 50% 50%,rgba(255,70,190,.18),transparent 60%),linear-gradient(160deg,#080520,#1a0b4a 50%,#06123a);
+    background-size:220% 220%,220% 220%,160% 160%,100% 100%;animation:nw-nebula 10s ease-in-out infinite,nw-glow 6s linear infinite}
+  @keyframes nw-nebula{0%,100%{background-position:0% 0%,100% 100%,30% 30%,0 0}50%{background-position:100% 60%,0% 20%,70% 70%,0 0}}
+  @keyframes nw-glow{0%,100%{box-shadow:0 0 0 2px #7b5cff,0 0 26px 2px rgba(123,92,255,.6),0 0 60px -6px rgba(0,220,255,.45)}33%{box-shadow:0 0 0 2px #2fd6ff,0 0 26px 2px rgba(47,214,255,.6),0 0 60px -6px rgba(255,80,200,.45)}66%{box-shadow:0 0 0 2px #ff5fd0,0 0 26px 2px rgba(255,95,208,.55),0 0 60px -6px rgba(123,92,255,.5)}}
+  .nw-box::before,.nw-box::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background-repeat:no-repeat}
+  .nw-box::before{background-image:radial-gradient(1.6px 1.6px at 8% 12%,#fff,transparent),radial-gradient(1.2px 1.2px at 22% 38%,#bfe6ff,transparent),radial-gradient(1.8px 1.8px at 41% 8%,#fff,transparent),radial-gradient(1.2px 1.2px at 63% 22%,#ffd6ff,transparent),radial-gradient(1.6px 1.6px at 84% 10%,#fff,transparent),radial-gradient(1.2px 1.2px at 92% 44%,#bfe6ff,transparent),radial-gradient(1.6px 1.6px at 12% 72%,#fff,transparent),radial-gradient(1.2px 1.2px at 55% 60%,#fff,transparent),radial-gradient(1.8px 1.8px at 76% 82%,#ffd6ff,transparent),radial-gradient(1.2px 1.2px at 33% 92%,#bfe6ff,transparent);animation:nw-tw 2.6s ease-in-out infinite}
+  .nw-box::after{background-image:radial-gradient(1.4px 1.4px at 16% 28%,#fff,transparent),radial-gradient(1.8px 1.8px at 35% 55%,#ffe9a8,transparent),radial-gradient(1.2px 1.2px at 52% 34%,#fff,transparent),radial-gradient(1.6px 1.6px at 70% 48%,#bfe6ff,transparent),radial-gradient(1.2px 1.2px at 88% 70%,#fff,transparent),radial-gradient(1.6px 1.6px at 6% 90%,#ffd6ff,transparent),radial-gradient(1.4px 1.4px at 47% 78%,#fff,transparent),radial-gradient(1.2px 1.2px at 96% 92%,#fff,transparent);animation:nw-tw 3.4s ease-in-out infinite reverse}
+  @keyframes nw-tw{0%,100%{opacity:.25}50%{opacity:1}}
+  .nw-box>*{position:relative;z-index:1}
+  .nw-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .nw-title{font-size:12px;line-height:1.4;background:linear-gradient(90deg,#8fe9ff,#c9a8ff,#ff9be6,#8fe9ff);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:nw-shine 4s linear infinite}
+  @keyframes nw-shine{0%{background-position:0% 0}100%{background-position:250% 0}}
+  .nw-ver{font-size:8px;line-height:1.6;color:#b9c8ff}
+  .nw-scroll{overflow-y:auto;overflow-x:hidden;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:10px;padding-right:2px;-webkit-overflow-scrolling:touch}
+  .nw-item{padding:10px;border-radius:12px;background:rgba(18,9,66,.6);box-shadow:inset 0 0 0 1px rgba(150,130,255,.5)}
+  .nw-item.nw-new{box-shadow:inset 0 0 0 2px #9d85ff,0 0 14px -2px rgba(157,133,255,.7)}
+  .nw-ih{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:10px;line-height:1.5}
+  .nw-ih b{font-weight:normal}
+  .nw-badge{font-size:7px;padding:3px 6px;border-radius:6px;background:linear-gradient(90deg,#ff5fd0,#7b5cff,#2fd6ff);background-size:200% 100%;animation:nw-shine 2.5s linear infinite;color:#fff}
+  .nw-meta{font-size:8px;color:#9fb0ff;margin:4px 0 6px}
+  .nw-item ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .nw-item li{font-size:9px;line-height:1.7;color:#eef1ff}
+  .nw-links{display:flex;flex-direction:column;gap:6px}
+  .nw-links .lang-btn{background:rgba(20,10,70,.7)}
+  #nw-ok{border:0;border-radius:12px;padding:12px;font-family:var(--pixel);font-size:12px;color:#fff;cursor:pointer;touch-action:manipulation;
+    background:linear-gradient(90deg,#7b5cff,#2fd6ff,#ff5fd0,#7b5cff);background-size:300% 100%;animation:nw-shine 3.5s linear infinite;box-shadow:inset 0 -4px 0 rgba(0,0,0,.3),0 0 16px -2px rgba(123,92,255,.8);text-shadow:0 1px 0 rgba(0,0,0,.5)}
+  #nw-ok:active{transform:translateY(1px)}
+  #settings-ver{color:var(--gold)}
+  @media (prefers-reduced-motion:reduce){.nw-box,.nw-box::before,.nw-box::after,#btn-news,.nw-title,#nw-ok,.nw-badge{animation:none}}
 </style>
 </head>
 
@@ -668,13 +723,16 @@ setTimeout(run,3000);
 /* --- прогрес = реально виконана робота --- */
 function target(){var pre=T.pre.t?T.pre.d/T.pre.t:1,gm=T.script?(T.game.t?T.game.d/T.game.t:1):0;
  return .08*T.font+.42*Math.min(1,pre)+.12*T.script+.33*Math.min(1,gm)+.05*(T.frames/2);}
+var LG=(function(){try{var v=localStorage.getItem('lang');if(v==='uk'||v==='en'||v==='ru')return v;var c=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.user&&Telegram.WebApp.initDataUnsafe.user.language_code;return c==='ru'?'ru':(c==='en'?'en':'uk');}catch(e){return 'uk';}})();
+var LTX={uk:['Збираємо героїв…','Розфарбовуємо небо…','Готуємось до підйому!','Поїхали!','Сходи в небо'],en:['Gathering heroes…','Painting the sky…','Getting ready to climb!','Let\'s go!','Stairs to the Sky'],ru:['Собираем героев…','Раскрашиваем небо…','Готовимся к подъёму!','Поехали!','Лестница в небо']};
+var LT=LTX[LG];st.textContent=LT[0];(function(){var tt=root.querySelector('.ttl');if(tt)tt.textContent=LT[4];})();
 var last=performance.now();
 function tick(now){if(finished||blocked)return;var dt=Math.min(.1,(now-last)/1000);last=now;
  var tg=target();if(now-t0>15000)tg=1;
  var step=(tg-shown)*Math.min(1,dt*9);step=Math.min(step,dt*1.6);if(tg>=1)step=Math.max(step,dt*.5);if(step>0)shown=Math.min(tg,shown+step);
  var p=shown>=.995&&tg>=1?1:shown,v=Math.round(p*100);
  root.style.setProperty('--p',p.toFixed(4));pc.textContent=v+'%';root.setAttribute('aria-valuenow',v);
- st.textContent=!T.script?'Збираємо героїв…':(T.game.t&&T.game.d<T.game.t?'Розфарбовуємо небо…':(p<1?'Готуємось до підйому!':'Поїхали!'));
+ st.textContent=!T.script?LT[0]:(T.game.t&&T.game.d<T.game.t?LT[1]:(p<1?LT[2]:LT[3]));
  if(p>=1){finish();return;}requestAnimationFrame(tick);}
 function finish(){if(blocked)return;finished=true;if(desc)Object.defineProperty(HTMLImageElement.prototype,'src',desc);
  setTimeout(function(){if(blocked)return;root.classList.add('done');setTimeout(function(){root.style.display='none';},900);},350);}
@@ -719,6 +777,7 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
     </button>
 
     <button id="btn-settings" type="button" title="Налаштування">⚙️</button>
+    <button id="btn-news" type="button" title="Новини">📰<span class="nw-dot off" id="btn-news-dot"></span></button>
 
     <div id="hud">
       <div id="score-row">
@@ -825,6 +884,10 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
         <button id="music-play" type="button">▶</button>
         <button id="music-next" type="button">⏭</button>
       </div>
+      <div class="music-modes">
+        <button id="music-loop-one" type="button"><span>🔂</span> <b id="music-loop-one-t"></b></button>
+        <button id="music-loop-all" type="button"><span>🔁</span> <b id="music-loop-all-t"></b></button>
+      </div>
       <div id="music-list"></div>
     </div>
   </div>
@@ -870,9 +933,24 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
           <button class="lang-btn link-btn" type="button" data-link="https://www.tiktok.com/@nightsergio?_r=1&amp;_t=ZS-99yuGlOXaGC"><span class="lk-ic">🎵</span><span class="lk-txt"><b id="lk-tt-t"></b><i>tiktok.com/@nightsergio</i></span></button>
         </div>
       </div>
+      <div class="settings-row"><div class="settings-label" id="settings-ver"></div></div>
     </div>
   </div>
 </div>
+
+  <div id="news-modal" class="off">
+    <div class="nw-box">
+      <div class="nw-head"><span class="nw-title" id="nw-title">📰 Новини</span><button class="shop-close" id="nw-close" type="button">✕</button></div>
+      <div class="nw-ver" id="nw-ver"></div>
+      <div class="nw-scroll" id="nw-list"></div>
+      <div class="nw-links">
+        <button class="lang-btn link-btn" type="button" data-link="https://www.tiktok.com/@nightsergio?_r=1&amp;_t=ZS-99yuGlOXaGC"><span class="lk-ic">🎵</span><span class="lk-txt"><b id="nw-lk-tt"></b><i>tiktok.com/@nightsergio</i></span></button>
+        <button class="lang-btn link-btn" type="button" data-link="https://t.me/Sergixlol"><span class="lk-ic">🛟</span><span class="lk-txt"><b id="nw-lk-sup"></b><i>@Sergixlol</i></span></button>
+        <button class="lang-btn link-btn" type="button" data-link="https://t.me/aura_up_news"><span class="lk-ic">📢</span><span class="lk-txt"><b id="nw-lk-news"></b><i>t.me/aura_up_news</i></span></button>
+      </div>
+      <button id="nw-ok" type="button">OK</button>
+    </div>
+  </div>
 
 <script type="text/plain" data-game>
 (() => {
@@ -1026,9 +1104,9 @@ const I18N = {
    Translates dynamically generated menu text (quests, weapons, armor, skins,
    upgrades, locations, leaderboard/shop messages) when English is selected.
    ========================================================================== */
-const MENU_I18N = {"Драговина слизнів": "Slime Swamp", "Табір гоблінів": "Goblin Camp", "Кладовище кісток": "Bone Graveyard", "Печера кажанів": "Bat Cave", "Павутинні глибини": "Spider Depths", "Вулканічна кузня": "Volcanic Forge", "Примарний склеп": "Phantom Crypt", "Демонічна безодня": "Demonic Abyss", "Трон Бога-Дракона": "Dragon God's Throne", "Кулаки": "Fists", "Дерев’яний меч": "Wooden Sword", "Бронзовий меч": "Bronze Sword", "Залізний меч": "Iron Sword", "Сталевий меч": "Steel Sword", "Лицарський меч": "Knight's Sword", "Магічний клинок": "Magic Blade", "Бойова сокира": "Battle Axe", "Алебарда": "Halberd", "Рунічний меч": "Runic Sword", "Катана": "Katana", "Клинок дракона": "Dragon Blade", "Крижаний клинок": "Frost Blade", "Зоряний клинок": "Star Blade", "Громовий молот": "Thunder Hammer", "Легендарний меч": "Legendary Sword", "Клинок порожнечі": "Void Blade", "Клинок фенікса": "Phoenix Blade", "Меч хаосу": "Chaos Sword", "Меч безодні": "Abyss Sword", "Клинок богів": "Gods' Blade", "Космічний клинок": "Cosmic Blade", "Клинок вічності": "Eternity Blade", "Всемогутній меч": "Omnipotent Sword", "Клинок наднової": "Supernova Blade", "Меч Титана": "Titan Sword", "Тканинний одяг": "Cloth Outfit", "Шкіряна броня": "Leather Armor", "Клепана броня": "Riveted Armor", "Кольчуга": "Chainmail", "Бригантина": "Brigandine", "Сталевий панцир": "Steel Armor", "Латний обладунок": "Plate Armor", "Лицарські лати": "Knight Armor", "Обладунок паладина": "Paladin Armor", "Міфрилова броня": "Mithril Armor", "Орчачий панцир": "Orc Armor", "Драконяча луска": "Dragon Scales", "Крижана броня": "Ice Armor", "Небесна броня": "Heavenly Armor", "Броня вампіра": "Vampire Armor", "Обсидіанова броня": "Obsidian Armor", "Громова броня": "Thunder Armor", "Броня порожнечі": "Void Armor", "Хаос-обладунок": "Chaos Armor", "Космічна броня": "Cosmic Armor", "Божественний обладунок": "Divine Armor", "Обладунок вічності": "Eternity Armor", "Броня серафима": "Seraphim Armor", "Панцир Безодні": "Abyss Armor", "Стандартний": "Default", "Білий": "White", "Червоний": "Red", "Синій": "Blue", "Зелений": "Green", "Золотий": "Gold", "Тінь": "Shadow", "Король": "King", "Фенікс": "Phoenix", "Кришталь": "Crystal", "Володар безодні": "Lord of the Abyss", "Фіолетовий": "Purple", "Рожевий": "Pink", "Камуфляж": "Camouflage", "Ніндзя": "Ninja", "Маг": "Mage", "Воїн": "Warrior", "Кіберпанк": "Cyberpunk", "Демон": "Demon", "Ангел": "Angel", "Льодовий": "Ice", "Вогняний": "Fire", "Привид": "Ghost", "Дикий": "Wild", "Зомбі": "Zombie", "Клоун": "Clown", "Некромант": "Necromancer", "Космічний": "Cosmic", "Самурай": "Samurai", "Пірат": "Pirate", "Технік": "Technician", "Дракон": "Dragon", "Легендарний": "Legendary", "Емілія": "Emilia", "Рем": "Rem", "Рам": "Ram", "Беатріс": "Beatrice", "Круш": "Crusch", "Юліус": "Julius", "Ехидна": "Echidna", "Майстерність зброї": "Weapon Mastery", "Критичний удар": "Critical Strike", "Сила крита": "Critical Power", "Жадібність": "Greed", "Щасливий клік": "Lucky Click", "Автомайстер": "Auto Master", "Регенерація": "Regeneration", "Стійкість": "Resilience", "Мисливець": "Hunter", "Нюх на діаманти": "Diamond Sense", "Золота лихоманка": "Gold Rush", "Залізна воля": "Iron Will", "Прудкість": "Agility", "Діамантова сила": "Diamond Power", "Діамантове лезо": "Diamond Blade", "Діамантове серце": "Diamond Heart", "Діамантовий щит": "Diamond Shield", "Діамантовий магніт": "Diamond Magnet", "Діамантовий крит": "Diamond Critical", "Діамантова регенерація": "Diamond Regeneration", "Слизень": "Slime", "Гоблін": "Goblin", "Скелет": "Skeleton", "Кажан": "Bat", "Павук": "Spider", "Лава-воїн": "Lava Warrior", "Бос": "Boss", "Сила кліку": "Click Power", "Автоклік": "Autoclick", "Прокачка": "Upgrades", "Завдання": "Quests", "Топ": "Top", "Основне": "Main", "Зброя": "Weapon", "Броня": "Armor", "Образи": "Skins", "Плейлист": "Playlist", "Магазин": "Shop", "Налаштування": "Settings", "Трек не обрано": "No track selected", "Доступ заблоковано": "Access blocked", "Тапай по екрану!": "Tap the screen!", "За клік": "Per tap", "за клік": "per tap", "авто": "auto", "Клік": "Click", "Авто": "Auto", "Поверх": "Floor", "Вершина вежі": "Top of the tower", "Здоров'я": "Health", "Здоров’я": "Health", "Куплено": "Purchased", "Одягнено": "Equipped", "Одягнути": "Equip", "Отримано": "Claimed", "У бою": "In battle", "Без бафів": "No buffs", "Без захисту": "No protection", "одноразова покупка": "one-time purchase", "Бойові та економічні": "Combat & Economy", "Діамантові прокачки": "💎 Diamond Upgrades", "МАКС": "MAX", "Оновити": "Refresh", "Завантаження…": "Loading…", "Анонім": "Anonymous", "Поки що тут порожньо.": "It's empty here for now.", "Зіграй і стань першим у рейтингу!": "Play and become the first on the leaderboard!", "Таблицю лідерів ще не підключено.": "The leaderboard is not connected yet.", "Встав свій Supabase ANON_KEY у коді гри.": "Insert your Supabase ANON_KEY into the game code.", "Запросити друга": "Invite a friend", "Дякуємо за покупку!": "Thank you for your purchase!", "Ваш акаунт заблоковано адміністрацією.": "Your account has been blocked by the administration.", "Причина:": "Reason:", "Причина не вказана.": "No reason provided.", "Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.": "Payment is made with official Telegram Stars. The reward is credited instantly to this account.", "Треків ще немає.": "There are no tracks yet.", "Додай свою музику у список TRACKS у коді гри.": "Add your music to the TRACKS list in the game code.", "Ваш друг дійшов": "Your friend reached"};
+const MENU_I18N = {"Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.": "Payment via official Telegram Stars. Credited instantly to this account.", "Драговина слизнів": "Slime Swamp", "Табір гоблінів": "Goblin Camp", "Кладовище кісток": "Bone Graveyard", "Печера кажанів": "Bat Cave", "Павутинні глибини": "Spider Depths", "Вулканічна кузня": "Volcanic Forge", "Примарний склеп": "Phantom Crypt", "Демонічна безодня": "Demonic Abyss", "Трон Бога-Дракона": "Dragon God's Throne", "Кулаки": "Fists", "Дерев’яний меч": "Wooden Sword", "Бронзовий меч": "Bronze Sword", "Залізний меч": "Iron Sword", "Сталевий меч": "Steel Sword", "Лицарський меч": "Knight's Sword", "Магічний клинок": "Magic Blade", "Бойова сокира": "Battle Axe", "Алебарда": "Halberd", "Рунічний меч": "Runic Sword", "Катана": "Katana", "Клинок дракона": "Dragon Blade", "Крижаний клинок": "Frost Blade", "Зоряний клинок": "Star Blade", "Громовий молот": "Thunder Hammer", "Легендарний меч": "Legendary Sword", "Клинок порожнечі": "Void Blade", "Клинок фенікса": "Phoenix Blade", "Меч хаосу": "Chaos Sword", "Меч безодні": "Abyss Sword", "Клинок богів": "Gods' Blade", "Космічний клинок": "Cosmic Blade", "Клинок вічності": "Eternity Blade", "Всемогутній меч": "Omnipotent Sword", "Клинок наднової": "Supernova Blade", "Меч Титана": "Titan Sword", "Тканинний одяг": "Cloth Outfit", "Шкіряна броня": "Leather Armor", "Клепана броня": "Riveted Armor", "Кольчуга": "Chainmail", "Бригантина": "Brigandine", "Сталевий панцир": "Steel Armor", "Латний обладунок": "Plate Armor", "Лицарські лати": "Knight Armor", "Обладунок паладина": "Paladin Armor", "Міфрилова броня": "Mithril Armor", "Орчачий панцир": "Orc Armor", "Драконяча луска": "Dragon Scales", "Крижана броня": "Ice Armor", "Небесна броня": "Heavenly Armor", "Броня вампіра": "Vampire Armor", "Обсидіанова броня": "Obsidian Armor", "Громова броня": "Thunder Armor", "Броня порожнечі": "Void Armor", "Хаос-обладунок": "Chaos Armor", "Космічна броня": "Cosmic Armor", "Божественний обладунок": "Divine Armor", "Обладунок вічності": "Eternity Armor", "Броня серафима": "Seraphim Armor", "Панцир Безодні": "Abyss Armor", "Стандартний": "Default", "Білий": "White", "Червоний": "Red", "Синій": "Blue", "Зелений": "Green", "Золотий": "Gold", "Тінь": "Shadow", "Король": "King", "Фенікс": "Phoenix", "Кришталь": "Crystal", "Володар безодні": "Lord of the Abyss", "Фіолетовий": "Purple", "Рожевий": "Pink", "Камуфляж": "Camouflage", "Ніндзя": "Ninja", "Маг": "Mage", "Воїн": "Warrior", "Кіберпанк": "Cyberpunk", "Демон": "Demon", "Ангел": "Angel", "Льодовий": "Ice", "Вогняний": "Fire", "Привид": "Ghost", "Дикий": "Wild", "Зомбі": "Zombie", "Клоун": "Clown", "Некромант": "Necromancer", "Космічний": "Cosmic", "Самурай": "Samurai", "Пірат": "Pirate", "Технік": "Technician", "Дракон": "Dragon", "Легендарний": "Legendary", "Емілія": "Emilia", "Рем": "Rem", "Рам": "Ram", "Беатріс": "Beatrice", "Круш": "Crusch", "Юліус": "Julius", "Ехидна": "Echidna", "Майстерність зброї": "Weapon Mastery", "Критичний удар": "Critical Strike", "Сила крита": "Critical Power", "Жадібність": "Greed", "Щасливий клік": "Lucky Click", "Автомайстер": "Auto Master", "Регенерація": "Regeneration", "Стійкість": "Resilience", "Мисливець": "Hunter", "Нюх на діаманти": "Diamond Sense", "Золота лихоманка": "Gold Rush", "Залізна воля": "Iron Will", "Прудкість": "Agility", "Діамантова сила": "Diamond Power", "Діамантове лезо": "Diamond Blade", "Діамантове серце": "Diamond Heart", "Діамантовий щит": "Diamond Shield", "Діамантовий магніт": "Diamond Magnet", "Діамантовий крит": "Diamond Critical", "Діамантова регенерація": "Diamond Regeneration", "Слизень": "Slime", "Гоблін": "Goblin", "Скелет": "Skeleton", "Кажан": "Bat", "Павук": "Spider", "Лава-воїн": "Lava Warrior", "Бос": "Boss", "Сила кліку": "Click Power", "Автоклік": "Autoclick", "Прокачка": "Upgrades", "Завдання": "Quests", "Топ": "Top", "Основне": "Main", "Зброя": "Weapon", "Броня": "Armor", "Образи": "Skins", "Плейлист": "Playlist", "Магазин": "Shop", "Налаштування": "Settings", "Трек не обрано": "No track selected", "Доступ заблоковано": "Access blocked", "Тапай по екрану!": "Tap the screen!", "За клік": "Per tap", "за клік": "per tap", "авто": "auto", "Клік": "Click", "Авто": "Auto", "Поверх": "Floor", "Вершина вежі": "Top of the tower", "Здоров'я": "Health", "Здоров’я": "Health", "Куплено": "Purchased", "Одягнено": "Equipped", "Одягнути": "Equip", "Отримано": "Claimed", "У бою": "In battle", "Без бафів": "No buffs", "Без захисту": "No protection", "одноразова покупка": "one-time purchase", "Бойові та економічні": "Combat & Economy", "Діамантові прокачки": "💎 Diamond Upgrades", "МАКС": "MAX", "Оновити": "Refresh", "Завантаження…": "Loading…", "Анонім": "Anonymous", "Поки що тут порожньо.": "It's empty here for now.", "Зіграй і стань першим у рейтингу!": "Play and become the first on the leaderboard!", "Таблицю лідерів ще не підключено.": "The leaderboard is not connected yet.", "Встав свій Supabase ANON_KEY у коді гри.": "Insert your Supabase ANON_KEY into the game code.", "Запросити друга": "Invite a friend", "Дякуємо за покупку!": "Thank you for your purchase!", "Ваш акаунт заблоковано адміністрацією.": "Your account has been blocked by the administration.", "Причина:": "Reason:", "Причина не вказана.": "No reason provided.", "Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.": "Payment is made with official Telegram Stars. The reward is credited instantly to this account.", "Треків ще немає.": "There are no tracks yet.", "Додай свою музику у список TRACKS у коді гри.": "Add your music to the TRACKS list in the game code.", "Ваш друг дійшов": "Your friend reached"};
 const MENU_I18N_REV = Object.fromEntries(Object.entries(MENU_I18N).map(([a,b]) => [b,a]));
-const MENU_I18N_RU_UK = {"Драговина слизнів":"Болото слизней","Табір гоблінів":"Лагерь гоблинов","Кладовище кісток":"Кладбище костей","Печера кажанів":"Пещера летучих мышей","Павутинні глибини":"Паучьи глубины","Вулканічна кузня":"Вулканическая кузница","Примарний склеп":"Призрачный склеп","Демонічна безодня":"Демоническая бездна","Трон Бога-Дракона":"Трон Бога-Дракона","Кулаки":"Кулаки","Дерев’яний меч":"Деревянный меч","Бронзовий меч":"Бронзовый меч","Залізний меч":"Железный меч","Сталевий меч":"Стальной меч","Лицарський меч":"Рыцарский меч","Магічний клинок":"Магический клинок","Бойова сокира":"Боевая секира","Алебарда":"Алебарда","Рунічний меч":"Рунический меч","Катана":"Катана","Клинок дракона":"Клинок дракона","Крижаний клинок":"Ледяной клинок","Зоряний клинок":"Звёздный клинок","Громовий молот":"Громовой молот","Легендарний меч":"Легендарный меч","Клинок порожнечі":"Клинок пустоты","Клинок фенікса":"Клинок феникса","Меч хаосу":"Меч хаоса","Меч безодні":"Меч бездны","Клинок богів":"Клинок богов","Космічний клинок":"Космический клинок","Клинок вічності":"Клинок вечности","Всемогутній меч":"Всемогущий меч","Клинок наднової":"Клинок сверхновой","Меч Титана":"Меч Титана","Тканинний одяг":"Тканевая одежда","Шкіряна броня":"Кожаная броня","Клепана броня":"Клёпаная броня","Кольчуга":"Кольчуга","Бригантина":"Бригантина","Сталевий панцир":"Стальной доспех","Латний обладунок":"Латный доспех","Лицарські лати":"Рыцарские латы","Обладунок паладина":"Доспех паладина","Міфрилова броня":"Мифриловая броня","Орчачий панцир":"Орочий доспех","Драконяча луска":"Чешуя дракона","Крижана броня":"Ледяная броня","Небесна броня":"Небесная броня","Броня вампіра":"Броня вампира","Обсидіанова броня":"Обсидиановая броня","Громова броня":"Грозовая броня","Броня порожнечі":"Броня пустоты","Хаос-обладунок":"Доспех хаоса","Космічна броня":"Космическая броня","Божественний обладунок":"Божественный доспех","Обладунок вічності":"Доспех вечности","Броня серафима":"Броня серафима","Панцир Безодні":"Доспех Бездны","Стандартний":"Стандартный","Білий":"Белый","Червоний":"Красный","Синій":"Синий","Зелений":"Зелёный","Золотий":"Золотой","Тінь":"Тень","Король":"Король","Фенікс":"Феникс","Кришталь":"Кристалл","Володар безодні":"Владыка бездны","Фіолетовий":"Фиолетовый","Рожевий":"Розовый","Камуфляж":"Камуфляж","Ніндзя":"Ниндзя","Маг":"Маг","Воїн":"Воин","Кіберпанк":"Киберпанк","Демон":"Демон","Ангел":"Ангел","Льодовий":"Ледяной","Вогняний":"Огненный","Привид":"Призрак","Дикий":"Дикий","Зомбі":"Зомби","Клоун":"Клоун","Некромант":"Некромант","Космічний":"Космический","Самурай":"Самурай","Пірат":"Пират","Технік":"Техник","Дракон":"Дракон","Легендарний":"Легендарный","Майстерність зброї":"Мастерство оружия","Критичний удар":"Критический удар","Сила крита":"Сила крита","Жадібність":"Жадность","Щасливий клік":"Счастливый клик","Автомайстер":"Автомастер","Регенерація":"Регенерация","Стійкість":"Стойкость","Мисливець":"Охотник","Нюх на діаманти":"Чутьё на алмазы","Золота лихоманка":"Золотая лихорадка","Залізна воля":"Железная воля","Прудкість":"Ловкость","Діамантова сила":"Сила алмазов","Діамантове лезо":"Алмазный клинок","Діамантове серце":"Алмазное сердце","Діамантовий щит":"Алмазный щит","Діамантовий магніт":"Алмазный магнит","Діамантовий крит":"Алмазный крит","Діамантова регенерація":"Алмазная регенерация","Слизень":"Слизень","Гоблін":"Гоблин","Скелет":"Скелет","Кажан":"Летучая мышь","Павук":"Паук","Лава-воїн":"Лава-воин","Бос":"Босс","Сила кліку":"Сила клика","Автоклік":"Автоклик","Прокачка":"Улучшения","Завдання":"Задания","Топ":"Топ","Основне":"Основное","Зброя":"Оружие","Броня":"Броня","Образи":"Образы","Плейлист":"Плейлист","Магазин":"Магазин","Налаштування":"Настройки","Трек не обрано":"Трек не выбран","Доступ заблоковано":"Доступ заблокирован","Тапай по екрану!":"Тапай по экрану!","За клік":"за клик","за клік":"за клик","авто":"авто","Клік":"Клик","Авто":"Авто","Поверх":"Этаж","Вершина вежі":"Вершина башни","Здоров'я":"Здоровье","Здоров’я":"Здоровье","Куплено":"Куплено","Одягнено":"Экипировано","Одягнути":"Экипировать","Отримано":"Получено","У бою":"В бою","Без бафів":"Без баффов","Без захисту":"Без защиты","одноразова покупка":"разовая покупка","Бойові та економічні":"Боевые и экономические","Діамантові прокачки":"💎 Алмазные улучшения","МАКС":"МАКС","Оновити":"Обновить","Завантаження…":"Загрузка…","Анонім":"Аноним","Поки що тут порожньо.":"Пока здесь пусто.","Зіграй і стань першим у рейтингу!":"Сыграй и стань первым в рейтинге!","Таблицю лідерів ще не підключено.":"Таблица лидеров ещё не подключена.","Встав свій Supabase ANON_KEY у коді гри.":"Вставь свой Supabase ANON_KEY в код игры.","Запросити друга":"Пригласить друга","Дякуємо за покупку!":"Спасибо за покупку!","Ваш акаунт заблоковано адміністрацією.":"Ваш аккаунт заблокирован администрацией.","Причина:":"Причина:","Причина не вказана.":"Причина не указана.","Треків ще немає.":"Треков пока нет.","Додай свою музику у список TRACKS у коді гри.":"Добавь свою музыку в список TRACKS в коде игры.","Ваш друг дійшов":"Ваш друг дошёл"};
+const MENU_I18N_RU_UK = {"Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.":"Оплата — официальными Telegram Stars. Начисляется мгновенно на этот аккаунт.","Емілія":"Эмилия","Беатріс":"Беатрис","Юліус":"Юлиус","Драговина слизнів":"Болото слизней","Табір гоблінів":"Лагерь гоблинов","Кладовище кісток":"Кладбище костей","Печера кажанів":"Пещера летучих мышей","Павутинні глибини":"Паучьи глубины","Вулканічна кузня":"Вулканическая кузница","Примарний склеп":"Призрачный склеп","Демонічна безодня":"Демоническая бездна","Трон Бога-Дракона":"Трон Бога-Дракона","Кулаки":"Кулаки","Дерев’яний меч":"Деревянный меч","Бронзовий меч":"Бронзовый меч","Залізний меч":"Железный меч","Сталевий меч":"Стальной меч","Лицарський меч":"Рыцарский меч","Магічний клинок":"Магический клинок","Бойова сокира":"Боевая секира","Алебарда":"Алебарда","Рунічний меч":"Рунический меч","Катана":"Катана","Клинок дракона":"Клинок дракона","Крижаний клинок":"Ледяной клинок","Зоряний клинок":"Звёздный клинок","Громовий молот":"Громовой молот","Легендарний меч":"Легендарный меч","Клинок порожнечі":"Клинок пустоты","Клинок фенікса":"Клинок феникса","Меч хаосу":"Меч хаоса","Меч безодні":"Меч бездны","Клинок богів":"Клинок богов","Космічний клинок":"Космический клинок","Клинок вічності":"Клинок вечности","Всемогутній меч":"Всемогущий меч","Клинок наднової":"Клинок сверхновой","Меч Титана":"Меч Титана","Тканинний одяг":"Тканевая одежда","Шкіряна броня":"Кожаная броня","Клепана броня":"Клёпаная броня","Кольчуга":"Кольчуга","Бригантина":"Бригантина","Сталевий панцир":"Стальной доспех","Латний обладунок":"Латный доспех","Лицарські лати":"Рыцарские латы","Обладунок паладина":"Доспех паладина","Міфрилова броня":"Мифриловая броня","Орчачий панцир":"Орочий доспех","Драконяча луска":"Чешуя дракона","Крижана броня":"Ледяная броня","Небесна броня":"Небесная броня","Броня вампіра":"Броня вампира","Обсидіанова броня":"Обсидиановая броня","Громова броня":"Грозовая броня","Броня порожнечі":"Броня пустоты","Хаос-обладунок":"Доспех хаоса","Космічна броня":"Космическая броня","Божественний обладунок":"Божественный доспех","Обладунок вічності":"Доспех вечности","Броня серафима":"Броня серафима","Панцир Безодні":"Доспех Бездны","Стандартний":"Стандартный","Білий":"Белый","Червоний":"Красный","Синій":"Синий","Зелений":"Зелёный","Золотий":"Золотой","Тінь":"Тень","Король":"Король","Фенікс":"Феникс","Кришталь":"Кристалл","Володар безодні":"Владыка бездны","Фіолетовий":"Фиолетовый","Рожевий":"Розовый","Камуфляж":"Камуфляж","Ніндзя":"Ниндзя","Маг":"Маг","Воїн":"Воин","Кіберпанк":"Киберпанк","Демон":"Демон","Ангел":"Ангел","Льодовий":"Ледяной","Вогняний":"Огненный","Привид":"Призрак","Дикий":"Дикий","Зомбі":"Зомби","Клоун":"Клоун","Некромант":"Некромант","Космічний":"Космический","Самурай":"Самурай","Пірат":"Пират","Технік":"Техник","Дракон":"Дракон","Легендарний":"Легендарный","Майстерність зброї":"Мастерство оружия","Критичний удар":"Критический удар","Сила крита":"Сила крита","Жадібність":"Жадность","Щасливий клік":"Счастливый клик","Автомайстер":"Автомастер","Регенерація":"Регенерация","Стійкість":"Стойкость","Мисливець":"Охотник","Нюх на діаманти":"Чутьё на алмазы","Золота лихоманка":"Золотая лихорадка","Залізна воля":"Железная воля","Прудкість":"Ловкость","Діамантова сила":"Сила алмазов","Діамантове лезо":"Алмазный клинок","Діамантове серце":"Алмазное сердце","Діамантовий щит":"Алмазный щит","Діамантовий магніт":"Алмазный магнит","Діамантовий крит":"Алмазный крит","Діамантова регенерація":"Алмазная регенерация","Слизень":"Слизень","Гоблін":"Гоблин","Скелет":"Скелет","Кажан":"Летучая мышь","Павук":"Паук","Лава-воїн":"Лава-воин","Бос":"Босс","Сила кліку":"Сила клика","Автоклік":"Автоклик","Прокачка":"Улучшения","Завдання":"Задания","Топ":"Топ","Основне":"Основное","Зброя":"Оружие","Броня":"Броня","Образи":"Образы","Плейлист":"Плейлист","Магазин":"Магазин","Налаштування":"Настройки","Трек не обрано":"Трек не выбран","Доступ заблоковано":"Доступ заблокирован","Тапай по екрану!":"Тапай по экрану!","За клік":"за клик","за клік":"за клик","авто":"авто","Клік":"Клик","Авто":"Авто","Поверх":"Этаж","Вершина вежі":"Вершина башни","Здоров'я":"Здоровье","Здоров’я":"Здоровье","Куплено":"Куплено","Одягнено":"Экипировано","Одягнути":"Экипировать","Отримано":"Получено","У бою":"В бою","Без бафів":"Без баффов","Без захисту":"Без защиты","одноразова покупка":"разовая покупка","Бойові та економічні":"Боевые и экономические","Діамантові прокачки":"💎 Алмазные улучшения","МАКС":"МАКС","Оновити":"Обновить","Завантаження…":"Загрузка…","Анонім":"Аноним","Поки що тут порожньо.":"Пока здесь пусто.","Зіграй і стань першим у рейтингу!":"Сыграй и стань первым в рейтинге!","Таблицю лідерів ще не підключено.":"Таблица лидеров ещё не подключена.","Встав свій Supabase ANON_KEY у коді гри.":"Вставь свой Supabase ANON_KEY в код игры.","Запросити друга":"Пригласить друга","Дякуємо за покупку!":"Спасибо за покупку!","Ваш акаунт заблоковано адміністрацією.":"Ваш аккаунт заблокирован администрацией.","Причина:":"Причина:","Причина не вказана.":"Причина не указана.","Треків ще немає.":"Треков пока нет.","Додай свою музику у список TRACKS у коді гри.":"Добавь свою музыку в список TRACKS в коде игры.","Ваш друг дійшов":"Ваш друг дошёл"};
 const MENU_I18N_RU_EN = Object.fromEntries(Object.entries(MENU_I18N_RU_UK).map(([uk,ru]) => [MENU_I18N[uk] || uk, ru]));
 const MENU_I18N_RU_REV = Object.fromEntries(Object.entries(MENU_I18N_RU_UK).map(([uk,ru]) => [ru,uk]));
 
@@ -1176,11 +1254,16 @@ function menuTranslateStringRaw(str) {
     [/Прокачай здоров’я до ([0-9]+) рівня/g, 'Upgrade health to level $1'],
     [/Урон \+/g, 'Damage +'],
     [/Шанс крита \+/g, 'Crit chance +'],
+    [/Крит ×/g, 'Crit ×'],
+    [/Авто \+/g, 'Auto +'],
+    [/\(плоско\)/g, '(flat)'],
+    [/\/с(?![а-яіїєґ])/g, '/s'],
+    [/([0-9])с(?![а-яіїєґ])/g, '$1s'],
   ] : [];
 
   if (curLang === 'ru') {
     const ruRules = [
-      [/Урон:/g,'Урон:'],[/ХП:/g,'ОЗ:'],[/рів\./g,'ур.'],[/урону/g,'урона'],[/зірок за клік/g,'звёзд за клик'],[/зірок з монстрів/g,'звёзд с монстров'],[/діамантів з монстрів/g,'алмазов с монстров'],[/втрат зірок при поразці/g,'потери звёзд при поражении'],[/отриманого урону/g,'получаемого урона'],[/Здобич з монстрів/g,'Добыча с монстров'],[/Здобич/g,'Добыча'],[/Шанс крита/g,'Шанс крита'],[/Монстр кожні/g,'Монстр каждые'],[/Швидкість автокліку/g,'Скорость автоклика'],[/Зірки/g,'Звёзды'],[/Пройди ([0-9 ]+) сходинок/g,'Пройди $1 ступеней'],[/Досягни ([0-9]+)-го поверху вежі/g,'Достигни $1-го этажа башни'],[/Досягни вершини вежі/g,'Достигни вершины башни'],[/Здобудь ([0-9]+) видів зброї/g,'Получи $1 видов оружия'],[/Здобудь ([0-9]+) видів броні/g,'Получи $1 видов брони'],[/Здобудь ([0-9]+) образи/g,'Получи $1 образов'],[/Май ([0-9]+) діамантів одночасно/g,'Имей $1 алмазов одновременно'],[/Прокачай автоклік до ([0-9]+) рівня/g,'Прокачай автоклик до $1 уровня'],[/Прокачай силу кліку до ([0-9]+) рівня/g,'Прокачай силу клика до $1 уровня'],[/Прокачай здоров’я до ([0-9]+) рівня/g,'Прокачай здоровье до $1 уровня']
+      [/Урон:/g,'Урон:'],[/ХП:/g,'ОЗ:'],[/рів\./g,'ур.'],[/отриманого урону/g,'получаемого урона'],[/урону/g,'урона'],[/зірок за клік/g,'звёзд за клик'],[/зірок з монстрів/g,'звёзд с монстров'],[/діамантів з монстрів/g,'алмазов с монстров'],[/втрат зірок при поразці/g,'потери звёзд при поражении'],[/отриманого урону/g,'получаемого урона'],[/Здобич з монстрів/g,'Добыча с монстров'],[/Здобич/g,'Добыча'],[/Шанс крита/g,'Шанс крита'],[/Монстр кожні/g,'Монстр каждые'],[/Швидкість автокліку/g,'Скорость автоклика'],[/Зірки/g,'Звёзды'],[/Пройди ([0-9 ]+) сходинок/g,'Пройди $1 ступеней'],[/Досягни ([0-9]+)-го поверху вежі/g,'Достигни $1-го этажа башни'],[/Досягни вершини вежі/g,'Достигни вершины башни'],[/Здобудь ([0-9]+) видів зброї/g,'Получи $1 видов оружия'],[/Здобудь ([0-9]+) видів броні/g,'Получи $1 видов брони'],[/Здобудь ([0-9]+) образи/g,'Получи $1 образов'],[/Май ([0-9]+) діамантів одночасно/g,'Имей $1 алмазов одновременно'],[/Прокачай автоклік до ([0-9]+) рівня/g,'Прокачай автоклик до $1 уровня'],[/Прокачай силу кліку до ([0-9]+) рівня/g,'Прокачай силу клика до $1 уровня'],[/Прокачай здоров’я до ([0-9]+) рівня/g,'Прокачай здоровье до $1 уровня']
     ];
     for (const [re,rep] of ruRules) out = out.replace(re,rep);
   }
@@ -1200,7 +1283,7 @@ function translateMenuDOM() {
   while (walker.nextNode()) nodes.push(walker.currentNode);
   for (const node of nodes) {
     const parent = node.parentElement;
-    if (!parent || ['SCRIPT','STYLE'].includes(parent.tagName)) continue;
+    if (!parent || ['SCRIPT','STYLE'].includes(parent.tagName) || parent.closest('#news-modal')) continue;
     const old = node.nodeValue;
     const next = menuTranslateString(old);
     if (next !== old) node.nodeValue = next;
@@ -1219,6 +1302,9 @@ Object.assign(I18N.uk, { botTitle:'Підозріла активність', bot
 Object.assign(I18N.en, { botTitle:'Suspicious activity', botText:'You have been tapping fast for over {m} min without a break. Please take a pause and play fair. Repeated violations may lead to an account ban.', botTextAuto:'Automated taps (bot) detected. This is not allowed — repeated violations may lead to an account ban.', botOk:'Got it' });
 Object.assign(I18N.ru, { botTitle:'Подозрительная активность', botText:'Ты тапаешь без пауз больше {m} мин в быстром темпе. Сделай перерыв и играй честно. Повторные нарушения могут привести к блокировке аккаунта.', botTextAuto:'Обнаружены автоматические тапы (бот). Так играть нельзя — повторные нарушения могут привести к блокировке аккаунта.', botOk:'Понятно' });
 
+Object.assign(I18N.uk, { onlineNow:'Зараз онлайн', loopOne:'Повтор треку', loopAll:'Далі по колу' });
+Object.assign(I18N.en, { onlineNow:'Online now', loopOne:'Repeat track', loopAll:'Play next, loop' });
+Object.assign(I18N.ru, { onlineNow:'Сейчас онлайн', loopOne:'Повтор трека', loopAll:'Дальше по кругу' });
 Object.assign(I18N.uk, { resetTitle:'Прогрес скинуто', resetText:'Адміністрація обнулила твій ігровий прогрес. Якщо це помилка — напиши в підтримку.' });
 Object.assign(I18N.en, { resetTitle:'Progress reset', resetText:'The administration has reset your game progress. If this is a mistake, contact support.' });
 Object.assign(I18N.ru, { resetTitle:'Прогресс сброшен', resetText:'Администрация обнулила твой игровой прогресс. Если это ошибка — напиши в поддержку.' });
@@ -1301,6 +1387,7 @@ function applyStaticI18n() {
   $('settings-title')      && ($('settings-title').textContent = t('settings-title'));
   $('settings-lang-label') && ($('settings-lang-label').textContent = t('settings-lang-label'));
   $('settings-links-label') && ($('settings-links-label').textContent = t('linksLabel'));
+  if ($('music-loop-one-t')) { $('music-loop-one-t').textContent = t('loopOne'); $('music-loop-all-t').textContent = t('loopAll'); }
   $('lk-news-t') && ($('lk-news-t').textContent = t('lkNews'));
   $('lk-sup-t')  && ($('lk-sup-t').textContent  = t('lkSup'));
   $('lk-tt-t')   && ($('lk-tt-t').textContent   = t('lkTt'));
@@ -1340,6 +1427,7 @@ function setLang(lang) {
   curLang = lang;
   try { localStorage.setItem('lang', lang); } catch (e) {}
   applyStaticI18n();
+  try { if (typeof renderNews === 'function') renderNews(); } catch (e) {}
   // Re-render open/visible panels so dynamically generated text is translated too.
   try {
     if (typeof renderQuests === 'function') renderQuests();
@@ -1969,6 +2057,27 @@ const SKINS = [
     fx:{ back:rzBack(-3, 9, 6, 21, '#f2f0fa', '#b8b4d4'),
          front:[...rzSkirt('#1a1424', '#0c0810', '#8a5cd0'), ...rzFly(2, 0, '#b878ff', '#f0d8ff')] } },
 ];
+/* ===== Баланс скінів: бонус залежить від ЦІНИ =====
+   Цінність скіна V у ★: зірки — як є, діаманти — за курсом обмінника (1 💎 = 300 ★).
+   Загальний бюджет бонусів росте з V, а скіни за 💎 сильніші за скіни за ★ тієї ж цінності
+   (премія SKIN_GEM_PREMIUM). Розподіл між типами бонусів зберігається з описів вище (це «характер»
+   скіна), а розміри рахуються з ціни. Список сортується за зростанням цінності. */
+const SKIN_GEM_RATE = 300, SKIN_GEM_PREMIUM = 1.5;
+const SKIN_PRICE_FIX = { pink:28000, camo:32000, cyber:280, ghost:360, rz_ram:470, rz_julius:950 };   // розводимо однакові ціни
+const SKIN_STAT_W = { click:1, dmg:1, hp:0.8, reward:1, guard:1.2, dia:2, death:0.8 };            // «вага» 1% кожного бонусу
+const SKIN_STAT_CAP = { guard:0.5, death:0.5 };
+const skinValue = s => s.cost * (s.cur === 'diamond' ? SKIN_GEM_RATE : 1);
+SKINS.forEach(sk => {
+  if (SKIN_PRICE_FIX[sk.id]) sk.cost = SKIN_PRICE_FIX[sk.id];
+  const keys = Object.keys(sk.buff);
+  if (!sk.cost || !keys.length) return;
+  const V = skinValue(sk);
+  const pts = (2 + 0.25 * Math.pow(V, 0.35) + (V > 600000 ? 14 * Math.log2(V / 600000) : 0)) * (sk.cur === 'diamond' ? SKIN_GEM_PREMIUM : 1);   // понад 600k ★-еквіваленту ріст різкіший (топові скіни)
+  const sum = keys.reduce((a, k) => a + sk.buff[k], 0), nb = {};
+  keys.forEach(k => { nb[k] = Math.min(SKIN_STAT_CAP[k] || 9, Math.max(1, Math.round(pts * (sk.buff[k] / sum) / SKIN_STAT_W[k])) / 100); });
+  sk.buff = nb;
+});
+SKINS.sort((a, b) => skinValue(a) - skinValue(b));
 const skinById = id => SKINS.find(s => s.id === id) || SKINS[0];
 const skinBuff = k => (skinById(state.skin).buff[k] || 0);
 function buffText(b) {
@@ -2827,9 +2936,12 @@ setInterval(checkMaintenance, 15000);
 async function fetchLeaderboard(limit) {
   if (!keyReady()) return null; // ключ ще не вставлено
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score,photo_url&order=score.desc&limit=${limit}`, {
-      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
-    });
+    const H = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
+    try {   // основний шлях: сервер сам рахує «онлайн» (за своїм часом)
+      const rp = await fetch(`${SUPABASE_URL}/rest/v1/rpc/leaderboard_top`, { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: JSON.stringify({ lim: limit }) });
+      if (rp.ok) return await rp.json();
+    } catch (e) {}
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score,photo_url&order=score.desc&limit=${limit}`, { headers: H });
     if (!r.ok) return [];
     return await r.json();
   } catch (e) { return []; }
@@ -3117,6 +3229,30 @@ const inviteBtnHtml = () => '<button class="lb-refresh" id="lb-invite-btn" type=
 function bindInviteBtn() { const b = $('lb-invite-btn'); if (b) b.addEventListener('click', shareReferralLink); }
 function refreshInviteBtn() { const b = $('lb-invite-btn'); if (b) b.textContent = '👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')'; }
 
+async function fetchOnlineCount() {
+  if (!keyReady()) return null;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/online_count`, { method: 'POST', headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: '{}' });
+    if (!r.ok) return null;
+    const n = await r.json();
+    return Number.isFinite(Number(n)) ? Number(n) : null;
+  } catch (e) { return null; }
+}
+/* «Пульс» присутності: раз на 30 с, поки гра відкрита. Сервер (тригер) сам ставить last_seen = now(). */
+async function sendPresence() {
+  if (!keyReady() || !telegramId || document.hidden) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?telegram_id=eq.${telegramId}`, {
+      method: 'PATCH',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ last_seen: new Date().toISOString() })
+    });
+  } catch (e) {}
+}
+sendPresence();
+setInterval(sendPresence, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) sendPresence(); });
+
 async function renderLeaderboard() {
   panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button><div class="lb-empty">' + uiText('Завантаження…') + '</div>';
   bindInviteBtn();
@@ -3126,7 +3262,8 @@ async function renderLeaderboard() {
     panelLb.querySelector('.lb-empty').innerHTML = uiText('Таблицю лідерів ще не підключено.') + '<br>' + uiText('Встав свій Supabase ANON_KEY у коді гри.');
     return;
   }
-  const top = await fetchLeaderboard(100);
+  const [top, onlineN] = await Promise.all([fetchLeaderboard(100), fetchOnlineCount()]);
+  const onlineHtml = onlineN === null ? '' : `<div class="lb-online"><i class="lb-dot on"></i><span>${t('onlineNow')}: <b>${onlineN}</b></span></div>`;
   if (!top || !top.length) {
     panelLb.querySelector('.lb-empty').innerHTML = uiText('Поки що тут порожньо.') + '<br>' + uiText('Зіграй і стань першим у рейтингу!');
     return;
@@ -3137,9 +3274,9 @@ async function renderLeaderboard() {
     const isMe = (p.username || '') === playerName;
     const cls = ['lb-row']; if (rank <= 3) cls.push('top' + rank); if (isMe) cls.push('me');
     const name = escapeHtml(String(p.username || uiText('Анонім'))).slice(0, 20);
-    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span>${avatarImg(p.photo_url, 'lb-avatar')}<span class="lb-name">${name}</span><span class="lb-score">${fmt(p.score || 0)}</span></div>`;
+    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span><span class="lb-name">${name}</span><span class="lb-score">${fmt(p.score || 0)}</span></div>`;
   }).join('');
-  panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
+  panelLb.innerHTML = inviteBtnHtml() + onlineHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
   bindInviteBtn();
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
 }
@@ -3905,6 +4042,86 @@ document.querySelectorAll('#settings-modal [data-link]').forEach(b => b.addEvent
     else window.open(url, '_blank', 'noopener');
   } catch (e) { window.open(url, '_blank', 'noopener'); }
 }));
+
+/* ================= НОВИНИ / ВЕРСІЯ ================= */
+/* Щоб показати нову новину всім: додай новий обʼєкт ПЕРШИМ у масив NEWS (з новою ver/date/time) — вікно зʼявиться знову при запуску. */
+const NEWS = [
+  { ver: '1.1.0', date: '24.09.2026', time: '17:04',
+    title: { uk: 'Велике оновлення', en: 'Big update', ru: 'Большое обновление' },
+    items: {
+      uk: ['🟢 Додали індикатор «онлайн» біля кожного гравця та лічильник, скільки гравців зараз онлайн', '🌐 Виправили баги з перекладом', '📰 Додали новини (це вікно) та кнопку новин у головному меню', '⚖️ Виправили баланс у грі', '💎 Скіни за алмази тепер кращі за скіни за звичайні зірки — навіть за такої самої вартості'],
+      en: ['🟢 Added an «online» indicator next to every player and a counter of players online', '🌐 Fixed translation bugs', '📰 Added news (this window) and a news button in the main menu', '⚖️ Fixed game balance', '💎 Diamond skins are now better than regular star skins — even at the same price'],
+      ru: ['🟢 Добавили индикатор «онлайн» рядом с каждым игроком и счётчик игроков онлайн', '🌐 Исправили баги с переводом', '📰 Добавили новости (это окно) и кнопку новостей в главном меню', '⚖️ Исправили баланс в игре', '💎 Скины за алмазы теперь лучше скинов за обычные звёзды — даже при одинаковой цене']
+    } },
+  { ver: '1.0.0', date: '', time: '',
+    title: { uk: 'Запуск гри', en: 'Game launch', ru: 'Запуск игры' },
+    items: {
+      uk: ['🏰 Вежа з поверхами та монстрами', '⚔️ Зброя та броня', '🎭 Образи героя з бафами (за зірки та діаманти)'],
+      en: ['🏰 A tower with floors and monsters', '⚔️ Weapons and armor', '🎭 Hero skins with buffs (for stars and diamonds)'],
+      ru: ['🏰 Башня с этажами и монстрами', '⚔️ Оружие и броня', '🎭 Образы героя с бафами (за звёзды и алмазы)']
+    } }
+];
+const NEWS_UI = {
+  uk: { title: '📰 Новини та оновлення', ver: 'Версія гри', upd: 'Оновлено', nw: 'НОВЕ', tt: 'TikTok канал', sup: 'Підтримка (Telegram)', news: 'Новини каналу Telegram' },
+  en: { title: '📰 News & updates', ver: 'Game version', upd: 'Updated', nw: 'NEW', tt: 'TikTok channel', sup: 'Support (Telegram)', news: 'Telegram channel news' },
+  ru: { title: '📰 Новости и обновления', ver: 'Версия игры', upd: 'Обновлено', nw: 'НОВОЕ', tt: 'TikTok-канал', sup: 'Поддержка (Telegram)', news: 'Новости Telegram-канала' }
+};
+const NEWS_KEY = 'newsSeenId';
+const NEWS_ID = NEWS[0].ver + '|' + NEWS[0].date + ' ' + NEWS[0].time;
+const newsSeen = () => { try { return localStorage.getItem(NEWS_KEY) === NEWS_ID; } catch (e) { return false; } };
+function renderNews() {
+  const L = curLang, U = NEWS_UI[L] || NEWS_UI.uk, cur = NEWS[0];
+  const verLine = U.ver + ': v' + cur.ver + ' · ' + U.upd + ': ' + cur.date + ', ' + cur.time;
+  $('nw-title').textContent = U.title;
+  $('nw-ver').textContent = verLine;
+  if ($('settings-ver')) $('settings-ver').textContent = verLine;
+  $('btn-news').title = U.title;
+  $('nw-lk-tt').textContent = U.tt; $('nw-lk-sup').textContent = U.sup; $('nw-lk-news').textContent = U.news;
+  const list = $('nw-list'); list.textContent = '';
+  NEWS.forEach((n, i) => {
+    const d = document.createElement('div'); d.className = 'nw-item' + (i === 0 ? ' nw-new' : '');
+    const h = document.createElement('div'); h.className = 'nw-ih';
+    const b = document.createElement('b'); b.textContent = (i === 0 ? '🚀 ' : '📜 ') + n.title[L]; h.appendChild(b);
+    if (i === 0) { const g = document.createElement('span'); g.className = 'nw-badge'; g.textContent = U.nw; h.appendChild(g); }
+    const m = document.createElement('div'); m.className = 'nw-meta';
+    m.textContent = 'v' + n.ver + (n.date ? ' · ' + n.date + (n.time ? ', ' + n.time : '') : '');
+    const ul = document.createElement('ul');
+    n.items[L].forEach(s => { const li = document.createElement('li'); li.textContent = s; ul.appendChild(li); });
+    d.appendChild(h); d.appendChild(m); d.appendChild(ul); list.appendChild(d);
+  });
+  $('btn-news-dot').classList.toggle('off', newsSeen());
+}
+function openNews() { renderNews(); $('news-modal').classList.remove('off'); $('nw-list').scrollTop = 0; haptic('light'); }
+function closeNews() {
+  $('news-modal').classList.add('off');
+  try { localStorage.setItem(NEWS_KEY, NEWS_ID); } catch (e) {}
+  $('btn-news-dot').classList.add('off'); haptic('light');
+}
+$('btn-news').addEventListener('click', openNews);
+$('nw-ok').addEventListener('click', closeNews);
+$('nw-close').addEventListener('click', closeNews);
+$('news-modal').addEventListener('click', e => { if (e.target === $('news-modal')) closeNews(); });
+document.querySelectorAll('#news-modal [data-link]').forEach(b => b.addEventListener('click', () => {
+  const url = b.dataset.link; haptic('light');
+  try {
+    if (tg && /^https:\/\/t\.me\//.test(url) && tg.openTelegramLink) tg.openTelegramLink(url);
+    else if (tg && tg.openLink) tg.openLink(url);
+    else window.open(url, '_blank', 'noopener');
+  } catch (e) { window.open(url, '_blank', 'noopener'); }
+}));
+renderNews();
+/* автопоказ: після завантаження гри, лише якщо ця новина ще не бачена */
+if (!newsSeen()) {
+  let tries = 0;
+  const iv = setInterval(() => {
+    tries++;
+    const ld = document.getElementById('aura-loader');
+    const ready = !ld || (ld.style.display === 'none' && !ld.classList.contains('blocked'));
+    if (ready) { clearInterval(iv); setTimeout(() => { if (!newsSeen()) openNews(); }, 500); }
+    else if (tries > 300) clearInterval(iv);
+  }, 500);
+}
+
 settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettings(); });
 $('lang-uk').addEventListener('click', () => { haptic('light'); setLang('uk'); });
 $('lang-en').addEventListener('click', () => { haptic('light'); setLang('en'); });
@@ -4070,7 +4287,20 @@ musicPrevBtn.addEventListener('click', () => { loadTrack(curTrack - 1, true); ha
 
 bgAudio.addEventListener('play',  () => { musicPlayBtn.textContent = '⏸'; setSpinning(true);  renderMusicList(); });
 bgAudio.addEventListener('pause', () => { musicPlayBtn.textContent = '▶'; setSpinning(false); renderMusicList(); });
-bgAudio.addEventListener('ended', () => loadTrack(curTrack + 1, true));
+/* Режим повтору: 'one' — зациклити поточний трек, 'all' — після кінця одразу наступний (по колу), 'off' — зупинитись */
+let loopMode = (() => { try { const v = localStorage.getItem('musicLoopMode'); return ['one','all','off'].includes(v) ? v : 'all'; } catch (e) { return 'all'; } })();
+function applyLoopMode() {
+  bgAudio.loop = (loopMode === 'one');
+  $('music-loop-one').classList.toggle('on', loopMode === 'one');
+  $('music-loop-all').classList.toggle('on', loopMode === 'all');
+  $('music-loop-one-t').textContent = t('loopOne');
+  $('music-loop-all-t').textContent = t('loopAll');
+  saveSetting('musicLoopMode', loopMode);
+}
+$('music-loop-one').addEventListener('click', () => { loopMode = loopMode === 'one' ? 'off' : 'one'; applyLoopMode(); haptic('light'); });
+$('music-loop-all').addEventListener('click', () => { loopMode = loopMode === 'all' ? 'off' : 'all'; applyLoopMode(); haptic('light'); });
+applyLoopMode();
+bgAudio.addEventListener('ended', () => { if (loopMode === 'all') loadTrack(curTrack + 1, true); });
 bgAudio.addEventListener('loadedmetadata', () => { musicDurTime.textContent = fmtTime(bgAudio.duration); });
 bgAudio.addEventListener('timeupdate', () => {
   musicCurTime.textContent = fmtTime(bgAudio.currentTime);
