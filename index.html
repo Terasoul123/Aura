@@ -47,7 +47,7 @@
 
   #hud{
     position:absolute;left:0;right:0;top:0;
-    padding:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 16px) 12px 0;
+    padding:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 16px) 60px 0;   /* 60px з боків — місце під кнопки ⚙ / 🏯 / 🛒 */
     display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:none;
   }
   #score-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;max-width:100%;padding:6px 14px;background:rgba(27,16,53,.55);border:2px solid rgba(91,71,176,.6);border-radius:14px;backdrop-filter:blur(2px)}
@@ -74,6 +74,7 @@
     font-size:16px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;
   }
   #btn-view:active{transform:translateY(1px)}
+  #btn-view,#btn-shop,#btn-settings,#btn-music{z-index:6}   /* кнопки завжди над HUD із балансом */
 
   /* ---------- плаваюча кнопка магазину (донат), окремо від нижніх вкладок ---------- */
   #btn-shop{
@@ -237,6 +238,13 @@
   .cs-shop .cs-o{font-size:8px;line-height:2;display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
   .cs-shop .cs-b{display:flex;flex-direction:column;gap:8px;width:100%;max-width:240px}
 
+  .cs-shop{padding:8px 10px;gap:6px}.cs-shop .cs-b{flex-direction:row;flex-wrap:wrap;justify-content:center;max-width:none}.cs-shop .cs-b>*{flex:1 1 30%;min-width:84px}
+  .cv-box{margin:4px 0;padding:12px;border-radius:10px;background:rgba(44,31,92,.6);box-shadow:inset 0 0 0 2px #4a3a90;font-family:var(--pixel);text-align:center}
+  .cv-t{font-size:11px;color:var(--gold);margin-bottom:6px}.cv-d{font-size:8px;color:var(--dim);line-height:1.8;margin-bottom:10px}
+  .cv-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}.cv-b:last-child{grid-column:span 2}.cv-b:disabled{opacity:.4}
+  .dn-hint{position:sticky;bottom:0;flex:none;text-align:center;padding:26px 0 6px;font:9px var(--pixel);color:#fff;text-shadow:var(--o2);background:linear-gradient(transparent,rgba(12,8,30,.96) 70%);pointer-events:none;transition:opacity .3s}
+  .dn-hint.gone{opacity:0}.dn-hint b{display:block;font-size:14px;animation:dn-b .9s ease-in-out infinite alternate}
+  @keyframes dn-b{to{transform:translateY(5px)}}
   #cs-cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
   .cs-hint{position:absolute;left:0;right:0;bottom:16%;text-align:center;font:11px var(--pixel);color:#fff;text-shadow:var(--o2);pointer-events:none;opacity:0;transition:opacity .5s}
   .cs-hint.on{opacity:1;animation:cs-blink 1s ease-in-out infinite alternate}
@@ -1245,6 +1253,9 @@ Object.assign(I18N.ru, { csR1: 'Фиолетовый', csR2: 'Красный', c
 Object.assign(I18N.uk, { csOdds: 'Шанси кейса та призів у рулетці', csDropOdds: 'Рядок: рідкість кейса (його шанс). Колонки: шанс призу в рулетці цього кейса.' });
 Object.assign(I18N.en, { csOdds: 'Case & roulette drop chances', csDropOdds: 'Row: case rarity (its chance). Columns: chance of each prize rarity in that case’s roulette.' });
 Object.assign(I18N.ru, { csOdds: 'Шансы кейса и призов в рулетке', csDropOdds: 'Строка: редкость кейса (его шанс). Столбцы: шанс приза в рулетке этого кейса.' });
+Object.assign(I18N.uk, { cvTitle: 'Обмін алмазів на зірки', cvNote: 'Курс: 1 💎 = 300 ★. Це невигідно — міняй лише за потреби.', dnHint: 'Гортай вниз — там ще набори' });
+Object.assign(I18N.en, { cvTitle: 'Diamonds → stars exchange', cvNote: 'Rate: 1 💎 = 300 ★. Not a great deal — exchange only if you need to.', dnHint: 'Scroll down — more packs below' });
+Object.assign(I18N.ru, { cvTitle: 'Обмен алмазов на звёзды', cvNote: 'Курс: 1 💎 = 300 ★. Невыгодно — меняй только при необходимости.', dnHint: 'Листай вниз — там ещё наборы' });
 Object.assign(I18N.ru, { maintTitle: 'Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Возвращайся чуть позже — прогресс никуда не денется.' });
 let curLang = (() => {
   try {
@@ -2984,8 +2995,14 @@ function renderDonate() {
     <div class="don-mid"><div class="don-name">${fmt(t.diamonds)}💎 + ${fmt(t.game)}★</div>
     <div class="don-get">${uiText('одноразова покупка')}</div></div>
     <button class="don-buy" type="button" data-tier="${t.id}">⭐ ${fmt(t.stars)}</button></div>`;
+  const keepTop = panelDon.scrollTop;   // перемальовування не має скидати прокрутку
   panelDon.innerHTML = caseCardHtml() + `<div class="don-note">${uiText('Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.')}</div>`
-    + DONATE_TIERS.map(card).join('');
+    + DONATE_TIERS.map(card).join('') + converterHtml() + `<div class="dn-hint" id="dn-hint"><b>▼</b>${t('dnHint')}</div>`;
+  panelDon.scrollTop = keepTop;
+  panelDon.querySelectorAll('[data-conv]').forEach(b => b.addEventListener('click', () => convertDiamonds(Number(b.dataset.conv))));
+  const dnHint = () => { const h = $('dn-hint'); if (h) h.classList.toggle('gone', panelDon.scrollTop + panelDon.clientHeight >= panelDon.scrollHeight - 12); };
+  if (!panelDon._dn) { panelDon._dn = true; panelDon.addEventListener('scroll', dnHint, { passive: true }); }
+  setTimeout(dnHint, 0);
   panelDon.querySelectorAll('[data-buy-case]').forEach(b => b.addEventListener('click', buyCaseDiamonds));
   panelDon.querySelectorAll('[data-open-case]').forEach(b => b.addEventListener('click', openCase));
   panelDon.querySelectorAll('[data-case-stars]').forEach(b => b.addEventListener('click', () => buyTier('case', b)));
@@ -4275,10 +4292,20 @@ function csStarsHtml() {   // піксельні зірки (квадрати) �
   const layer = (n, sz, dur) => { const a = []; for (let i = 0; i < n; i++) a.push(`${(Math.random() * 100).toFixed(1)}vw ${(Math.random() * 100).toFixed(1)}vh 0 0 ${cols[i % 4]}`); return `<i class="cs-px" style="width:${sz}px;height:${sz}px;box-shadow:${a.join(',')};animation-duration:${dur}s"></i>`; };
   return layer(50, 2, 1.7) + layer(28, 3, 2.3) + layer(12, 4, 3.1);
 }
+const DIA_TO_STAR = 300, DIA_CONV = [5, 10, 25, 50, 100];   // курс навмисно невигідний: 1 💎 = 300 ★
+function converterHtml() {
+  return `<div class="cv-box"><div class="cv-t">${t('cvTitle')}</div><div class="cv-d">${t('cvNote')}</div><div class="cv-g">${DIA_CONV.map(n => `<button class="don-buy cv-b" type="button" data-conv="${n}"${state.diamonds >= n ? '' : ' disabled'}>${n}💎 → ${fmt(n * DIA_TO_STAR)}★</button>`).join('')}</div></div>`;
+}
+function convertDiamonds(n) {
+  if (!DIA_CONV.includes(n) || state.diamonds < n) { hapticNote('error'); return; }
+  state.diamonds -= n; state.score += n * DIA_TO_STAR;
+  dirty = true; uiDirty = true; shopSig = ''; save(); hapticNote('success');
+  floater('+' + fmt(n * DIA_TO_STAR) + '★', cx * S, (cy - 70) * S); burst(cx, cy - 10, 20, 80, SPARK);
+}
 function caseCardHtml() {
   const can = state.diamonds >= CASE_DIAMONDS;
   const odds = `<table class="cs-tb"><tr><th></th>${[0, 1, 2, 3].map(i => `<th style="color:${CS_COL[i]}">■</th>`).join('')}</tr>${[0, 1, 2, 3].map(r => `<tr><td style="color:${CS_COL[r]}">${t('csR' + r)} ${CS_TIER_P[r]}%</td>${CS_DROP[r].map((v, i) => `<td style="color:${CS_COL[i]}">${v ? v + '%' : '—'}</td>`).join('')}</tr>`).join('')}</table>`;
-  return `<div class="cs-shop"><img class="cs-sp" src="${csSprites().caseUrl}" width="96" height="96" alt="">
+  return `<div class="cs-shop"><img class="cs-sp" src="${csSprites().caseUrl}" width="64" height="64" alt="">
     <div class="cs-t">${t('csName')}</div><div class="cs-d">${t('csDesc')}</div>
     <div class="cs-d">${t('csOdds')}:</div>${odds}<div class="cs-d" style="font-size:7px">${t('csDropOdds')}</div>
     <div class="cs-b">${state.cases > 0 ? `<button class="wpn-btn" type="button" data-open-case>🎁 ${t('csOpen')} ×${state.cases}</button>` : ''}
