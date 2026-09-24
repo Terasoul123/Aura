@@ -173,6 +173,49 @@
   .ref-icon{font-size:38px;margin-bottom:12px}
   .ref-avatar{width:44px;height:44px;border-radius:7px;image-rendering:pixelated;box-shadow:inset 0 0 0 2px var(--edge);background:#2c1f5c;object-fit:cover;margin:0 auto 12px;display:block}
 
+  /* ---------- космічний кейс ---------- */
+  #case-modal{position:fixed;inset:0;z-index:9997;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#1b1250 0%,#080418 70%);animation:cs-in .5s}
+  #case-modal.off{display:none}
+  @keyframes cs-in{from{opacity:0}to{opacity:1}}
+  .cs-st{position:absolute;inset:-200px 0 0 -200px;animation:cs-star 9s linear infinite;opacity:.9;
+    background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 90px 140px,#9fd,transparent),radial-gradient(2px 2px at 150px 60px,#c9f,transparent),radial-gradient(1px 1px at 60px 180px,#fff,transparent);background-size:180px 200px}
+  .cs-st.b{animation-duration:16s;opacity:.55;background-size:120px 130px}
+  @keyframes cs-star{to{transform:translate(200px,200px)}}
+  .cs-box{position:absolute;left:50%;top:38%;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:14px;font:44px/96px var(--pixel);text-align:center;color:#fff;
+    background:linear-gradient(135deg,#4b6bff,#a44bff);box-shadow:0 0 40px 10px rgba(140,90,255,.7),inset 0 0 0 4px rgba(255,255,255,.35);animation:cs-drop 1.1s cubic-bezier(.3,1.6,.5,1) both}
+  #case-modal.roul .cs-box,#case-modal.win .cs-box{display:none}
+  @keyframes cs-drop{0%{transform:translateY(-70vh) scale(.3) rotate(-25deg);opacity:0}70%{opacity:1}100%{transform:none}}
+  .cs-box.shake{animation:cs-shake .5s 2}
+  @keyframes cs-shake{25%{transform:translateX(-6px) rotate(-4deg)}75%{transform:translateX(6px) rotate(4deg)}}
+  .cs-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+  .cs-flash.go{animation:cs-fl .9s}
+  @keyframes cs-fl{0%{opacity:0}15%{opacity:.95}100%{opacity:0}}
+  .cs-ring{position:absolute;left:50%;top:38%;width:20px;height:20px;margin:-10px;border-radius:50%;border:3px solid #c9f;opacity:0}
+  .cs-ring.go{animation:cs-rg 1.1s ease-out}
+  @keyframes cs-rg{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(40)}}
+  .cs-planet{position:absolute;top:58%;left:-30%;font-size:74px;filter:drop-shadow(0 0 22px #6cf);opacity:0}
+  .cs-planet i{position:absolute;left:70px;top:-34px;font-size:30px;filter:drop-shadow(0 0 12px #fff);animation:cs-moon 1.6s linear infinite}
+  .cs-planet.go{animation:cs-fly 2.3s ease-in-out}
+  @keyframes cs-fly{0%{opacity:0;left:-30%}15%{opacity:1}85%{opacity:1}100%{opacity:0;left:105%}}
+  @keyframes cs-moon{0%{transform:translate(0,0)}25%{transform:translate(-30px,40px)}50%{transform:translate(-100px,50px)}75%{transform:translate(-40px,-10px)}100%{transform:translate(0,0)}}
+  .cs-roul{position:absolute;left:0;right:0;top:26%;opacity:0;pointer-events:none;transition:opacity .6s}
+  #case-modal.roul .cs-roul,#case-modal.win .cs-roul{opacity:1;pointer-events:auto}
+  .cs-win{position:relative;height:112px;overflow:hidden;background:rgba(0,0,0,.45);box-shadow:0 0 0 2px #4a3a90,0 0 30px rgba(140,90,255,.5)}
+  .cs-strip{display:flex;height:100%;will-change:transform}
+  .cs-it{flex:none;width:92px;height:100%;box-sizing:border-box;padding:6px 3px;text-align:center;font-family:var(--pixel);color:#fff;border-bottom:5px solid var(--rc);background:linear-gradient(180deg,transparent 30%,var(--rc) 260%);border-right:2px solid rgba(0,0,0,.4)}
+  .cs-it b{display:block;font-size:22px;font-weight:normal;margin:8px 0 6px}.cs-it span{font-size:7px;line-height:1.5;display:block;overflow:hidden}
+  .cs-it.r3{background:linear-gradient(135deg,#1b3bff,#a44bff,#1bd0ff);background-size:200% 200%;animation:cs-cos 2s linear infinite}
+  @keyframes cs-cos{50%{background-position:100% 100%}}
+  .cs-it.win{animation:cs-pulse .8s infinite alternate;position:relative;z-index:2}
+  @keyframes cs-pulse{to{box-shadow:0 0 22px 6px var(--rc);transform:scale(1.06)}}
+  .cs-mark{position:absolute;left:50%;top:-2px;bottom:-2px;width:0;z-index:3;border-left:3px solid #ffd23f;box-shadow:0 0 12px #ffd23f}
+  .cs-mark:before{content:'▼';position:absolute;top:-12px;left:-9px;color:#ffd23f;font-size:14px}
+  .cs-go{display:block;margin:28px auto 0;padding:14px 34px;border:0;border-radius:10px;font:13px var(--pixel);color:#fff;background:linear-gradient(180deg,#ff5b8a,#c2185b);box-shadow:inset 0 -4px 0 rgba(0,0,0,.3),0 0 22px rgba(255,80,140,.6);animation:cs-pulse2 1s infinite alternate}
+  @keyframes cs-pulse2{to{transform:scale(1.06)}}
+  .cs-go:disabled{opacity:.4;animation:none}
+  .cs-res{text-align:center;margin-top:26px;font-family:var(--pixel);font-size:11px;line-height:2;color:#fff;min-height:70px}
+  .cs-res b{display:block;font-weight:normal;font-size:16px;color:var(--rc);text-shadow:0 0 14px var(--rc)}
+
   /* ---------- щоденні нагороди ---------- */
   #daily-modal{position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;background:rgba(10,6,24,.72);padding:24px}
   #daily-modal.off{display:none}
@@ -1156,6 +1199,9 @@ Object.assign(I18N.en, { maintTitle: 'Maintenance break', maintText: 'We\'re upd
 Object.assign(I18N.uk, { dailyTitle: 'Щоденна нагорода', dailyDay: 'День', dailyClaim: 'Забрати', dailyNext: 'Наступна нагорода — завтра', dailyDone: 'Усі 7 нагород отримано!' });
 Object.assign(I18N.en, { dailyTitle: 'Daily reward', dailyDay: 'Day', dailyClaim: 'Claim', dailyNext: 'Next reward — tomorrow', dailyDone: 'All 7 rewards claimed!' });
 Object.assign(I18N.ru, { dailyTitle: 'Ежедневная награда', dailyDay: 'День', dailyClaim: 'Забрать', dailyNext: 'Следующая награда — завтра', dailyDone: 'Все 7 наград получены!' });
+Object.assign(I18N.uk, { csName: 'Космічний кейс', csDesc: 'Шанс на космічний скін!', csSpin: 'КРУТИТИ', csWin: 'Ти виграв', csDupe: 'Скін уже є — компенсація', csR0: 'Звичайний', csR1: 'Рідкісний', csR2: 'Міфічний', csR3: 'Космічний' });
+Object.assign(I18N.en, { csName: 'Cosmic Case', csDesc: 'A chance at a cosmic skin!', csSpin: 'SPIN', csWin: 'You won', csDupe: 'Skin owned — compensation', csR0: 'Common', csR1: 'Rare', csR2: 'Mythic', csR3: 'Cosmic' });
+Object.assign(I18N.ru, { csName: 'Космический кейс', csDesc: 'Шанс на космический скин!', csSpin: 'КРУТИТЬ', csWin: 'Ты выиграл', csDupe: 'Скин уже есть — компенсация', csR0: 'Обычный', csR1: 'Редкий', csR2: 'Мифический', csR3: 'Космический' });
 Object.assign(I18N.ru, { maintTitle: 'Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Возвращайся чуть позже — прогресс никуда не денется.' });
 let curLang = (() => {
   try {
@@ -1790,6 +1836,8 @@ const SKINS = [
     look:{ hair:[330,.4,1.6,.05], body:[335,.55,2.1,.05], acc:[320,.9,1.2,.1] } },
   { id:'camo',    name:'Камуфляж',    cost:30000,  cur:'star',    buff:{ guard:0.05 },
     look:{ hair:[95,.25,1.1,-.05], body:[90,.3,1.3,-.05], acc:[80,.4,1,-.05] } },
+  { id:'starlord', name:'Зоряний володар', cost:2000, cur:'diamond', buff:{ click:0.25, dmg:0.20, hp:0.15 },
+    look:{ hair:[245,.8,1.7,.08], body:[255,.75,1.9,.06], acc:[200,1,1.5,.15], eye:[190,1.5,1.4,.2], crown:true } },
   { id:'ninja',   name:'Ніндзя',      cost:60,     cur:'diamond', buff:{ guard:0.10, dmg:0.05 },
     look:{ hair:[0,0,.5,-.1], body:[0,0,.45,-.1], acc:[0,.6,.6,0] } },
   { id:'mage',    name:'Маг',         cost:90,     cur:'diamond', buff:{ click:0.12 },
@@ -2425,6 +2473,7 @@ function defaultState() {
     hpLvl: 0, armor: ['cloth'], viewMode: 'sky', skins: ['default'], skin: 'default', ups: {},
     monstersKilled: 0, questsClaimed: [], kills: { slime: 0, goblin: 0, skeleton: 0, bat: 0, spider: 0, lava: 0, ghost: 0, demon: 0, boss: 0 },
     referredBy: null, refRewardGiven: false, invitesCount: 0, botWarns: 0,   // реферальна система
+    cases: 0,   // невідкриті кейси (куплені за Telegram Stars або 💎)
     daily: { n: 0, day: '' }   // щоденні нагороди: n — скільки з 7 забрано, day — дата останнього забирання
   };
 }
@@ -2914,6 +2963,7 @@ async function buyTier(tierId, btn) {
         floater('⭐ Оплата пройшла!', cx * S, (cy - 70) * S);
         setTimeout(claimReferralBonus, 1500);
         setTimeout(claimReferralBonus, 5000);
+        setTimeout(claimCases, 1500); setTimeout(claimCases, 5000);
       }
     });
   } catch (e) {
@@ -3967,7 +4017,7 @@ const priceBtn = (cur, cost, can, attr, id) =>
 function shopSignature() {
   const can = list => list.map(x => (balanceOf(x.cur) >= x.cost ? 1 : 0)).join('');
   return [curTab, state.weapons.join(), state.armor.join(), state.skins.join(), state.skin, state.hpLvl, hpMax(),
-    can(WEAPONS), can(ARMOR), can(SKINS), UPGRADES.map(u => upLvl(u.id) + (upLvl(u.id) < u.max && balanceOf(u.cur) >= upCost(u) ? 'y' : 'n')).join(''), state.score >= costHp() ? 1 : 0,
+    can(WEAPONS), can(ARMOR), can(SKINS), UPGRADES.map(u => upLvl(u.id) + (upLvl(u.id) < u.max && balanceOf(u.cur) >= upCost(u) ? 'y' : 'n')).join(''), state.score >= costHp() ? 1 : 0, state.diamonds >= CASE_DIAMONDS ? 1 : 0, state.cases,
     state.questsClaimed.join(), Math.floor(state.steps/25), state.floorTier, state.monstersKilled, state.autoLvl, state.powerLvl,
     state.kills.slime, state.kills.goblin, state.kills.skeleton, state.kills.bat, state.kills.spider, state.kills.lava, state.kills.ghost, state.kills.demon, state.kills.boss, state.hpLvl, Math.floor(state.diamonds/5)].join('|');
 }
@@ -4110,8 +4160,13 @@ function pvStyle(id) {
   const W = 27 * w / 18, m = -(W - 27) / 2;
   return `width:${W.toFixed(1)}px;margin:0 ${m.toFixed(1)}px`;
 }
+function caseCardHtml() {
+  const can = state.diamonds >= CASE_DIAMONDS;
+  const open = state.cases > 0 ? `<button class="wpn-btn" type="button" data-open-case>🎁 ×${state.cases}</button>` : '';
+  return `<div class="wpn${can ? ' can' : ''}"><div class="skn-pv" style="display:flex;align-items:center;justify-content:center;font-size:34px">🎁</div><div class="wpn-info skn-info"><div class="wpn-name">${t('csName')}</div><div class="wpn-desc">${t('csDesc')}</div></div><div style="display:flex;flex-direction:column;gap:6px">${open}${priceBtn('diamond', CASE_DIAMONDS, can, 'data-buy-case', '1')}<button class="wpn-btn" type="button" data-case-stars>⭐ 50</button></div></div>`;
+}
 function renderSkins() {
-  panelSkn.innerHTML = SKINS.map(s => {
+  panelSkn.innerHTML = caseCardHtml() + SKINS.map(s => {
     const owned = state.skins.includes(s.id);
     const eq = state.skin === s.id;
     const can = !owned && balanceOf(s.cur) >= s.cost;
@@ -4122,6 +4177,9 @@ function renderSkins() {
     else btn = priceBtn(s.cur, s.cost, can, 'data-buy-skin', s.id);
     return `<div class="${cls.join(' ')}"><img class="skn-pv" src="${skinPreviewUrl(s.id)}" alt="" style="${pvStyle(s.id)}"><div class="wpn-info skn-info"><div class="wpn-name">${uiText(s.name)}</div><div class="wpn-buff">${uiText(buffText(s.buff))}</div></div>${btn}</div>`;
   }).join('');
+  panelSkn.querySelectorAll('[data-buy-case]').forEach(b => b.addEventListener('click', buyCaseDiamonds));
+  panelSkn.querySelectorAll('[data-open-case]').forEach(b => b.addEventListener('click', openCase));
+  panelSkn.querySelectorAll('[data-case-stars]').forEach(b => b.addEventListener('click', () => buyTier('case', b)));
   panelSkn.querySelectorAll('[data-buy-skin]').forEach(b => b.addEventListener('click', () => buySkin(b.dataset.buySkin)));
   panelSkn.querySelectorAll('[data-eq-skin]').forEach(b => b.addEventListener('click', () => equipSkin(b.dataset.eqSkin)));
 }
@@ -4133,6 +4191,93 @@ function equipSkin(id) {
   haptic('light');
   burst(cx, cy - 10, 14, 60, SPARK);
 }
+/* ===== Космічний кейс (рулетка) =====
+   Приз визначається і нараховується ОДРАЗУ при покупці (тому не губиться, якщо закрити гру під час анімації),
+   а рулетка лише красиво «підводить» до нього. Шанси — у полі w (відсотки, разом 100). */
+const CASE_DIAMONDS = 150;   // ціна кейса в 💎; за справжні Telegram Stars — 50 ⭐ (тариф 'case' на сервері)
+const CS_COL = ['#9aa0ac', '#a44bff', '#ff3d4d', '#3fa7ff'];
+const CS_ITEMS = [
+  { r:0, s:5000,  w:35 }, { r:0, s:10000, w:27 },
+  { r:1, d:100, w:7 }, { r:1, d:200, w:4 }, { r:1, s:60000, w:8 }, { r:1, skin:'mage', w:5 }, { r:1, skin:'shadow', w:3 },
+  { r:2, d:300, w:2.5 }, { r:2, d:500, w:1.5 }, { r:2, s:120000, w:3 }, { r:2, skin:'phoenix', w:1.2 }, { r:2, skin:'crystal', w:.8 },
+  { r:3, skin:'starlord', w:1.4 }, { r:3, skin:'dragon', w:.6 }
+];
+let csBusy = false;
+document.body.insertAdjacentHTML('beforeend', '<div id="case-modal" class="off"></div>');
+function csRoll() { let x = Math.random() * 100; for (const it of CS_ITEMS) { if ((x -= it.w) < 0) return it; } return CS_ITEMS[0]; }
+function csLabel(it) {
+  if (it.skin) return ['🎭', uiText(SKINS.find(x => x.id === it.skin).name)];
+  return it.d ? ['💎', '+' + fmt(it.d)] : ['★', '+' + fmt(it.s)];
+}
+function csCard(it, win) {
+  const [ic, tx] = csLabel(it);
+  return `<div class="cs-it r${it.r}${win ? ' win' : ''}" style="--rc:${CS_COL[it.r]}"><b>${ic}</b><span>${escapeHtml(tx)}</span></div>`;
+}
+function csGrant(it) {
+  if (it.s) { state.score += it.s; return ''; }
+  if (it.d) { state.diamonds += it.d; return ''; }
+  if (state.skins.includes(it.skin)) { const c = Math.floor(SKINS.find(x => x.id === it.skin).cost / 2); state.diamonds += c; return '+' + fmt(c) + '💎'; }
+  state.skins.push(it.skin); return '';
+}
+function buyCaseDiamonds() {
+  if (csBusy || state.diamonds < CASE_DIAMONDS) { hapticNote('error'); return; }
+  state.diamonds -= CASE_DIAMONDS; state.cases++;
+  dirty = true; uiDirty = true; shopSig = ''; save();
+  openCase();
+}
+async function claimCases() {   // забирає кейси, оплачені Telegram Stars (сервер рахує їх у leaderboard.purchase_cases)
+  if (!keyReady() || !telegramId) return;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/claim_purchased_cases`, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_telegram_id: telegramId })
+    });
+    const n = Math.floor(Number(await r.json())) || 0;
+    if (n > 0) { state.cases += n; dirty = true; uiDirty = true; shopSig = ''; save(); if (!csBusy) openCase(); }
+  } catch (e) {}
+}
+setTimeout(claimCases, 2500);
+function openCase() {
+  if (csBusy || state.cases < 1) return;
+  csBusy = true;
+  state.cases--;
+  const prize = csRoll(), comp = csGrant(prize);
+  dirty = true; uiDirty = true; shopSig = ''; save();
+  const W = 9, N = 60, CW = 92, m = $('case-modal');
+  const items = Array.from({ length: N }, (_, i) => i === W ? prize : csRoll());
+  m.className = ''; 
+  m.innerHTML = `<div class="cs-st"></div><div class="cs-st b"></div><div class="cs-ring" id="cs-ring"></div><div class="cs-box" id="cs-box">★</div><div class="cs-planet" id="cs-pl">🌍<i>🌙</i></div>
+    <div class="cs-roul"><div class="cs-win"><div class="cs-strip" id="cs-strip">${items.map((it, i) => csCard(it, false)).join('')}</div><div class="cs-mark"></div></div>
+    <button class="cs-go" id="cs-go" type="button">${t('csSpin')}</button><div class="cs-res" id="cs-res"></div></div><div class="cs-flash" id="cs-fl"></div>`;
+  const strip = $('cs-strip'), win = m.querySelector('.cs-win'), go = $('cs-go');
+  let wW = 0, x0 = 0, x1 = 0; const setX = x => { strip.style.transform = `translateX(${x}px)`; };
+  const later = (fn, ms) => setTimeout(fn, ms);
+  later(() => { $('cs-box').classList.add('shake'); haptic('medium'); }, 1150);
+  later(() => { $('cs-fl').classList.add('go'); $('cs-ring').classList.add('go'); $('cs-pl').classList.add('go'); hapticNote('success'); }, 1750);
+  later(() => {
+    m.classList.add('roul'); wW = win.clientWidth;
+    x1 = wW / 2 - (W * CW + CW / 2 + (Math.random() - .5) * CW * .7);     // фінальне положення: приз під стрілкою
+    x0 = x1 - (N - 14) * CW; setX(x0);                                   // старт далеко ліворуч → рухається ВПРАВО
+  }, 3300);
+  go.addEventListener('click', () => {
+    go.disabled = true; haptic('heavy');
+    const T = 6800, t0 = performance.now(); let lastI = -1;
+    const ease = u => { const e = 1 - Math.pow(1 - u, 4); return u < .08 ? e * (u / .08) * (u / .08) : e; };
+    (function frame(now) {
+      const u = Math.min(1, (now - t0) / T), x = x0 + (x1 - x0) * ease(u); setX(x);
+      const idx = Math.floor((wW / 2 - x) / CW); if (idx !== lastI) { lastI = idx; haptic('light'); }
+      if (u < 1) return requestAnimationFrame(frame);
+      strip.children[W].classList.add('win'); hapticNote('success');
+      const [ic, tx] = csLabel(prize);
+      $('cs-res').style.setProperty('--rc', CS_COL[prize.r]);
+      $('cs-res').innerHTML = `${t('csWin')}:<b>${ic} ${escapeHtml(tx)}</b>${t('csR' + prize.r)}${comp ? '<br>' + t('csDupe') + ' ' + comp : ''}<br><button class="ref-ok" id="cs-ok" type="button" style="margin-top:14px;max-width:200px">OK</button>`;
+      floater('🎁 ' + ic + ' ' + tx, cx * S, (cy - 70) * S); burst(cx, cy - 10, 30, 110, SPARK);
+      $('cs-ok').addEventListener('click', () => { m.classList.add('off'); csBusy = false; uiDirty = true; shopSig = ''; });
+    })(t0);
+  }, { once: true });
+}
+
 /* ===== Щоденні нагороди (7 днів) =====
    Кожен новий календарний день, коли гравець заходить, відкриває наступну нагороду (не скидається,
    якщо пропустив день). День рахується за часом сервера Supabase (заголовок Date), щоб не можна було
