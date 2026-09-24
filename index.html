@@ -1954,8 +1954,8 @@ const TIERS = [
   { at: 35000000000,  dMin: 800,  dMax: 1400 }
 ];
 /* Складність монстрів по поверхах (індекс = floorTier; останній — вершина вежі) */
-const TIER_HP  = [0, 80, 250, 700, 1500, 3200, 6800, 14000, 28000, 55000];
-const TIER_DMG = [0, 3, 8, 16, 26, 42, 65, 95, 135, 190];
+const TIER_HP  = [0, 60, 150, 350, 700, 1400, 2600, 5000, 9500, 18000];
+const TIER_DMG = [0, 2, 4, 7, 11, 17, 25, 36, 50, 70];
 
 /* --- Зброя: більший урон по монстрах, купується за зірки або діаманти --- */
 const WEAPONS = [
@@ -2370,14 +2370,14 @@ const MONSTER_SPRITES = {
 
 const MONSTER_META = {
   slime:    { label:'Слизень',    hpMul:1.0,  dmgMul:1.0,  scoreMul:1.0  },
-  goblin:   { label:'Гоблін',     hpMul:1.6,  dmgMul:1.3,  scoreMul:1.4  },
-  skeleton: { label:'Скелет',     hpMul:2.4,  dmgMul:1.7,  scoreMul:2.0  },
-  bat:      { label:'Кажан',      hpMul:3.2,  dmgMul:2.2,  scoreMul:2.6  },
-  spider:   { label:'Павук',      hpMul:4.4,  dmgMul:2.9,  scoreMul:3.4  },
-  lava:     { label:'Лава-воїн',  hpMul:6.0,  dmgMul:3.8,  scoreMul:4.4  },
-  ghost:    { label:'Привид',     hpMul:8.2,  dmgMul:4.9,  scoreMul:5.8  },
-  demon:    { label:'Демон',      hpMul:11.5, dmgMul:6.4,  scoreMul:7.6  },
-  boss:     { label:'Бос',        hpMul:22,   dmgMul:9.5,  scoreMul:14   }
+  goblin:   { label:'Гоблін',     hpMul:1.35, dmgMul:1.12, scoreMul:1.4  },
+  skeleton: { label:'Скелет',     hpMul:1.8,  dmgMul:1.32, scoreMul:2.0  },
+  bat:      { label:'Кажан',      hpMul:2.25, dmgMul:1.55, scoreMul:2.6  },
+  spider:   { label:'Павук',      hpMul:2.9,  dmgMul:1.8,  scoreMul:3.4  },
+  lava:     { label:'Лава-воїн',  hpMul:3.8,  dmgMul:2.1,  scoreMul:4.4  },
+  ghost:    { label:'Привид',     hpMul:5.0,  dmgMul:2.45, scoreMul:5.8  },
+  demon:    { label:'Демон',      hpMul:6.8,  dmgMul:2.8,  scoreMul:7.6  },
+  boss:     { label:'Бос',        hpMul:11,   dmgMul:3.6,  scoreMul:14   }
 };
 /* Пул можливих монстрів для кожного з 9 поверхів (випадково один з 2-3) */
 const FLOOR_MONSTERS = [
@@ -3345,10 +3345,7 @@ function awardFor(rank) {
   return '';
 }
 
-const referralInfoHtml = () => {
-  const lang = I18N[curLang] || I18N.uk;
-  return '<div class="referral-info"><div class="referral-info-title">' + lang['referral-title'] + '</div><div class="referral-info-desc">' + lang['referral-desc'] + '</div></div>';
-};
+const referralInfoHtml = () => '<div class="referral-info"><div class="referral-info-title">' + uiText('referral-title') + '</div><div class="referral-info-desc">' + uiText('referral-desc') + '</div></div>';
 const inviteBtnHtml = () => referralInfoHtml() + '<button class="lb-refresh" id="lb-invite-btn" type="button">👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')</button>';
 function bindInviteBtn() { const b = $('lb-invite-btn'); if (b) b.addEventListener('click', shareReferralLink); }
 function refreshInviteBtn() { const b = $('lb-invite-btn'); if (b) b.textContent = '👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')'; }
@@ -3969,8 +3966,8 @@ function startEncounter() {
   const kind = monsterKindForTier(lvl);
   const meta = MONSTER_META[kind];
   const ti = Math.min(lvl, TIER_HP.length - 1);
-  const baseHp = Math.round(25 + state.steps * 0.25 + TIER_HP[ti] + state.totalStars * 0.0003 + Math.random() * 20);
-  const baseDmg = Math.round(4 + TIER_DMG[ti] + Math.floor(Math.sqrt(state.totalStars / 20000)) + Math.random() * 3);
+  const baseHp = Math.round(18 + state.steps * 0.10 + TIER_HP[ti] + state.totalStars * 0.00012 + Math.random() * 12);
+  const baseDmg = Math.round(2 + TIER_DMG[ti] + Math.floor(Math.sqrt(state.totalStars / 50000)) + Math.random() * 2);
   const baseHpMax = Math.round(baseHp * meta.hpMul);
   /* HP не може бути меншим за N ударів гравця — інакше сильна зброя вбиває монстрів з 1 удару */
   const avgHit = weaponDmg() * dmgMul() * (1 + critChance() * (critMul() - 1));
@@ -4029,13 +4026,34 @@ function onMonsterDefeated() {
   hapticNote('success');
 }
 function onPlayerDeath() {
-  const loss = Math.round(state.score * CFG.DEATH_LOSS * (1 - Math.min(0.9, skinBuff('death'))));
+  /* Поразка стає трохи відчутнішою на високих поверхах, але без жорсткого вайпу.
+     Втрачаються: частина поточних зірок, трохи загального прогресу та сходинок. */
+  const deathFloor = Math.max(0, Math.min(state.floorTier, TIERS.length - 1));
+  const skinProtection = (1 - Math.min(0.9, skinBuff('death')));
+  const scoreRate = Math.min(0.22, 0.08 + deathFloor * 0.015);
+  const progressRate = Math.min(0.09, 0.025 + deathFloor * 0.006);
+  const stepRate = Math.min(0.10, 0.025 + deathFloor * 0.006);
+  const loss = Math.round(state.score * scoreRate * skinProtection);
+  const progressLoss = Math.round(state.totalStars * progressRate * skinProtection);
+  const stepLoss = Math.max(deathFloor > 0 ? 1 : 0, Math.round(state.steps * stepRate * skinProtection));
+
   state.score = Math.max(0, state.score - loss);
+  state.totalStars = Math.max(0, state.totalStars - progressLoss);
+  state.steps = Math.max(0, state.steps - stepLoss);
+  state.floorTier = TIERS.filter(x => state.totalStars > x.at).length;
+
+  /* Герой візуально падає вниз на втрачені сходинки. */
+  visTarget = Math.max(0, state.steps);
+  if (pos > visTarget + MAX_JUMP_LEAD) pos = visTarget + MAX_JUMP_LEAD;
+  bgPos = Math.min(bgPos, Math.max(0, state.steps));
+
   state.hp = hpMax();
   combat = null;
   spawnAcc = 0;
   $('combat-hud').classList.add('off');
-  floater('−' + fmt(loss), cx * S, (cy - 26) * S);
+  if (loss > 0) floater('−' + fmt(loss) + ' ★', cx * S, (cy - 26) * S);
+  if (progressLoss > 0) floater('−' + fmt(progressLoss) + ' прогрес', cx * S, (cy - 44) * S);
+  if (stepLoss > 0) floater('↘ −' + fmt(stepLoss) + ' сход.', cx * S, (cy - 62) * S);
   dirty = true; uiDirty = true;
   hapticNote('error');
 }
@@ -4173,6 +4191,13 @@ document.querySelectorAll('#settings-modal [data-link]').forEach(b => b.addEvent
 /* ================= НОВИНИ / ВЕРСІЯ ================= */
 /* Щоб показати нову новину всім: додай новий обʼєкт ПЕРШИМ у масив NEWS (з новою ver/date/time) — вікно зʼявиться знову при запуску. */
 const NEWS = [
+  { ver: '1.3.0', date: '24.09.2026', time: '21:46',
+    title: { uk: 'Велике оновлення: Топ, реферали та баланс', en: 'Big update: Leaderboard, referrals & balance', ru: 'Большое обновление: Топ, рефералы и баланс' },
+    items: {
+      uk: ['🏆 Повністю оновили дизайн «Топу» — ширші та красивіші картки гравців', '👑 @sergixlol отримав особливе оформлення творця гри', '🔍 Додали пошук гравця за ніком і сортування за алфавітом', '👥 Реферальна система: друг доходить до 3-го поверху → тобі +20💎', '⚖️ Збалансували монстрів: на високих поверхах вони тепер не такі жирні та не так швидко забирають ХП', '💀 Після поразки втрачається частина зірок і прогресу, а герой відступає на кілька сходинок — коефіцієнт залежить від поверху'],
+      en: ['🏆 Completely redesigned the leaderboard with wider, richer player cards', '👑 @sergixlol now has special game creator styling', '🔍 Added player search by nickname and alphabetical sorting', '👥 Referral system: friend reaches the 3rd floor → you get +20💎', '⚖️ Rebalanced monsters: higher floors are now less tanky and deal less damage', '💀 After defeat, you lose some stars and progress, and the hero falls back a few steps — the coefficient depends on the floor'],
+      ru: ['🏆 Полностью обновили дизайн «Топа» — карточки игроков стали шире и красивее', '👑 @sergixlol получил особое оформление создателя игры', '🔍 Добавили поиск игрока по нику и сортировку по алфавиту', '👥 Реферальная система: друг дойдёт до 3-го этажа → тебе +20💎', '⚖️ Сбалансировали монстров: на высоких этажах они теперь не такие жирные и наносят меньше урона', '💀 После поражения теряется часть звёзд и прогресса, а герой отступает на несколько ступенек — коэффициент зависит от этажа']
+    } },
   { ver: '1.2.0', date: '24.09.2026', time: '18:14',
     title: { uk: 'Кейси, щоденні нагороди та звуки', en: 'Cases, daily rewards & sounds', ru: 'Кейсы, ежедневные награды и звуки' },
     items: {
@@ -4195,6 +4220,7 @@ const NEWS = [
       ru: ['🏰 Башня с этажами и монстрами', '⚔️ Оружие и броня', '🎭 Образы героя с бафами (за звёзды и алмазы)']
     } }
 ];
+const GAME_VERSION = '1.3.0';
 const NEWS_UI = {
   uk: { title: '📰 Новини та оновлення', ver: 'Версія гри', upd: 'Оновлено', nw: 'НОВЕ', tt: 'TikTok канал', sup: 'Підтримка (Telegram)', news: 'Новини каналу Telegram' },
   en: { title: '📰 News & updates', ver: 'Game version', upd: 'Updated', nw: 'NEW', tt: 'TikTok channel', sup: 'Support (Telegram)', news: 'Telegram channel news' },
@@ -4259,7 +4285,7 @@ if (!newsSeen()) {
 /* ===== Нова версія гри: коли на хостингу з'явився оновлений код, гравцям, що зараз онлайн, зразу показуємо «перезайди».
    Спосіб: раз на хвилину дешевий HEAD-запит до самої сторінки — якщо змінився ETag / Last-Modified / розмір, значить залито новий index.html.
    Додатково один раз після старту порівнюємо версію в NEWS (на випадок, коли Telegram віддав старий кеш).
-   Щоб гравці отримали повідомлення про оновлення й нову «Версію гри» — додавай новий обʼєкт першим у масив NEWS. */
+   Щоб усі гравці побачили новину про реліз, новий обʼєкт NEWS має бути першим у масиві. NEWS_ID автоматично робить її новою для кожного браузера/гравця. */
 Object.assign(I18N.uk, { updTitle: 'Вийшло оновлення!', updText: 'Вийди з гри та зайди знову, щоб завантажити нову версію. Твій прогрес збережено.', updBtn: 'Закрити гру' });
 Object.assign(I18N.en, { updTitle: 'Update available!', updText: 'Leave the game and open it again to load the new version. Your progress is saved.', updBtn: 'Close game' });
 Object.assign(I18N.ru, { updTitle: 'Вышло обновление!', updText: 'Выйди из игры и зайди снова, чтобы загрузить новую версию. Твой прогресс сохранён.', updBtn: 'Закрыть игру' });
