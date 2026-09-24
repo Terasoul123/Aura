@@ -245,6 +245,7 @@
   .dn-hint{position:sticky;bottom:0;flex:none;text-align:center;padding:26px 0 6px;font:9px var(--pixel);color:#fff;text-shadow:var(--o2);background:linear-gradient(transparent,rgba(12,8,30,.96) 70%);pointer-events:none;transition:opacity .3s}
   .dn-hint.gone{opacity:0}.dn-hint b{display:block;font-size:14px;animation:dn-b .9s ease-in-out infinite alternate}
   @keyframes dn-b{to{transform:translateY(5px)}}
+  #upd-modal{position:fixed;inset:0;z-index:100001;display:flex;align-items:center;justify-content:center;background:rgba(10,6,24,.88);padding:24px}
   #cs-cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
   .cs-hint{position:absolute;left:0;right:0;bottom:16%;text-align:center;font:11px var(--pixel);color:#fff;text-shadow:var(--o2);pointer-events:none;opacity:0;transition:opacity .5s}
   .cs-hint.on{opacity:1;animation:cs-blink 1s ease-in-out infinite alternate}
@@ -1325,8 +1326,8 @@ Object.assign(I18N.ru, {
 });
 
 I18N.uk['auth-btn'] = 'Відкрити в Telegram'; I18N.en['auth-btn'] = 'Open in Telegram'; I18N.ru['auth-btn'] = 'Открыть в Telegram';
-Object.assign(I18N.uk, { maintTitle: 'Технічна перерва', maintText: 'Зараз ми оновлюємо гру.<br>Повертайся трохи пізніше — прогрес нікуди не подінеться.' });
-Object.assign(I18N.en, { maintTitle: 'Maintenance break', maintText: 'We\'re updating the game right now.<br>Come back a bit later — your progress is safe.' });
+Object.assign(I18N.uk, { maintTitle: 'Технічна перерва', maintText: 'Зараз ми оновлюємо гру.<br>Вийди з гри та відпочинь пару хвилин ☕ Повертайся трохи пізніше — прогрес нікуди не подінеться.' });
+Object.assign(I18N.en, { maintTitle: 'Maintenance break', maintText: 'We\'re updating the game right now.<br>Leave the game and take a short break for a couple of minutes ☕ Come back a bit later — your progress is safe.' });
 Object.assign(I18N.uk, { dailyTitle: 'Щоденна нагорода', dailyDay: 'День', dailyClaim: 'Забрати', dailyNext: 'Наступна нагорода — завтра', dailyDone: 'Усі 7 нагород отримано!' });
 Object.assign(I18N.en, { dailyTitle: 'Daily reward', dailyDay: 'Day', dailyClaim: 'Claim', dailyNext: 'Next reward — tomorrow', dailyDone: 'All 7 rewards claimed!' });
 Object.assign(I18N.ru, { dailyTitle: 'Ежедневная награда', dailyDay: 'День', dailyClaim: 'Забрать', dailyNext: 'Следующая награда — завтра', dailyDone: 'Все 7 наград получены!' });
@@ -1345,7 +1346,7 @@ Object.assign(I18N.ru, { csOdds: 'Шансы кейса и призов в ру�
 Object.assign(I18N.uk, { cvTitle: 'Обмін алмазів на зірки', cvNote: 'Курс: 1 💎 = 300 ★. Це невигідно — міняй лише за потреби.', dnHint: 'Гортай вниз — там ще набори' });
 Object.assign(I18N.en, { cvTitle: 'Diamonds → stars exchange', cvNote: 'Rate: 1 💎 = 300 ★. Not a great deal — exchange only if you need to.', dnHint: 'Scroll down — more packs below' });
 Object.assign(I18N.ru, { cvTitle: 'Обмен алмазов на звёзды', cvNote: 'Курс: 1 💎 = 300 ★. Невыгодно — меняй только при необходимости.', dnHint: 'Листай вниз — там ещё наборы' });
-Object.assign(I18N.ru, { maintTitle: 'Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Возвращайся чуть позже — прогресс никуда не денется.' });
+Object.assign(I18N.ru, { maintTitle: 'Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Выйди из игры и отдохни пару минут ☕ Возвращайся чуть позже — прогресс никуда не денется.' });
 let curLang = (() => {
   try {
     const saved = localStorage.getItem('lang');
@@ -2919,6 +2920,7 @@ async function checkMaintenance() {
     const rows = await r.json();
     const on = !!(rows && rows[0] && rows[0].value);
     if (on) {
+      if (!inMaintenance) { try { save(); syncProgressToCloud(true); } catch (e) {} }   // гравець онлайн — зберігаємо прогрес перед екраном перерви
       inMaintenance = true;
       showAuthBlock(t('maintText') + maintenanceLinksHtml(), t('maintTitle'), { icon: '🛠', hideBtn: true });
     } else if (inMaintenance) {
@@ -2931,7 +2933,7 @@ async function checkMaintenance() {
   } catch (e) {}
 }
 checkMaintenance();
-setInterval(checkMaintenance, 15000);
+setInterval(checkMaintenance, 10000);
 
 async function fetchLeaderboard(limit) {
   if (!keyReady()) return null; // ключ ще не вставлено
@@ -4046,6 +4048,13 @@ document.querySelectorAll('#settings-modal [data-link]').forEach(b => b.addEvent
 /* ================= НОВИНИ / ВЕРСІЯ ================= */
 /* Щоб показати нову новину всім: додай новий обʼєкт ПЕРШИМ у масив NEWS (з новою ver/date/time) — вікно зʼявиться знову при запуску. */
 const NEWS = [
+  { ver: '1.2.0', date: '24.09.2026', time: '18:14',
+    title: { uk: 'Кейси, щоденні нагороди та звуки', en: 'Cases, daily rewards & sounds', ru: 'Кейсы, ежедневные награды и звуки' },
+    items: {
+      uk: ['🎁 Щоденні нагороди на 7 днів — на 7-й день скін', '📦 Космічний кейс: тапай, збирай енергію й крути рулетку (4 рідкості)', '💎 Обмін алмазів на зірки в магазині', '🔊 Звуки кнопок і кейса, нова музика в плейлисті', '🛠 Технічна перерва тепер зʼявляється і в тих, хто вже грає', '🔄 Повідомлення, коли вийшла нова версія гри'],
+      en: ['🎁 7-day daily rewards — a skin on day 7', '📦 Cosmic case: tap to charge it, then spin the roulette (4 rarities)', '💎 Diamonds → stars exchange in the shop', '🔊 Button & case sounds, new music in the playlist', '🛠 Maintenance break now also shows for players who are already in the game', '🔄 A notice when a new game version is released'],
+      ru: ['🎁 Ежедневные награды на 7 дней — на 7-й день скин', '📦 Космический кейс: тапай, копи энергию и крути рулетку (4 редкости)', '💎 Обмен алмазов на звёзды в магазине', '🔊 Звуки кнопок и кейса, новая музыка в плейлисте', '🛠 Техническая пауза теперь появляется и у тех, кто уже играет', '🔄 Уведомление, когда вышла новая версия игры']
+    } },
   { ver: '1.1.0', date: '24.09.2026', time: '17:04',
     title: { uk: 'Велике оновлення', en: 'Big update', ru: 'Большое обновление' },
     items: {
@@ -4121,6 +4130,45 @@ if (!newsSeen()) {
     else if (tries > 300) clearInterval(iv);
   }, 500);
 }
+
+/* ===== Нова версія гри: коли на хостингу з'явився оновлений код, гравцям, що зараз онлайн, зразу показуємо «перезайди».
+   Спосіб: раз на хвилину дешевий HEAD-запит до самої сторінки — якщо змінився ETag / Last-Modified / розмір, значить залито новий index.html.
+   Додатково один раз після старту порівнюємо версію в NEWS (на випадок, коли Telegram віддав старий кеш).
+   Щоб гравці отримали повідомлення про оновлення й нову «Версію гри» — додавай новий обʼєкт першим у масив NEWS. */
+Object.assign(I18N.uk, { updTitle: 'Вийшло оновлення!', updText: 'Вийди з гри та зайди знову, щоб завантажити нову версію. Твій прогрес збережено.', updBtn: 'Закрити гру' });
+Object.assign(I18N.en, { updTitle: 'Update available!', updText: 'Leave the game and open it again to load the new version. Your progress is saved.', updBtn: 'Close game' });
+Object.assign(I18N.ru, { updTitle: 'Вышло обновление!', updText: 'Выйди из игры и зайди снова, чтобы загрузить новую версию. Твой прогресс сохранён.', updBtn: 'Закрыть игру' });
+let updShown = false, updBase = null, updHeadBad = false;
+function showUpdateNotice() {
+  if (updShown) return; updShown = true;
+  try { save(); syncProgressToCloud(true); } catch (e) {}
+  const el = document.createElement('div'); el.id = 'upd-modal';
+  el.innerHTML = `<div class="ref-box"><div class="ref-icon">🚀</div><div class="ref-title">${t('updTitle')}</div><div style="font-family:var(--pixel);font-size:9px;line-height:1.9;color:var(--dim);margin:8px 0 14px">${t('updText')}</div><button class="ref-ok" id="upd-btn" type="button">${t('updBtn')}</button></div>`;
+  document.body.appendChild(el); hapticNote('success');
+  $('upd-btn').addEventListener('click', () => { try { if (tg && tg.close) { tg.close(); return; } } catch (e) {} location.reload(); });
+}
+const updUrl = () => { const u = new URL(location.href); u.hash = ''; u.searchParams.set('_v', Date.now()); return u.toString(); };
+async function checkUpdate() {
+  if (updShown || document.hidden) return;
+  try {
+    const r = await fetch(updUrl(), { method: 'HEAD', cache: 'no-store' });
+    if (!r.ok) { updHeadBad = true; return; }
+    const sig = [r.headers.get('etag'), r.headers.get('last-modified'), r.headers.get('content-length')].join('|');
+    if (sig === '||') { updHeadBad = true; return; }
+    if (updBase === null) updBase = sig; else if (sig !== updBase) showUpdateNotice();
+  } catch (e) {}
+}
+async function checkUpdateVersion() {
+  if (updShown) return;
+  try {
+    const r = await fetch(updUrl(), { cache: 'no-store' }); if (!r.ok) return;
+    const m = (await r.text()).match(/const NEWS = \[\s*\{ ver: '([^']+)', date: '([^']*)', time: '([^']*)'/);
+    if (m && (m[1] + '|' + m[2] + ' ' + m[3]) !== NEWS_ID) showUpdateNotice();
+  } catch (e) {}
+}
+setTimeout(checkUpdate, 5000); setTimeout(checkUpdateVersion, 20000);
+setInterval(checkUpdate, 60000); setInterval(() => { if (updHeadBad) checkUpdateVersion(); }, 300000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkUpdate(); });
 
 settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettings(); });
 $('lang-uk').addEventListener('click', () => { haptic('light'); setLang('uk'); });
