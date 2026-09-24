@@ -585,6 +585,45 @@
   #nw-ok:active{transform:translateY(1px)}
   #settings-ver{color:var(--gold)}
   @media (prefers-reduced-motion:reduce){.nw-box,.nw-box::before,.nw-box::after,#btn-news,.nw-title,#nw-ok,.nw-badge{animation:none}}
+
+  /* ---------- прихована адмін-панель ---------- */
+  #admin-modal{position:fixed;inset:0;z-index:100050;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,1,14,.86)}
+  #admin-modal.off{display:none}
+  .admin-box{width:100%;max-width:560px;max-height:94vh;max-height:94dvh;overflow-y:auto;background:var(--ink);
+    border-radius:18px 18px 0 0;box-shadow:0 0 0 2px #ffb84d,0 -8px 28px -6px rgba(255,184,77,.35);
+    padding:18px 12px calc(16px + env(safe-area-inset-bottom,0px));}
+  .admin-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:10px;margin-bottom:10px;border-bottom:2px solid #3a2d70}
+  .admin-title{font-size:12px;color:#ffcf70;text-shadow:var(--o2)}
+  .admin-sub{font-size:7px;color:var(--dim);margin-top:4px}
+  .admin-close,.admin-back,.admin-save{border:0;border-radius:8px;padding:9px 11px;background:#2c1f5c;color:var(--paper);
+    font-family:var(--pixel);font-size:8px;box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 #241a52;cursor:pointer}
+  .admin-save{background:#356f48;box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -3px 0 #214c32}
+  .admin-back{width:100%;margin-bottom:9px}
+  .admin-section{padding:9px;border-radius:10px;background:#241a52;box-shadow:inset 0 0 0 2px #3a2d70;margin-bottom:9px}
+  .admin-section h3{font-size:9px;color:var(--gold);margin:0 0 8px}
+  .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .admin-field{display:flex;flex-direction:column;gap:4px}
+  .admin-field label{font-size:7px;color:var(--dim)}
+  .admin-field input{width:100%;border:0;border-radius:7px;padding:8px;background:#1b1035;color:#fff;font:8px var(--pixel);box-shadow:inset 0 0 0 1px #5b47b0}
+  .admin-player{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+  .admin-player img{width:34px;height:34px;border-radius:6px;object-fit:cover;image-rendering:pixelated;box-shadow:inset 0 0 0 2px #5b47b0}
+  .admin-player-name{font-size:10px;color:#fff}
+  .admin-player-id{font-size:7px;color:var(--dim);margin-top:4px}
+  .admin-list{display:flex;flex-direction:column;gap:6px}
+  .admin-item{display:flex;align-items:center;gap:7px;padding:7px;border-radius:8px;background:#2c1f5c;box-shadow:inset 0 0 0 1px #4b3a8f}
+  .admin-item-main{flex:1;min-width:0}
+  .admin-item-name{font-size:8px;color:#fff;line-height:1.4}
+  .admin-item-meta{font-size:7px;color:var(--dim);margin-top:2px}
+  .admin-mini{border:0;border-radius:6px;padding:7px 9px;background:#3d2a7a;color:#fff;font:9px var(--pixel);box-shadow:inset 0 0 0 1px #5b47b0;cursor:pointer}
+  .admin-mini.plus{background:#356f48;box-shadow:inset 0 0 0 1px #7be0a4}
+  .admin-mini.minus{background:#713b4b;box-shadow:inset 0 0 0 1px #d4778b}
+  .admin-check{width:17px;height:17px;accent-color:var(--gold);flex:none}
+  .admin-status{font-size:8px;line-height:1.7;color:#9cf0b8;text-align:center;min-height:16px;margin:3px 0 8px}
+  .admin-error{color:#ff9b9b}
+  .admin-empty{font-size:8px;color:var(--dim);text-align:center;padding:10px}
+  .admin-lb-btn{flex:none;border:0;border-radius:7px;padding:7px 8px;background:#6b4b16;color:#fff2c8;font:8px var(--pixel);box-shadow:inset 0 0 0 1px #ffcf70;cursor:pointer}
+  .lb-row .admin-lb-btn{margin-left:4px}
+
 </style>
 </head>
 
@@ -861,6 +900,22 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
   <div id="panel-skn" class="off"></div>
   <div id="panel-qst" class="off"></div>
   <div id="panel-lb" class="off"></div>
+
+
+  <div id="admin-modal" class="off">
+    <div class="admin-box">
+      <div class="admin-head">
+        <div>
+          <div class="admin-title">🛠 АДМІН-ПАНЕЛЬ</div>
+          <div class="admin-sub">Керування вибраним гравцем</div>
+        </div>
+        <button class="admin-close" id="admin-close" type="button">✕</button>
+      </div>
+      <button class="admin-back" id="admin-back" type="button">← Повернутися до свого акаунта</button>
+      <div id="admin-status" class="admin-status"></div>
+      <div id="admin-content"></div>
+    </div>
+  </div>
 
   <div id="music-modal" class="off">
     <div class="shop-box">
@@ -5094,7 +5149,223 @@ $('btn-view').textContent = state.viewMode === 'walls' ? '☁' : '🏯';
 if (state.steps > 0) hintEl.classList.add('off');
 renderUI();
 requestAnimationFrame(frame);
+/* ==========================================================================
+   10. ПРИХОВАНА АДМІН-ПАНЕЛЬ
+   ВАЖЛИВО: доступ до змін у БД перевіряється серверною Supabase Edge Function.
+   Саме приховування кнопки в HTML НЕ є захистом.
+   ========================================================================== */
+const ADMIN_EDGE_FUNCTION = `${SUPABASE_URL}/functions/v1/admin-player`;
+let adminTarget = null;
+let adminDraft = null;
+
+function adminAllowedClient() {
+  try {
+    const u = tg?.initDataUnsafe?.user;
+    return !!(u && u.username && String(u.username).toLowerCase() === 'sergixlol');
+  } catch (e) { return false; }
+}
+function adminStatus(text, error=false) {
+  const el = $('admin-status');
+  if (!el) return;
+  el.textContent = text || '';
+  el.classList.toggle('admin-error', !!error);
+}
+function adminNum(v, fallback=0) {
+  const n = Math.floor(Number(v));
+  return Number.isFinite(n) && n >= 0 ? n : fallback;
+}
+function adminCall(action, payload={}) {
+  if (!adminAllowedClient()) return Promise.reject(new Error('forbidden'));
+  return fetch(ADMIN_EDGE_FUNCTION, {
+    method:'POST',
+    headers:{
+      apikey: SUPABASE_ANON_KEY,
+      Authorization:`Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({
+      action,
+      init_data: tg?.initData || '',
+      ...payload
+    })
+  }).then(async r => {
+    const data = await r.json().catch(()=>({}));
+    if (!r.ok || data?.error) throw new Error(data?.error || ('HTTP '+r.status));
+    return data;
+  });
+}
+
+function adminStateFieldsHtml(p) {
+  const st = p.progress || {};
+  const fields = [
+    ['score','Зірки',st.score],['diamonds','Геми',st.diamonds],['steps','Сходинки',st.steps],
+    ['powerLvl','Сила кліку',st.powerLvl],['autoLvl','Автоклік',st.autoLvl],['totalStars','Усього зірок',st.totalStars],
+    ['floorTier','Поверх',st.floorTier],['hp','HP',st.hp],['hpLvl','Рівень HP',st.hpLvl],
+    ['monstersKilled','Переможено монстрів',st.monstersKilled],['cases','Кейси',st.cases],
+    ['invitesCount','Запрошення',st.invitesCount],['botWarns','Попередження бота',st.botWarns]
+  ];
+  return `<div class="admin-grid">${fields.map(([k,l,v]) =>
+    `<div class="admin-field"><label>${escapeHtml(l)}</label><input type="number" min="0" step="1" data-admin-field="${k}" value="${adminNum(v)}"></div>`
+  ).join('')}</div>`;
+}
+
+function adminUpgradeHtml() {
+  const ups = adminDraft?.progress?.ups || {};
+  return `<div class="admin-list">${UPGRADES.map(u => {
+    const lvl = adminNum(ups[u.id]);
+    return `<div class="admin-item">
+      <div class="admin-item-main"><div class="admin-item-name">${escapeHtml(u.name)}</div><div class="admin-item-meta">Рівень: <b id="admin-up-${u.id}">${lvl}</b> / ${u.max}</div></div>
+      <button class="admin-mini minus" type="button" data-admin-up-minus="${escapeHtml(u.id)}">−</button>
+      <button class="admin-mini plus" type="button" data-admin-up-plus="${escapeHtml(u.id)}">+</button>
+    </div>`;
+  }).join('')}</div>
+  <button class="admin-save" id="admin-save-upgrades" type="button" style="width:100%;margin-top:8px">💾 Зберегти рівні покращень</button>`;
+}
+
+function adminOwnedListHtml(title, items, owned, attr) {
+  return `<div class="admin-section"><h3>${escapeHtml(title)}</h3><div class="admin-list">${items.map(x => {
+    const on = Array.isArray(owned) && owned.includes(x.id);
+    return `<div class="admin-item"><div class="admin-item-main"><div class="admin-item-name">${escapeHtml(x.name)}</div><div class="admin-item-meta">${escapeHtml(x.id)}</div></div>
+      <input class="admin-check" type="checkbox" ${on?'checked':''} data-admin-own="${escapeHtml(attr)}" data-admin-id="${escapeHtml(x.id)}"></div>`;
+  }).join('')}</div>
+  <button class="admin-save" type="button" data-admin-save-owned="${escapeHtml(attr)}" style="width:100%;margin-top:8px">💾 Зберегти</button></div>`;
+}
+
+function renderAdminPlayer() {
+  if (!adminDraft) return;
+  const p = adminDraft;
+  const st = p.progress || {};
+  const skins = Array.isArray(st.skins) ? st.skins : [];
+  const weapons = Array.isArray(st.weapons) ? st.weapons : [];
+  const armor = Array.isArray(st.armor) ? st.armor : [];
+  const content = $('admin-content');
+  content.innerHTML = `
+    <div class="admin-section">
+      <div class="admin-player">
+        ${avatarImg(p.photo_url,'')}
+        <div><div class="admin-player-name">${escapeHtml(p.username || 'Анонім')}</div><div class="admin-player-id">Telegram ID: ${escapeHtml(String(p.telegram_id || '—'))}</div></div>
+      </div>
+      ${adminStateFieldsHtml(p)}
+      <button class="admin-save" id="admin-save-fields" type="button" style="width:100%;margin-top:9px">💾 Зберегти параметри</button>
+    </div>
+    <div class="admin-section"><h3>⚡ Покращення</h3>${adminUpgradeHtml()}</div>
+    ${adminOwnedListHtml('⚔ Зброя', WEAPONS, weapons, 'weapons')}
+    ${adminOwnedListHtml('🛡 Броня', ARMOR, armor, 'armor')}
+    ${adminOwnedListHtml('🎭 Скіни', SKINS, skins, 'skins')}
+  `;
+  $('admin-save-fields').addEventListener('click', adminSaveFields);
+  $('admin-save-upgrades').addEventListener('click', adminSaveUpgrades);
+  content.querySelectorAll('[data-admin-up-plus]').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.dataset.adminUpPlus, u=UPGRADES.find(x=>x.id===id);
+    if (!u) return;
+    adminDraft.progress.ups = adminDraft.progress.ups || {};
+    adminDraft.progress.ups[id] = Math.min(u.max, adminNum(adminDraft.progress.ups[id])+1);
+    renderAdminPlayer();
+  }));
+  content.querySelectorAll('[data-admin-up-minus]').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.dataset.adminUpMinus;
+    adminDraft.progress.ups = adminDraft.progress.ups || {};
+    adminDraft.progress.ups[id] = Math.max(0, adminNum(adminDraft.progress.ups[id])-1);
+    renderAdminPlayer();
+  }));
+  content.querySelectorAll('[data-admin-save-owned]').forEach(b=>b.addEventListener('click',()=>adminSaveOwned(b.dataset.adminSaveOwned)));
+}
+
+async function openAdminPlayer(username) {
+  if (!adminAllowedClient()) return;
+  adminTarget = String(username || '').replace(/^@/,'');
+  if (!adminTarget) return;
+  $('admin-modal').classList.remove('off');
+  $('admin-content').innerHTML = '<div class="admin-empty">Завантаження даних гравця…</div>';
+  adminStatus('');
+  try {
+    const data = await adminCall('get_player',{username:adminTarget});
+    adminDraft = data.player;
+    renderAdminPlayer();
+  } catch (e) {
+    adminStatus('Не вдалося завантажити гравця: '+(e.message||e),true);
+  }
+}
+function closeAdminPlayer(){
+  adminTarget=null; adminDraft=null;
+  $('admin-modal').classList.add('off');
+  adminStatus('');
+  $('admin-content').innerHTML='';
+}
+async function adminSaveFields(){
+  if (!adminDraft) return;
+  const patch = {};
+  $('admin-content').querySelectorAll('[data-admin-field]').forEach(i => patch[i.dataset.adminField]=adminNum(i.value));
+  adminDraft.progress = {...adminDraft.progress,...patch};
+  try {
+    adminStatus('Збереження…');
+    const data=await adminCall('save_player',{username:adminTarget,patch:{progress:adminDraft.progress}});
+    adminDraft=data.player||adminDraft;
+    renderAdminPlayer();
+    adminStatus('✓ Параметри збережено');
+  } catch(e){ adminStatus('Помилка збереження: '+(e.message||e),true); }
+}
+async function adminSaveUpgrades(){
+  if (!adminDraft) return;
+  try {
+    adminStatus('Збереження покращень…');
+    const data=await adminCall('save_player',{username:adminTarget,patch:{progress:{ups:adminDraft.progress.ups||{}}}});
+    adminDraft=data.player||adminDraft;
+    renderAdminPlayer();
+    adminStatus('✓ Покращення збережено');
+  } catch(e){ adminStatus('Помилка збереження: '+(e.message||e),true); }
+}
+async function adminSaveOwned(kind){
+  if (!adminDraft) return;
+  const arr=[...$('admin-content').querySelectorAll(`[data-admin-own="${kind}"]`)].filter(x=>x.checked).map(x=>x.dataset.adminId);
+  if (kind==='weapons' && !arr.includes('fists')) arr.unshift('fists');
+  try {
+    adminStatus('Збереження…');
+    const progress={}; progress[kind]=arr;
+    if (kind==='skins' && !arr.includes(adminDraft.progress.skin)) progress.skin=arr.includes('default')?'default':arr[0]||'default';
+    const data=await adminCall('save_player',{username:adminTarget,patch:{progress}});
+    adminDraft=data.player||adminDraft;
+    renderAdminPlayer();
+    adminStatus('✓ Збережено');
+  } catch(e){ adminStatus('Помилка збереження: '+(e.message||e),true); }
+}
+$('admin-close').addEventListener('click',closeAdminPlayer);
+$('admin-back').addEventListener('click',closeAdminPlayer);
+$('admin-modal').addEventListener('click',e=>{if(e.target===$('admin-modal'))closeAdminPlayer();});
+
+/* Кнопки керування біля гравців у «Топ». Видимі тільки @sergixlol. */
+function adminLeaderboardButton(username){
+  if (!adminAllowedClient() || !username) return '';
+  return `<button class="admin-lb-btn" type="button" data-admin-player="${escapeHtml(String(username).replace(/^@/,''))}">⚙</button>`;
+}
+function bindAdminLeaderboardButtons(){
+  if (!adminAllowedClient()) return;
+  panelLb.querySelectorAll('[data-admin-player]').forEach(b=>{
+    b.addEventListener('click',e=>{e.stopPropagation();openAdminPlayer(b.dataset.adminPlayer);});
+  });
+}
+
+/* Підміняємо renderLeaderboard один раз після оголошення оригінальної функції:
+   кнопка додається тільки в UI, а реальна авторизація відбувається на сервері. */
+const _originalRenderLeaderboard = renderLeaderboard;
+renderLeaderboard = async function(){
+  await _originalRenderLeaderboard();
+  if (!adminAllowedClient()) return;
+  panelLb.querySelectorAll('.lb-row').forEach(row=>{
+    const nameEl=row.querySelector('.lb-name');
+    const name=nameEl?.textContent?.trim() || '';
+    if (!name || name==='Анонім') return;
+    const b=document.createElement('button');
+    b.className='admin-lb-btn'; b.type='button'; b.textContent='⚙';
+    b.dataset.adminPlayer=name.replace(/^@/,'');
+    row.appendChild(b);
+  });
+  bindAdminLeaderboardButtons();
+};
+
 })();
+
+
 </script>
 </body>
 </html>
