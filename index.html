@@ -398,60 +398,63 @@
   #panel-don{display:flex;flex-direction:column;gap:8px;max-height:56vh;overflow-y:auto;padding:2px 2px 4px}
 
   /* ---------- таблиця лідерів ---------- */
-  #panel-lb{gap:5px}
+  #panel-lb{gap:7px}
   .lb-refresh{
-    width:100%;border:0;border-radius:9px;padding:9px;margin-bottom:4px;background:linear-gradient(180deg,#3d2a7a,#2c1f5c);color:var(--paper);
+    width:100%;border:0;border-radius:12px;padding:11px 12px;margin-bottom:2px;background:linear-gradient(135deg,#4b35a0,#2b5fc7,#4d2c91);background-size:220% 220%;animation:lbButtonGlow 5s ease infinite;color:var(--paper);
     font-family:var(--pixel);font-size:9px;cursor:pointer;touch-action:manipulation;
-    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -4px 0 0 #241a52;
+    box-shadow:inset 0 0 0 2px rgba(171,151,255,.7),inset 0 -4px 0 0 #21154b,0 4px 12px rgba(52,38,130,.25);
   }
   .lb-refresh:active{transform:translateY(1px)}
   .lb-row{
-    position:relative;display:flex;align-items:center;gap:6px;padding:9px 9px;border-radius:10px;background:linear-gradient(180deg,#241b43,#191331);
-    box-shadow:inset 0 0 0 2px #4a397f,inset 0 -4px 0 0 #0f0a20,0 3px 0 rgba(0,0,0,.18);
+    position:relative;display:flex;align-items:center;gap:9px;min-height:48px;padding:9px 13px;border-radius:13px;background:linear-gradient(135deg,#29204c,#171328 70%,#241946);
+    box-shadow:inset 0 0 0 2px #5a478f,inset 0 -4px 0 0 #0d091a,0 5px 12px rgba(0,0,0,.24);
     overflow:hidden;isolation:isolate;transition:transform .15s ease,box-shadow .2s ease;
   }
-  .lb-row:active{transform:translateY(1px)}
-  .lb-row.top1{box-shadow:inset 0 0 0 2px #f5c95b,inset 0 -4px 0 0 #76500b,0 3px 0 rgba(0,0,0,.2)}
-  .lb-row.top2{box-shadow:inset 0 0 0 2px #c9d3e0,inset 0 -4px 0 0 #56616f,0 3px 0 rgba(0,0,0,.2)}
-  .lb-row.top3{box-shadow:inset 0 0 0 2px #d9925a,inset 0 -4px 0 0 #75431f,0 3px 0 rgba(0,0,0,.2)}
-  .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55,0 3px 0 rgba(0,0,0,.2)}
+  .lb-row:active{transform:scale(.992)}
+  .lb-row::after{content:'';position:absolute;left:10%;right:10%;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);pointer-events:none}
+  .lb-row.top1{background:linear-gradient(135deg,#4a3513,#2d2110,#4a3210);box-shadow:inset 0 0 0 2px #f5c95b,inset 0 -4px 0 0 #76500b,0 5px 14px rgba(245,201,91,.16)}
+  .lb-row.top2{background:linear-gradient(135deg,#39414f,#202630,#343b48);box-shadow:inset 0 0 0 2px #c9d3e0,inset 0 -4px 0 0 #56616f,0 5px 14px rgba(201,211,224,.12)}
+  .lb-row.top3{background:linear-gradient(135deg,#4b2c1b,#2d1b12,#4a2817);box-shadow:inset 0 0 0 2px #d9925a,inset 0 -4px 0 0 #75431f,0 5px 14px rgba(217,146,90,.14)}
+  .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55,0 5px 14px rgba(123,224,164,.13)}
   .lb-row.creator{
-    background:linear-gradient(115deg,#24134d,#30206b,#152e68,#40206f,#21144b);
-    background-size:300% 300%;animation:creatorGradient 5s ease infinite;
-    box-shadow:inset 0 0 0 2px #8b6cff,inset 0 -4px 0 0 #24124f,0 0 14px rgba(111,78,255,.38);
+    background:linear-gradient(115deg,#25104f,#3b1c78,#123d83,#5a2390,#211052);
+    background-size:400% 400%;animation:creatorGradient 4s ease infinite;
+    box-shadow:inset 0 0 0 2px #a98cff,inset 0 -4px 0 0 #24124f,0 0 8px rgba(117,81,255,.65),0 0 22px rgba(54,110,255,.3);
   }
   .lb-row.creator::before{
-    content:'';position:absolute;inset:-45%;z-index:-1;pointer-events:none;
-    background:radial-gradient(circle at 15% 20%,rgba(255,255,255,.95) 0 1px,transparent 2px),radial-gradient(circle at 70% 75%,rgba(255,255,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 88% 25%,rgba(180,170,255,.95) 0 1.5px,transparent 2.5px);
-    background-size:55px 55px,72px 72px,91px 91px;animation:creatorStars 4s linear infinite;opacity:.9;
+    content:'✦  ✧  ★  ✦  ✧  ★  ✦';position:absolute;inset:-55% -10%;z-index:-1;pointer-events:none;
+    font-size:10px;line-height:25px;letter-spacing:9px;word-spacing:7px;color:rgba(255,255,255,.8);
+    transform:rotate(-8deg);animation:creatorStars 3.2s linear infinite;opacity:.85;
+    text-shadow:0 0 5px #fff,0 0 10px #8c70ff;
   }
   .lb-row.creator::after{
-    content:'✦  ✧  ✦  ✧';position:absolute;right:7px;top:-3px;z-index:-1;
-    font-size:9px;letter-spacing:7px;color:#d9d1ff;opacity:.8;transform:rotate(-8deg);animation:creatorSparkles 2.5s ease-in-out infinite;pointer-events:none;
+    content:'';position:absolute;left:-30%;top:0;width:35%;height:100%;z-index:0;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-18deg);animation:creatorShine 2.6s linear infinite;
   }
   @keyframes creatorGradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-  @keyframes creatorStars{0%{transform:translateY(-8px) rotate(0deg)}100%{transform:translateY(16px) rotate(5deg)}}
-  @keyframes creatorSparkles{0%,100%{opacity:.35;transform:translateY(0) rotate(-8deg)}50%{opacity:1;transform:translateY(8px) rotate(-8deg)}}
+  @keyframes creatorStars{0%{transform:translateY(-25px) rotate(-8deg)}100%{transform:translateY(42px) rotate(-8deg)}}
+  @keyframes creatorShine{0%{left:-35%}100%{left:125%}}
+  @keyframes lbButtonGlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
   .lb-name{font-weight:700;min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--o2)}
   .lb-name.creator-name{color:#fff;text-shadow:0 0 5px #9d8cff,0 0 10px rgba(128,100,255,.7)}
   .lb-crown{display:inline-block;margin-right:3px;font-size:11px;filter:drop-shadow(0 0 3px rgba(255,215,75,.75));animation:crownFloat 2s ease-in-out infinite}
   @keyframes crownFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-  .lb-rank{width:18px;flex:none;font-size:8px;color:var(--dim);text-align:center}
-  .lb-award{width:16px;flex:none;font-size:13px;text-align:center;line-height:1}
-  .lb-av{position:relative;flex:none;width:18px;height:18px}
+  .lb-rank{width:24px;flex:none;font-size:10px;color:var(--paper);text-align:center;font-weight:700;text-shadow:0 0 5px rgba(255,255,255,.25)}
+  .lb-award{width:22px;flex:none;font-size:14px;text-align:center;line-height:1}
+  .lb-av{position:relative;flex:none;width:30px;height:30px}
   .lb-dot{position:absolute;right:-3px;bottom:-3px;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2px #1a1240}
   .lb-dot.on{background:#3ddc6e}
   .lb-dot.off{background:#7a7a8c}
   .lb-online{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px;margin-bottom:6px;border-radius:9px;background:#241a52;color:var(--paper);font-family:var(--pixel);font-size:9px;box-shadow:inset 0 0 0 2px #3a2b7a}
   .lb-online .lb-dot{position:static;box-shadow:none}
   .lb-online b{color:#3ddc6e;font-weight:normal}
-  .lb-avatar{width:18px;height:18px;flex:none;border-radius:3px;image-rendering:pixelated;box-shadow:inset 0 0 0 1px var(--edge-dark);background:#2c1f5c;object-fit:cover}
-  .lb-name{flex:1 1 auto;min-width:0;font-size:9px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .lb-score{flex:none;font-size:9px;color:var(--gold);text-shadow:var(--o2);min-width:40px;text-align:right}
+  .lb-avatar{width:30px;height:30px;flex:none;border-radius:7px;image-rendering:pixelated;box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 2px 7px rgba(0,0,0,.3);background:#2c1f5c;object-fit:cover}
+  .lb-name{flex:1 1 auto;min-width:0;font-size:10px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+  .lb-score{flex:none;font-size:10px;color:var(--gold);text-shadow:var(--o2);min-width:58px;text-align:right;font-weight:700}
   .lb-empty{font-size:8px;color:var(--dim);text-align:center;line-height:1.8;padding:20px 8px}
-  .referral-info{padding:9px 10px;margin-bottom:1px;border-radius:9px;background:linear-gradient(135deg,#2c1f5c,#241a52);box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 0 #241a52;text-align:center}
-  .referral-info-title{font-size:9px;color:var(--gold);line-height:1.5;text-shadow:var(--o2);margin-bottom:5px}
-  .referral-info-desc{font-size:7px;color:var(--paper);line-height:1.7}
+  .referral-info{padding:8px 12px;margin-bottom:1px;border-radius:11px;background:linear-gradient(135deg,#302060,#1d3568);box-shadow:inset 0 0 0 2px #6f59c8,inset 0 -3px 0 0 #21164b,0 3px 10px rgba(70,55,150,.2);text-align:center}
+  .referral-info-title{font-size:9px;color:var(--gold);line-height:1.3;text-shadow:var(--o2);margin-bottom:3px}
+  .referral-info-desc{font-size:8px;color:var(--paper);line-height:1.45;font-weight:700}
   .quest-bar{height:6px;background:#1a1030;border:1px solid #000;box-shadow:inset 0 0 0 1px #4b3a8f;margin-top:5px}
   .quest-bar-fill{height:100%;background:linear-gradient(#7be0a4,#4ea83a)}
   .wpn.done{--edge:#4ea83a;--edge-dark:#215c1e;opacity:.75}
@@ -1133,7 +1136,7 @@ const I18N = {
     'music-now-title-empty': 'Трек не обрано',
     'ref-modal-ok': 'OK',
     'referral-title': '👥 Реферальна система',
-    'referral-desc': 'Запроси друга в гру. Якщо він дійде до 3-го поверху — ти отримаєш 20💎!',
+    'referral-desc': 'Друг дійшов до 3-го поверху → +20💎 тобі!',
     perClick: 'за клік', autoSuffix: 'авто', perSec: '/с',
     lvl: 'рів.', click: 'Клік', auto: 'Авто',
     floor: 'Поверх', top: 'Вершина вежі'
@@ -1164,7 +1167,7 @@ const I18N = {
     'music-now-title-empty': 'No track selected',
     'ref-modal-ok': 'OK',
     'referral-title': '👥 Referral system',
-    'referral-desc': 'Invite a friend to the game. If they reach the 3rd floor, you will receive 20💎!',
+    'referral-desc': 'Friend reaches the 3rd floor → you get +20💎!',
     perClick: 'per tap', autoSuffix: 'auto', perSec: '/s',
     lvl: 'lvl', click: 'Click', auto: 'Auto',
     floor: 'Floor', top: 'Top of the tower'
@@ -1181,7 +1184,7 @@ const I18N = {
     'shop-title': '🛒 Магазин', 'settings-title': '⚙️ Настройки', 'settings-lang-label': 'ЯЗЫК / LANGUAGE',
     'music-now-title-empty': 'Трек не выбран', 'ref-modal-ok': 'OK',
     'referral-title': '👥 Реферальная система',
-    'referral-desc': 'Пригласи друга в игру. Если он дойдёт до 3-го этажа — ты получишь 20💎!',
+    'referral-desc': 'Друг дойдёт до 3-го этажа → тебе +20💎!',
     perClick: 'за клик', autoSuffix: 'авто', perSec: '/с', lvl: 'ур.', click: 'Клик', auto: 'Авто',
     floor: 'Этаж', top: 'Вершина башни'
   }
