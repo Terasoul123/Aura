@@ -1219,6 +1219,9 @@ Object.assign(I18N.uk, { botTitle:'Підозріла активність', bot
 Object.assign(I18N.en, { botTitle:'Suspicious activity', botText:'You have been tapping fast for over {m} min without a break. Please take a pause and play fair. Repeated violations may lead to an account ban.', botTextAuto:'Automated taps (bot) detected. This is not allowed — repeated violations may lead to an account ban.', botOk:'Got it' });
 Object.assign(I18N.ru, { botTitle:'Подозрительная активность', botText:'Ты тапаешь без пауз больше {m} мин в быстром темпе. Сделай перерыв и играй честно. Повторные нарушения могут привести к блокировке аккаунта.', botTextAuto:'Обнаружены автоматические тапы (бот). Так играть нельзя — повторные нарушения могут привести к блокировке аккаунта.', botOk:'Понятно' });
 
+Object.assign(I18N.uk, { resetTitle:'Прогрес скинуто', resetText:'Адміністрація обнулила твій ігровий прогрес. Якщо це помилка — напиши в підтримку.' });
+Object.assign(I18N.en, { resetTitle:'Progress reset', resetText:'The administration has reset your game progress. If this is a mistake, contact support.' });
+Object.assign(I18N.ru, { resetTitle:'Прогресс сброшен', resetText:'Администрация обнулила твой игровой прогресс. Если это ошибка — напиши в поддержку.' });
 Object.assign(I18N.uk, { linksLabel:'СПІЛЬНОТА', lkNews:'Новини каналу Telegram', lkSup:'Підтримка', lkTt:'TikTok канал' });
 Object.assign(I18N.en, { linksLabel:'COMMUNITY', lkNews:'Telegram channel news', lkSup:'Support', lkTt:'TikTok channel' });
 Object.assign(I18N.ru, { linksLabel:'СООБЩЕСТВО', lkNews:'Новости Telegram-канала', lkSup:'Поддержка', lkTt:'TikTok-канал' });
@@ -2727,6 +2730,49 @@ async function checkBan() {
 checkBan();
 setInterval(checkBan, 15000);
 
+/* ===== Скидання прогресу адміном =====
+   В таблиці leaderboard є булеве поле reset_progress. Адмін ставить true прямо
+   в Supabase Table Editor → у цього гравця (щойно він у грі або при наступному
+   заході) весь прогрес обнуляється і одразу зберігається в хмару та локально.
+   Потім адмін повертає false/NULL. Поки стоїть true — сервер (тригер) тримає
+   рядок гравця обнуленим, а гра не дає відновити прогрес ні з хмари, ні з
+   локального збереження. Клієнт це поле лише ЧИТАЄ (змінити його з клієнта
+   тригер не дає). */
+let resetting = false, resetReady = false;
+async function applyRemoteReset() {
+  if (resetting) return;
+  const fresh = defaultState();
+  if (JSON.stringify(state) === JSON.stringify(fresh)) return;     // вже обнулено — нічого не робимо
+  resetting = true;
+  try {
+    for (const k of Object.keys(state)) delete state[k];
+    Object.assign(state, fresh);
+    pos = 0; visTarget = 0; bgPos = 0; autoAcc = 0; spawnAcc = 0; combat = null; shopSig = '';
+    const hud = $('combat-hud'); if (hud) hud.classList.add('off');
+    dirty = true; uiDirty = true;
+    try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {}
+    await syncProgressToCloud(true);                                 // одразу зберігаємо обнулений прогрес
+    showResetNotice();
+  } finally { resetting = false; }
+}
+async function checkReset() {
+  if (!keyReady() || !telegramId) { resetReady = true; return; }
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?telegram_id=eq.${telegramId}&select=reset_progress&limit=1`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+    });
+    if (r.ok) {
+      const rows = await r.json();
+      if (rows && rows[0] && rows[0].reset_progress === true) await applyRemoteReset();
+    }
+  } catch (e) {}
+  resetReady = true;
+}
+const resetFirstCheck = checkReset();
+setTimeout(() => { resetReady = true; }, 8000);                      // якщо мережа зависла — не блокуємо збереження назавжди
+setInterval(checkReset, 15000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkReset(); });
+
 /* ===== Технічна перерва (режим обслуговування) =====
    Один рядок у таблиці public.app_settings (key='maintenance', value=true/false).
    Адмін (@Sergixlol) вмикає/вимикає цей булевий прапорець прямо в Supabase
@@ -2792,8 +2838,13 @@ async function fetchLeaderboard(limit) {
 /* Раз на 5 секунд (і при виході з гри) відправляємо свій рахунок і
    прогрес у Supabase — upsert по telegram_id: якщо рядка гравця ще нема,
    Supabase створить новий, якщо є — оновить score і progress. */
-async function syncProgressToCloud() {
-  if (!keyReady() || cloudSaving || !telegramId) return;
+async function syncProgressToCloud(force) {
+  if (!keyReady() || !telegramId) return;
+  if (!resetReady && !force) return;            // поки не перевірили прапорець скидання — старий локальний прогрес у хмару не шлемо
+  if (cloudSaving) {
+    if (!force) return;
+    for (let i = 0; i < 30 && cloudSaving; i++) await new Promise(r => setTimeout(r, 100));
+  }
   cloudSaving = true;
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?on_conflict=telegram_id`, {
@@ -2819,7 +2870,7 @@ async function syncProgressToCloud() {
 async function fetchCloudProgress() {
   if (!keyReady() || !telegramId) return null;
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?telegram_id=eq.${telegramId}&select=progress&limit=1`, {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?telegram_id=eq.${telegramId}&select=progress,reset_progress&limit=1`, {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
     });
     if (!r.ok) return null;
@@ -2833,8 +2884,9 @@ async function fetchCloudProgress() {
    прогрес не губиться при заході з іншого телефона/акаунта Telegram.
    Локальний прогрес не перезаписується, якщо він і так попереду. */
 async function loadProgressFromCloud() {
+  await resetFirstCheck;
   const row = await fetchCloudProgress();
-  if (!row || !row.progress) return;
+  if (!row || !row.progress || row.reset_progress === true) return;   // reset_progress = true → старий прогрес з хмари не відновлюємо
   const cloud = sanitizeState(row.progress);
   if (cloud.totalStars > state.totalStars) {
     const keepDaily = (cloud.daily.n > state.daily.n || (cloud.daily.n === state.daily.n && cloud.daily.day > state.daily.day)) ? cloud.daily : state.daily;
@@ -3726,6 +3778,13 @@ function onPlayerDeath() {
 
 /* --- антибот: довге безперервне швидке тапання --- */
 let tapsSec = 0, fastSecs = 0;
+function showResetNotice() {
+  $('bot-title').textContent = t('resetTitle');
+  $('bot-text').textContent = t('resetText');
+  $('bot-ok').textContent = t('botOk');
+  $('bot-modal').classList.remove('off');
+  hapticNote('warning');
+}
 function showBotWarning(auto) {
   if (!$('bot-modal').classList.contains('off')) return;
   state.botWarns = (state.botWarns || 0) + 1; dirty = true;
