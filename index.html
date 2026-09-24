@@ -3345,7 +3345,10 @@ function awardFor(rank) {
   return '';
 }
 
-const referralInfoHtml = () => '<div class="referral-info"><div class="referral-info-title">' + uiText('referral-title') + '</div><div class="referral-info-desc">' + uiText('referral-desc') + '</div></div>';
+const referralInfoHtml = () => {
+  const lang = I18N[curLang] || I18N.uk;
+  return '<div class="referral-info"><div class="referral-info-title">' + lang['referral-title'] + '</div><div class="referral-info-desc">' + lang['referral-desc'] + '</div></div>';
+};
 const inviteBtnHtml = () => referralInfoHtml() + '<button class="lb-refresh" id="lb-invite-btn" type="button">👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')</button>';
 function bindInviteBtn() { const b = $('lb-invite-btn'); if (b) b.addEventListener('click', shareReferralLink); }
 function refreshInviteBtn() { const b = $('lb-invite-btn'); if (b) b.textContent = '👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')'; }
