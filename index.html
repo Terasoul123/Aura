@@ -408,7 +408,7 @@
   .lb-row{
     position:relative;display:flex;flex-direction:column;gap:5px;min-height:64px;padding:13px 13px 12px;border-radius:13px;background:linear-gradient(135deg,#29204c,#171328 70%,#241946);
     box-shadow:inset 0 0 0 2px #5a478f,inset 0 -4px 0 0 #0d091a,0 5px 12px rgba(0,0,0,.24);
-    overflow:hidden;isolation:isolate;transition:transform .15s ease,box-shadow .2s ease;
+    overflow:hidden;isolation:isolate;transition:transform .15s ease,box-shadow .2s ease;cursor:pointer;
   }
   .lb-row-top{display:grid;grid-template-columns:24px 22px 30px 1fr auto;align-items:center;gap:9px}
   .lb-row-bottom{display:grid;grid-template-columns:24px 22px 30px 1fr auto;align-items:center}
@@ -798,6 +798,33 @@
   .admin-mini.plus{background:#356f48;box-shadow:inset 0 0 0 1px #7be0a4}
   .admin-mini.minus{background:#713b4b;box-shadow:inset 0 0 0 1px #d4778b}
   .admin-check{width:17px;height:17px;accent-color:var(--gold);flex:none}
+
+  /* ---------- профіль гравця (клік по рядку в Топ) ---------- */
+  #profile-modal{position:fixed;inset:0;z-index:100040;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,1,14,.86)}
+  #profile-modal.off{display:none}
+  .profile-box{position:relative;width:100%;max-width:560px;max-height:82vh;max-height:82dvh;overflow-y:auto;
+    background:var(--ink);border-radius:18px 18px 0 0;box-shadow:0 0 0 2px #5b47b0,0 -8px 28px -6px rgba(0,0,0,.55);
+    padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));}
+  .profile-banner{position:relative;height:150px;overflow:hidden;isolation:isolate;
+    background:linear-gradient(145deg,#2c1d58,#211744);border-radius:18px 18px 0 0}
+  .profile-banner .bnr-strip{position:absolute;inset:0;width:100%;height:100%;border-radius:0;box-shadow:none}
+  .profile-banner .bnr-name{display:none}
+  .profile-banner::after{content:'';position:absolute;left:0;right:0;bottom:0;height:70px;z-index:4;
+    background:linear-gradient(0deg,var(--ink) 0%,rgba(27,16,53,.0) 100%)}
+  .profile-close{position:absolute;top:10px;right:10px;z-index:20;width:30px;height:30px;border:0;border-radius:50%;
+    background:rgba(8,5,22,.65);color:#fff;font-size:13px;line-height:1;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+  .profile-body{position:relative;z-index:5;padding:0 16px 4px;margin-top:-44px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .profile-avatar-wrap{width:78px;height:78px;border-radius:16px;overflow:hidden;background:#241a52;
+    box-shadow:0 0 0 4px var(--ink),0 0 0 6px #5b47b0,0 6px 14px rgba(0,0,0,.4);margin-bottom:10px}
+  .profile-avatar-wrap img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;display:block}
+  .profile-name{font-size:13px;color:#fff;text-shadow:var(--o2);display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap}
+  .profile-stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+  .profile-stat{background:#241a52;padding:9px 12px;border-radius:10px;box-shadow:inset 0 0 0 1px #4b3a8f;
+    font-size:10px;color:#fff;display:flex;align-items:center;gap:6px}
+  .profile-stat.on{color:#7be0a4;box-shadow:inset 0 0 0 1px #2f7a55}
+  .profile-stat.off{color:var(--dim)}
+  .profile-edit-btn{margin:14px 16px 0;border:0;border-radius:10px;padding:10px;background:#6b4b16;color:#fff2c8;
+    font-family:var(--pixel);font-size:9px;box-shadow:inset 0 0 0 2px #ffcf70,inset 0 -3px 0 #4a3210;cursor:pointer}
   .admin-status{font-size:8px;line-height:1.7;color:#9cf0b8;text-align:center;min-height:16px;margin:3px 0 8px}
   .admin-error{color:#ff9b9b}
   .admin-empty{font-size:8px;color:var(--dim);text-align:center;padding:10px}
@@ -1251,6 +1278,18 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
       <button class="admin-back" id="admin-back" type="button">← Повернутися до свого акаунта</button>
       <div id="admin-status" class="admin-status"></div>
       <div id="admin-content"></div>
+    </div>
+  </div>
+
+  <div id="profile-modal" class="off">
+    <div class="profile-box">
+      <div class="profile-banner" id="profile-banner"></div>
+      <button class="profile-close" id="profile-close" type="button">✕</button>
+      <div class="profile-body">
+        <div class="profile-avatar-wrap" id="profile-avatar-wrap"></div>
+        <div class="profile-name" id="profile-name"></div>
+        <div class="profile-stats" id="profile-stats"></div>
+      </div>
     </div>
   </div>
 
@@ -1758,11 +1797,17 @@ function menuTranslateStringRaw(str) {
     [/\(плоско\)/g, '(flat)'],
     [/\/с(?![а-яіїєґ])/g, '/s'],
     [/([0-9])с(?![а-яіїєґ])/g, '$1s'],
+    [/В мережі/g, 'Online'],
+    [/Не в мережі/g, 'Offline'],
+    [/Щойно була\(в\) в мережі/g, 'Just seen online'],
+    [/хв тому/g, 'min ago'],
+    [/год тому/g, 'h ago'],
+    [/дн тому/g, 'd ago'],
   ] : [];
 
   if (curLang === 'ru') {
     const ruRules = [
-      [/Урон:/g,'Урон:'],[/ХП:/g,'ОЗ:'],[/рів\./g,'ур.'],[/отриманого урону/g,'получаемого урона'],[/урону/g,'урона'],[/зірок за клік/g,'звёзд за клик'],[/зірок з монстрів/g,'звёзд с монстров'],[/діамантів з монстрів/g,'алмазов с монстров'],[/втрат зірок при поразці/g,'потери звёзд при поражении'],[/отриманого урону/g,'получаемого урона'],[/Здобич з монстрів/g,'Добыча с монстров'],[/Здобич/g,'Добыча'],[/Шанс крита/g,'Шанс крита'],[/Монстр кожні/g,'Монстр каждые'],[/Швидкість автокліку/g,'Скорость автоклика'],[/Зірки/g,'Звёзды'],[/Пройди ([0-9 ]+) сходинок/g,'Пройди $1 ступеней'],[/Досягни ([0-9]+)-го поверху вежі/g,'Достигни $1-го этажа башни'],[/Досягни вершини вежі/g,'Достигни вершины башни'],[/Здобудь ([0-9]+) видів зброї/g,'Получи $1 видов оружия'],[/Здобудь ([0-9]+) видів броні/g,'Получи $1 видов брони'],[/Здобудь ([0-9]+) образи/g,'Получи $1 образов'],[/Май ([0-9]+) діамантів одночасно/g,'Имей $1 алмазов одновременно'],[/Прокачай автоклік до ([0-9]+) рівня/g,'Прокачай автоклик до $1 уровня'],[/Прокачай силу кліку до ([0-9]+) рівня/g,'Прокачай силу клика до $1 уровня'],[/Прокачай здоров’я до ([0-9]+) рівня/g,'Прокачай здоровье до $1 уровня']
+      [/Урон:/g,'Урон:'],[/ХП:/g,'ОЗ:'],[/рів\./g,'ур.'],[/отриманого урону/g,'получаемого урона'],[/урону/g,'урона'],[/зірок за клік/g,'звёзд за клик'],[/зірок з монстрів/g,'звёзд с монстров'],[/діамантів з монстрів/g,'алмазов с монстров'],[/втрат зірок при поразці/g,'потери звёзд при поражении'],[/отриманого урону/g,'получаемого урона'],[/Здобич з монстрів/g,'Добыча с монстров'],[/Здобич/g,'Добыча'],[/Шанс крита/g,'Шанс крита'],[/Монстр кожні/g,'Монстр каждые'],[/Швидкість автокліку/g,'Скорость автоклика'],[/Зірки/g,'Звёзды'],[/Пройди ([0-9 ]+) сходинок/g,'Пройди $1 ступеней'],[/Досягни ([0-9]+)-го поверху вежі/g,'Достигни $1-го этажа башни'],[/Досягни вершини вежі/g,'Достигни вершины башни'],[/Здобудь ([0-9]+) видів зброї/g,'Получи $1 видов оружия'],[/Здобудь ([0-9]+) видів броні/g,'Получи $1 видов брони'],[/Здобудь ([0-9]+) образи/g,'Получи $1 образов'],[/Май ([0-9]+) діамантів одночасно/g,'Имей $1 алмазов одновременно'],[/Прокачай автоклік до ([0-9]+) рівня/g,'Прокачай автоклик до $1 уровня'],[/Прокачай силу кліку до ([0-9]+) рівня/g,'Прокачай силу клика до $1 уровня'],[/Прокачай здоров’я до ([0-9]+) рівня/g,'Прокачай здоровье до $1 уровня'],[/В мережі/g,'В сети'],[/Не в мережі/g,'Не в сети'],[/Щойно була\(в\) в мережі/g,'Только что была(л) в сети'],[/хв тому/g,'мин назад'],[/год тому/g,'ч назад'],[/дн тому/g,'дн назад']
     ];
     for (const [re,rep] of ruRules) out = out.replace(re,rep);
   }
@@ -3580,6 +3625,7 @@ async function syncProgressToCloud(force) {
         username: playerName,
         photo_url: myPhotoUrl,
         score: Math.floor(state.totalStars),
+        equipped_banner: state.banners.equipped || null,
         progress: state
       })
     });
@@ -3863,6 +3909,58 @@ sendPresence();
 setInterval(sendPresence, 30000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) sendPresence(); });
 
+/* ===== Профіль гравця: клік по рядку в «Топ» відкриває картку з банером на фоні.
+   Для @sergixlol клік замість профілю одразу відкриває адмін-редагування. ===== */
+let lbPlayersByKey = {};
+function playerActivityInfo(p) {
+  if (p.online === true) return { text: uiText('В мережі'), cls: 'on' };
+  if (p.last_seen) {
+    const diffMin = Math.floor((Date.now() - new Date(p.last_seen).getTime()) / 60000);
+    if (diffMin < 2) return { text: uiText('Щойно була(в) в мережі'), cls: 'on' };
+    if (diffMin < 60) return { text: diffMin + ' ' + uiText('хв тому'), cls: 'off' };
+    const h = Math.floor(diffMin / 60);
+    if (h < 24) return { text: h + ' ' + uiText('год тому'), cls: 'off' };
+    return { text: Math.floor(h / 24) + ' ' + uiText('дн тому'), cls: 'off' };
+  }
+  if (p.online === false) return { text: uiText('Не в мережі'), cls: 'off' };
+  return null;
+}
+function openProfileModal(p, fallbackName) {
+  const modal = $('profile-modal');
+  if (!modal) return;
+  if (!p) p = { username: fallbackName };
+  const rawName = String(p.username || fallbackName || uiText('Анонім'));
+  const isCreator = rawName.replace(/^@/, '').toLowerCase() === 'sergixlol';
+  const name = escapeHtml(rawName).slice(0, 24);
+  const eqBnrId = p.equipped_banner || (p.progress && p.progress.banners && p.progress.banners.equipped) || null;
+  const bnr = eqBnrId && BANNERS.find(x => x.id === eqBnrId);
+  $('profile-banner').innerHTML = bnr ? bannerStripHtml(bnr.id) : '';
+  $('profile-avatar-wrap').innerHTML = avatarImg(p.photo_url, '');
+  $('profile-name').innerHTML = (isCreator ? '<span class="lb-crown">👑</span>' : '') + name;
+  const activity = playerActivityInfo(p);
+  const stats = [
+    `<span class="profile-stat">⭐ ${fmt(p.score || 0)}</span>`,
+    `<span class="profile-stat">🏆 ${fmt(p.trophies || 0)}</span>`
+  ];
+  if (activity) stats.push(`<span class="profile-stat ${activity.cls}">${activity.cls === 'on' ? '🟢' : '⚪'} ${activity.text}</span>`);
+  $('profile-stats').innerHTML = stats.join('');
+  modal.classList.remove('off');
+}
+function closeProfileModal() { $('profile-modal').classList.add('off'); }
+$('profile-close').addEventListener('click', closeProfileModal);
+$('profile-modal').addEventListener('click', e => { if (e.target === $('profile-modal')) closeProfileModal(); });
+function bindLbRowProfileClicks() {
+  panelLb.querySelectorAll('.lb-row[data-lb-player]').forEach(row => {
+    row.addEventListener('click', () => {
+      const uname = row.dataset.lbPlayer;
+      if (!uname) return;
+      haptic('light');
+      if (typeof adminAllowedClient === 'function' && adminAllowedClient()) { openAdminPlayer(uname); return; }
+      openProfileModal(lbPlayersByKey[uname.toLowerCase()], uname);
+    });
+  });
+}
+
 async function renderLeaderboard() {
   panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button><div class="lb-empty">' + uiText('Завантаження…') + '</div>';
   bindInviteBtn();
@@ -3897,11 +3995,14 @@ async function renderLeaderboard() {
     const eqBnrId = p.equipped_banner || (p.progress && p.progress.banners && p.progress.banners.equipped) || null;
     const bnrBg = eqBnrId && BANNERS.find(x => x.id === eqBnrId) ? `<div class="lb-bnr-bg">${bannerStripHtml(eqBnrId)}</div>` : '';
     const avHtml = `<span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span>`;
-    return `<div class="${cls.join(' ')}">${bnrBg}<div class="lb-row-top"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span>${avHtml}${creatorName}${duelBtn}</div><div class="lb-row-bottom"><div class="lb-row-stats"><span class="lb-score">★ ${fmt(p.score || 0)}</span>${trophyBadge}</div></div>${searchLine}</div>`;
+    const lbKey = rawName.replace(/^@/, '').toLowerCase();
+    if (lbKey) lbPlayersByKey[lbKey] = p;
+    return `<div class="${cls.join(' ')}" data-lb-player="${escapeHtml(rawName.replace(/^@/, ''))}">${bnrBg}<div class="lb-row-top"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span>${avHtml}${creatorName}${duelBtn}</div><div class="lb-row-bottom"><div class="lb-row-stats"><span class="lb-score">★ ${fmt(p.score || 0)}</span>${trophyBadge}</div></div>${searchLine}</div>`;
   }).join('');
   panelLb.innerHTML = inviteBtnHtml() + onlineHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
   bindInviteBtn();
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
+  bindLbRowProfileClicks();
 }
 
 const costPower = () => Math.ceil(CFG.POWER_BASE_COST * Math.pow(CFG.POWER_GROWTH, state.powerLvl - 1));
