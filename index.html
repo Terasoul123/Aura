@@ -6004,10 +6004,13 @@ async function adminSaveFields(){
   if (!adminDraft) return;
   const patch = {};
   $('admin-content').querySelectorAll('[data-admin-field]').forEach(i => patch[i.dataset.adminField]=adminNum(i.value));
-  adminDraft.progress = {...adminDraft.progress,...patch};
   try {
     adminStatus('Збереження…');
-    const data=await adminCall('save_player',{username:adminTarget,patch:{progress:adminDraft.progress}});
+    // Підтягуємо свіжий прогрес гравця перед записом, щоб не відкотити те,
+    // що гравець встиг заробити, поки адмін-панель була відкрита.
+    const fresh = await adminCall('get_player',{username:adminTarget});
+    const mergedProgress = {...(fresh.player && fresh.player.progress || adminDraft.progress), ...patch};
+    const data=await adminCall('save_player',{username:adminTarget,patch:{progress:mergedProgress}});
     adminDraft=data.player||adminDraft;
     renderAdminPlayer();
     adminStatus('✓ Параметри збережено');
@@ -6017,7 +6020,10 @@ async function adminSaveUpgrades(){
   if (!adminDraft) return;
   try {
     adminStatus('Збереження покращень…');
-    const data=await adminCall('save_player',{username:adminTarget,patch:{progress:{ups:adminDraft.progress.ups||{}}}});
+    const fresh = await adminCall('get_player',{username:adminTarget});
+    const baseProgress = (fresh.player && fresh.player.progress) || adminDraft.progress || {};
+    const mergedProgress = {...baseProgress, ups: adminDraft.progress.ups||{}};
+    const data=await adminCall('save_player',{username:adminTarget,patch:{progress:mergedProgress}});
     adminDraft=data.player||adminDraft;
     renderAdminPlayer();
     adminStatus('✓ Покращення збережено');
@@ -6029,9 +6035,11 @@ async function adminSaveOwned(kind){
   if (kind==='weapons' && !arr.includes('fists')) arr.unshift('fists');
   try {
     adminStatus('Збереження…');
-    const progress={}; progress[kind]=arr;
-    if (kind==='skins' && !arr.includes(adminDraft.progress.skin)) progress.skin=arr.includes('default')?'default':arr[0]||'default';
-    const data=await adminCall('save_player',{username:adminTarget,patch:{progress}});
+    const fresh = await adminCall('get_player',{username:adminTarget});
+    const baseProgress = (fresh.player && fresh.player.progress) || adminDraft.progress || {};
+    const mergedProgress = {...baseProgress}; mergedProgress[kind]=arr;
+    if (kind==='skins' && !arr.includes(mergedProgress.skin)) mergedProgress.skin=arr.includes('default')?'default':arr[0]||'default';
+    const data=await adminCall('save_player',{username:adminTarget,patch:{progress:mergedProgress}});
     adminDraft=data.player||adminDraft;
     renderAdminPlayer();
     adminStatus('✓ Збережено');
