@@ -3277,11 +3277,16 @@ function sanitizeState(s) {
   return d;
 }
 function load() {
-  try {
-    const raw = localStorage.getItem(CFG.SAVE_KEY);
-    if (raw) return sanitizeState(JSON.parse(raw));
-  } catch (e) {}
-  return defaultState();
+  /* основне збереження + 2 ротаційні локальні копії: беремо ту, де найбільше зірок
+     (захист від пошкодженого/обрізаного localStorage — таке буває при різкому закритті додатку) */
+  let best = null;
+  for (const k of [CFG.SAVE_KEY, CFG.SAVE_KEY + '_bak1', CFG.SAVE_KEY + '_bak2']) {
+    try {
+      const raw = localStorage.getItem(k);
+      if (raw) { const st = sanitizeState(JSON.parse(raw)); if (!best || st.totalStars > best.totalStars) best = st; }
+    } catch (e) {}
+  }
+  return best || defaultState();
 }
 const state = load();
 if (state.hp > hpMax()) state.hp = hpMax();
@@ -3293,8 +3298,18 @@ let autoAcc = 0, dirty = false, uiDirty = true, bump = false, lastSave = 0, floo
 let combat = null;                                    // {kind,hp,hpMax,dmg,reward,atkAcc,hitFlash,walkFrame,walkAcc}
 let spawnAcc = 0;                                      // секунд накопичено з останньої появи монстра
 
+let lastLocalBak = 0;
 function save() {
   try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {}
+  try {
+    const nowT = Date.now();
+    if (state.totalStars > 0 && nowT - lastLocalBak > 120000) {
+      lastLocalBak = nowT;
+      const b1 = localStorage.getItem(CFG.SAVE_KEY + '_bak1');
+      if (b1) localStorage.setItem(CFG.SAVE_KEY + '_bak2', b1);
+      localStorage.setItem(CFG.SAVE_KEY + '_bak1', JSON.stringify(state));
+    }
+  } catch (e) {}
   dirty = false; lastSave = performance.now();
   if (lastSave - lastCloudSave > 5000) { lastCloudSave = lastSave; syncProgressToCloud(); }
 }
@@ -3370,6 +3385,8 @@ function avatarImg(url, cls) {
 }
 
 let lastCloudSave = 0, cloudSaving = false;
+let cloudReadyToSave = false;   // true лише ПІСЛЯ того, як прогрес з хмари успішно прочитано хоч раз
+let cloudFetchOk = false, cloudKnownStars = -1, loadingCloud = false;
 
 function keyReady() { return SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith('ТВІЙ'); }
 
@@ -3437,7 +3454,8 @@ async function applyRemoteReset() {
     pos = 0; visTarget = 0; bgPos = 0; autoAcc = 0; spawnAcc = 0; combat = null; shopSig = '';
     const hud = $('combat-hud'); if (hud) hud.classList.add('off');
     dirty = true; uiDirty = true;
-    try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {}
+    try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); localStorage.removeItem(CFG.SAVE_KEY + '_bak1'); localStorage.removeItem(CFG.SAVE_KEY + '_bak2'); } catch (e) {}
+    cloudKnownStars = 0;                                              // після обнулення в хмарі теж 0 — наступні збереження дозволені
     await syncProgressToCloud(true);                                 // одразу зберігаємо обнулений прогрес
     showResetNotice();
   } finally { resetting = false; }
@@ -3537,6 +3555,12 @@ function adminVersionOf(progress) {
 async function syncProgressToCloud(force) {
   if (!keyReady() || !telegramId) return;
   if (!resetReady && !force) return;
+  // Не пишемо в хмару, поки не прочитали звідти реальний прогрес хоча б раз — інакше свіжий
+  // локальний стан (нулі при холодному старті/збої мережі) затре справжній прогрес гравця.
+  if (!cloudReadyToSave && !resetting) return;
+  // Захист від "порожнього" запису: якщо ми точно знаємо, що в хмарі вже є прогрес (cloudKnownStars > 0),
+  // а зараз намагаємось відправити повністю пустий стан — це майже напевно баг/гонка, а не реальна гра.
+  if (!resetting && cloudKnownStars > 0 && Math.floor(state.totalStars) === 0 && state.diamonds === 0 && state.skins.length <= 1) return;
   if (cloudSaving) {
     if (!force) return;
     for (let i = 0; i < 30 && cloudSaving; i++) await new Promise(r => setTimeout(r, 100));
@@ -3565,7 +3589,7 @@ async function syncProgressToCloud(force) {
       }
     } catch (e) {}
 
-    await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?on_conflict=telegram_id`, {
+    const __saveR = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?on_conflict=telegram_id`, {
       method: 'POST',
       headers: {
         apikey: SUPABASE_ANON_KEY,
@@ -3582,6 +3606,7 @@ async function syncProgressToCloud(force) {
         progress: state
       })
     });
+    if (__saveR && __saveR.ok) cloudKnownStars = Math.max(cloudKnownStars, Math.floor(state.totalStars));
   } catch (e) {}
   cloudSaving = false;
 }
@@ -3594,6 +3619,7 @@ async function fetchCloudProgress() {
     });
     if (!r.ok) return null;
     const data = await r.json();
+    cloudFetchOk = true;   // запит реально пройшов (навіть якщо рядка для цього гравця ще нема — новий гравець)
     return data && data[0] ? data[0] : null;
   } catch (e) { return null; }
 }
@@ -3603,21 +3629,38 @@ async function fetchCloudProgress() {
    прогрес не губиться при заході з іншого телефона/акаунта Telegram.
    Локальний прогрес не перезаписується, якщо він і так попереду. */
 async function loadProgressFromCloud() {
-  await resetFirstCheck;
-  const row = await fetchCloudProgress();
-  if (!row || !row.progress || row.reset_progress === true) return;   // reset_progress = true → старий прогрес з хмари не відновлюємо
-  const cloud = sanitizeState(row.progress);
-  // Адмінська версія має пріоритет навіть якщо totalStars стало менше.
-  if (adminVersionOf(cloud) > adminVersionOf(state) || cloud.totalStars > state.totalStars) {
-    const keepDaily = (cloud.daily.n > state.daily.n || (cloud.daily.n === state.daily.n && cloud.daily.day > state.daily.day)) ? cloud.daily : state.daily;
-    Object.assign(state, cloud);
-    state.daily = { n: keepDaily.n, day: keepDaily.day };
-    if (state.hp > hpMax()) state.hp = hpMax();
-    dirty = true; uiDirty = true;
-    save();
-  }
+  if (loadingCloud || cloudReadyToSave || !keyReady() || !telegramId) return;
+  loadingCloud = true;
+  try {
+    await resetFirstCheck;
+    let row = null;
+    // Мережа на старті (особливо в Telegram WebView) часом підвисає чи тимчасово падає —
+    // не здаємось після 1 спроби, а пробуємо ще кілька разів із паузою, що зростає.
+    for (let i = 0; i < 5 && !cloudFetchOk; i++) {
+      row = await fetchCloudProgress();
+      if (!cloudFetchOk) await new Promise(r => setTimeout(r, 1500 * (i + 1)));
+    }
+    if (!cloudFetchOk) return;   // мережа й досі недоступна — НЕ позначаємо готовим до запису, спробуємо пізніше (див. setInterval нижче)
+    if (row && row.progress && row.reset_progress !== true) {
+      const cloud = sanitizeState(row.progress);
+      cloudKnownStars = Math.floor(cloud.totalStars);
+      // Адмінська версія має пріоритет навіть якщо totalStars стало менше.
+      if (adminVersionOf(cloud) > adminVersionOf(state) || cloud.totalStars > state.totalStars) {
+        const keepDaily = (cloud.daily.n > state.daily.n || (cloud.daily.n === state.daily.n && cloud.daily.day > state.daily.day)) ? cloud.daily : state.daily;
+        Object.assign(state, cloud);
+        state.daily = { n: keepDaily.n, day: keepDaily.day };
+        if (state.hp > hpMax()) state.hp = hpMax();
+        dirty = true; uiDirty = true;
+        save();
+      }
+    } else {
+      cloudKnownStars = 0;   // рядка в хмарі й справді ще нема — це новий гравець, писати можна
+    }
+    cloudReadyToSave = true;
+  } finally { loadingCloud = false; }
 }
 loadProgressFromCloud().catch(() => {}).then(() => setTimeout(initDaily, 600));   // щоденна нагорода — після підтягування хмарного прогресу
+setInterval(() => { if (!cloudReadyToSave) loadProgressFromCloud().catch(() => {}); }, 15000);   // якщо перше читання не вдалось — пробуємо й далі, поки не вийде
 
 /* ==========================================================================
    6c. РЕФЕРАЛЬНА СИСТЕМА
