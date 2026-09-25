@@ -406,7 +406,7 @@
   }
   .lb-refresh:active{transform:translateY(1px)}
   .lb-row{
-    position:relative;display:flex;align-items:center;gap:9px;min-height:48px;padding:9px 13px;border-radius:13px;background:linear-gradient(135deg,#29204c,#171328 70%,#241946);
+    position:relative;display:flex;align-items:center;gap:9px;min-height:64px;padding:18px 13px;border-radius:13px;background:linear-gradient(135deg,#29204c,#171328 70%,#241946);
     box-shadow:inset 0 0 0 2px #5a478f,inset 0 -4px 0 0 #0d091a,0 5px 12px rgba(0,0,0,.24);
     overflow:hidden;isolation:isolate;transition:transform .15s ease,box-shadow .2s ease;
   }
@@ -417,19 +417,7 @@
   .lb-row.top3{background:linear-gradient(135deg,#4b2c1b,#2d1b12,#4a2817);box-shadow:inset 0 0 0 2px #d9925a,inset 0 -4px 0 0 #75431f,0 5px 14px rgba(217,146,90,.14)}
   .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55,0 5px 14px rgba(123,224,164,.13)}
   .lb-row.creator{
-    background:linear-gradient(115deg,#25104f,#3b1c78,#123d83,#5a2390,#211052);
-    background-size:400% 400%;animation:creatorGradient 4s ease infinite;
-    box-shadow:inset 0 0 0 2px #a98cff,inset 0 -4px 0 0 #24124f,0 0 8px rgba(117,81,255,.65),0 0 22px rgba(54,110,255,.3);
-  }
-  .lb-row.creator::before{
-    content:'✦  ✧  ★  ✦  ✧  ★  ✦';position:absolute;inset:-55% -10%;z-index:-1;pointer-events:none;
-    font-size:10px;line-height:25px;letter-spacing:9px;word-spacing:7px;color:rgba(255,255,255,.8);
-    transform:rotate(-8deg);animation:creatorStars 3.2s linear infinite;opacity:.85;
-    text-shadow:0 0 5px #fff,0 0 10px #8c70ff;
-  }
-  .lb-row.creator::after{
-    content:'';position:absolute;left:-30%;top:0;width:35%;height:100%;z-index:0;pointer-events:none;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-18deg);animation:creatorShine 2.6s linear infinite;
+    box-shadow:inset 0 0 0 2px #a98cff,inset 0 -4px 0 0 #24124f,0 0 8px rgba(117,81,255,.35);
   }
   @keyframes creatorGradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
   @keyframes creatorStars{0%{transform:translateY(-25px) rotate(-8deg)}100%{transform:translateY(42px) rotate(-8deg)}}
@@ -724,7 +712,7 @@
   .bnr-road-tag{font-size:8px;padding:3px 6px;border-radius:6px;background:#1a1240;color:#8fe9ff;box-shadow:inset 0 0 0 1px #3fa7ff}
   .bnr-card .wpn-btn{min-height:34px}
   /* У топі фон банера реально заповнює всю картку */
-  .lb-bnr-bg{position:absolute;inset:0;border-radius:inherit;opacity:.52;pointer-events:none;z-index:0;overflow:hidden}
+  .lb-bnr-bg{position:absolute;inset:0;border-radius:inherit;opacity:.62;pointer-events:none;z-index:0;overflow:hidden}
   .lb-bnr-bg .bnr-strip{width:100%;height:100%;min-height:100%;border-radius:inherit;box-shadow:none}
   .lb-bnr-bg .bnr-name{display:none}
   .lb-row{position:relative;isolation:isolate}
@@ -833,6 +821,11 @@
   .duel-rules-line{font-size:8px;color:var(--paper);line-height:2}
   .duel-rules-foot{font-size:7px;color:var(--dim);margin-top:8px;line-height:1.6}
   .duel-hint{font-size:7px;color:var(--dim);text-align:center;line-height:1.6}
+  .duel-searching-feed{display:flex;flex-direction:column;gap:6px}
+  .duel-searching-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:11px;background:#241a52;
+    box-shadow:inset 0 0 0 2px #3a2d70;animation:duelSearchPulse 1.4s ease-in-out infinite}
+  .duel-searching-av{width:22px;height:22px;border-radius:50%;flex:none;object-fit:cover}
+  .duel-searching-item span{font-size:8px;color:var(--paper);text-shadow:var(--o2);line-height:1.5}
 
   /* ---------- ⚔ Дуель: 🌌 Дорога слави (сезонний магазин нагород за трофеї) ---------- */
   .road-wrap{position:relative;overflow:hidden;border-radius:14px;padding:12px 10px 14px;
@@ -870,9 +863,9 @@
   @media (prefers-reduced-motion:reduce){.road-wrap,.road-wrap::before,.road-wrap::after,.road-title,.road-node.ready .road-node-ic{animation:none}}
 
   /* ---------- ⚔ Дуель: арена (модалка) ---------- */
-  #duel-modal{position:fixed;inset:0;z-index:100060;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,1,14,.86)}
+  #duel-modal{position:fixed;top:0;left:0;right:0;height:100vh;height:100dvh;z-index:100060;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,1,14,.86)}
   #duel-modal.off{display:none}
-  .duel-box{width:100%;max-width:560px;max-height:92vh;max-height:92dvh;overflow-y:auto;background:var(--ink);
+  .duel-box{width:100%;max-width:560px;max-height:96vh;max-height:96dvh;overflow-y:auto;background:var(--ink);
     border-radius:18px 18px 0 0;box-shadow:0 0 0 2px #ff6b6b,0 -8px 28px -6px rgba(255,107,107,.35);
     padding:18px 14px calc(16px + env(safe-area-inset-bottom,0px));text-align:center}
   .duel-title{font-size:12px;color:var(--gold);text-shadow:var(--o2);margin-bottom:14px}
@@ -1471,6 +1464,16 @@ const I18N = {
     duelDraw: 'нічия', duelYouWon: 'твоя перемога', duelOppWon: 'перемога суперника',
     duelWinTitle: 'Перемога!', duelLoseTitle: 'Поразка', duelTrophySuffix: 'трофеїв',
     duelDeclinedMsg: 'Гравець відхилив виклик.', duelCancelledMsg: 'Дуель скасовано.',
+    duelTabLabel: '⚔ Дуель', duelMyTrophies: 'Твої трофеї', duelSearchingCancel: 'Пошук суперника… (натисни, щоб скасувати)',
+    duelRandomBtn: 'Випадкова дуель', duelRulesTitle: 'Хто кого перехитрить',
+    duelRuleAtkDodge: 'Атака ⟶ перемагає ⟶ 💨 Ухилення', duelRuleDodgeDef: 'Ухилення ⟶ перемагає ⟶ 🛡️ Захист',
+    duelRuleDefAtk: 'Захист ⟶ перемагає ⟶ 🗡️ Атаку', duelRulesFoot: 'Перший до 5 очок перемагає й забирає 70% трофеїв суперника.',
+    duelHintInviteFromTop: 'Можна також викликати конкретного гравця кнопкою ⚔ прямо у списку «🏆 Топ».',
+    duelSomethingWrong: 'Дуель: щось пішло не так.', duelInviteClosed: 'Виклик на дуель закрито.',
+    duelErrTargetOffline: 'Гравець зараз не в мережі.', duelErrTargetBusy: 'Гравець вже зайнятий іншою дуеллю.',
+    duelErrCannotSelf: 'Не можна викликати самого себе.', duelErrPlayerNotFound: 'Гравця не знайдено.',
+    duelErrNotActive: 'Дуель вже завершена.', duelErrBadMove: 'Невірний хід.',
+    duelErrInvalidInvite: 'Виклик більше недійсний.', duelErrNotParticipant: 'Ти не береш участь у цій дуелі.',
     perClick: 'за клік', autoSuffix: 'авто', perSec: '/с',
     lvl: 'рів.', click: 'Клік', auto: 'Авто',
     floor: 'Поверх', top: 'Вершина вежі'
@@ -1525,6 +1528,16 @@ const I18N = {
     duelDraw: 'draw', duelYouWon: 'you won', duelOppWon: 'opponent won',
     duelWinTitle: 'Victory!', duelLoseTitle: 'Defeat', duelTrophySuffix: 'trophies',
     duelDeclinedMsg: 'The player declined the challenge.', duelCancelledMsg: 'Duel cancelled.',
+    duelTabLabel: '⚔ Duel', duelMyTrophies: 'Your trophies', duelSearchingCancel: 'Searching for an opponent… (tap to cancel)',
+    duelRandomBtn: 'Random duel', duelRulesTitle: 'Who outsmarts whom',
+    duelRuleAtkDodge: 'Attack ⟶ beats ⟶ 💨 Dodge', duelRuleDodgeDef: 'Dodge ⟶ beats ⟶ 🛡️ Defense',
+    duelRuleDefAtk: 'Defense ⟶ beats ⟶ 🗡️ Attack', duelRulesFoot: 'First to 5 points wins and takes 70% of the opponent\'s trophies.',
+    duelHintInviteFromTop: 'You can also challenge a specific player with the ⚔ button right in the "🏆 Top" list.',
+    duelSomethingWrong: 'Duel: something went wrong.', duelInviteClosed: 'The duel challenge was closed.',
+    duelErrTargetOffline: 'The player is currently offline.', duelErrTargetBusy: 'The player is already busy with another duel.',
+    duelErrCannotSelf: 'You can\'t challenge yourself.', duelErrPlayerNotFound: 'Player not found.',
+    duelErrNotActive: 'The duel has already ended.', duelErrBadMove: 'Invalid move.',
+    duelErrInvalidInvite: 'The challenge is no longer valid.', duelErrNotParticipant: 'You are not part of this duel.',
     perClick: 'per tap', autoSuffix: 'auto', perSec: '/s',
     lvl: 'lvl', click: 'Click', auto: 'Auto',
     floor: 'Floor', top: 'Top of the tower'
@@ -1565,6 +1578,16 @@ const I18N = {
     duelDraw: 'ничья', duelYouWon: 'твоя победа', duelOppWon: 'победа соперника',
     duelWinTitle: 'Победа!', duelLoseTitle: 'Поражение', duelTrophySuffix: 'трофеев',
     duelDeclinedMsg: 'Игрок отклонил вызов.', duelCancelledMsg: 'Дуэль отменена.',
+    duelTabLabel: '⚔ Дуэль', duelMyTrophies: 'Твои трофеи', duelSearchingCancel: 'Поиск соперника… (нажми, чтобы отменить)',
+    duelRandomBtn: 'Случайная дуэль', duelRulesTitle: 'Кто кого перехитрит',
+    duelRuleAtkDodge: 'Атака ⟶ побеждает ⟶ 💨 Уклонение', duelRuleDodgeDef: 'Уклонение ⟶ побеждает ⟶ 🛡️ Защиту',
+    duelRuleDefAtk: 'Защита ⟶ побеждает ⟶ 🗡️ Атаку', duelRulesFoot: 'Первый до 5 очков побеждает и забирает 70% трофеев соперника.',
+    duelHintInviteFromTop: 'Можно также вызвать конкретного игрока кнопкой ⚔ прямо в списке «🏆 Топ».',
+    duelSomethingWrong: 'Дуэль: что-то пошло не так.', duelInviteClosed: 'Вызов на дуэль закрыт.',
+    duelErrTargetOffline: 'Игрок сейчас не в сети.', duelErrTargetBusy: 'Игрок уже занят другой дуэлью.',
+    duelErrCannotSelf: 'Нельзя вызвать самого себя.', duelErrPlayerNotFound: 'Игрок не найден.',
+    duelErrNotActive: 'Дуэль уже завершена.', duelErrBadMove: 'Неверный ход.',
+    duelErrInvalidInvite: 'Вызов больше недействителен.', duelErrNotParticipant: 'Ты не участвуешь в этой дуэли.',
     perClick: 'за клик', autoSuffix: 'авто', perSec: '/с', lvl: 'ур.', click: 'Клик', auto: 'Авто',
     floor: 'Этаж', top: 'Вершина башни'
   }
@@ -1631,8 +1654,8 @@ Object.assign(MENU_I18N_RU_REV, Object.fromEntries(Object.entries(MENU_I18N_RU_U
 /* Кеш перекладу: раніше кожен виклик для EN/RU заново будував величезні словники
    й компілював ~100 регулярних виразів, а магазин викликає це сотні разів
    при кожному оновленні — звідси «застигання» персонажа. Тепер результат запам'ятовується. */
-MENU_I18N['Зоряний володар'] = 'Star Sovereign'; MENU_I18N['Кейс'] = 'Case';
-MENU_I18N_RU_UK['Зоряний володар'] = 'Звёздный владыка'; MENU_I18N_RU_UK['Кейс'] = 'Кейс';
+MENU_I18N['Зоряний володар'] = 'Star Sovereign'; MENU_I18N['Кейс'] = 'Case'; MENU_I18N['⚔ Дуель'] = '⚔ Duel';
+MENU_I18N_RU_UK['Зоряний володар'] = 'Звёздный владыка'; MENU_I18N_RU_UK['Кейс'] = 'Кейс'; MENU_I18N_RU_UK['⚔ Дуель'] = '⚔ Дуэль';
 try { MENU_I18N_REV['Star Sovereign'] = 'Зоряний володар'; MENU_I18N_REV['Case'] = 'Кейс'; } catch (e) {}
 const _mtCache = new Map();
 let _mtLang = null;
@@ -2554,7 +2577,7 @@ const BNR_RNAME = ['Звичайний','Епічний','Червоний','З�
 function bannerStripHtml(id, extraCls) {
   const b = BANNERS.find(x => x.id === id);
   if (!b) return '';
-  return `<div class="bnr-strip r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-name">${uiText(b.name)}</span></div>`;
+  return `<div class="bnr-strip banner-${b.id} r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-name">${uiText(b.name)}</span></div>`;
 }
 function renderBanners() {
   panelBnr.innerHTML = BANNERS.map(b => {
@@ -3860,7 +3883,7 @@ async function renderLeaderboard() {
     const tid = p.telegram_id;
     const isMePlayer = !!(telegramId && tid && Number(tid) === Number(telegramId));
     const isSearching = p.duel_status === 'searching';
-    const canDuel = keyReady() && telegramId && tid && !isMePlayer && p.online && p.duel_status !== 'busy';
+    const canDuel = keyReady() && telegramId && tid && !isMePlayer && p.duel_status !== 'busy';
     const searchLine = isSearching ? `<div class="duel-search-line">⚔ ${t('duelSearchLine').replace('{name}', name)}</div>` : '';
     const duelBtn = canDuel ? `<button class="duel-inv-btn" type="button" data-duel-invite="${escapeHtml(String(tid))}" title="${t('duelInviteTitle')}">⚔</button>` : '';
     const trophyBadge = p.trophies ? `<span class="lb-trophy" title="${t('trophiesTitle')}">🏆${fmt(p.trophies)}</span>` : '';
@@ -5931,7 +5954,7 @@ renderLeaderboard = async function(){
   panelLb.querySelectorAll('.lb-row').forEach(row=>{
     const nameEl=row.querySelector('.lb-name');
     const name=nameEl?.textContent?.trim() || '';
-    if (!name || name==='Анонім') return;
+    if (!name || name===uiText('Анонім')) return;
     const b=document.createElement('button');
     b.className='admin-lb-btn'; b.type='button'; b.textContent='⚙';
     b.dataset.adminPlayer=name.replace(/^@/,'');
@@ -5969,6 +5992,17 @@ renderLeaderboard = async function(){
   };
 
   let myTrophies = 0, curDuel = null, curDuelStatus = 'idle';
+  let searchingPlayers = [];
+  async function fetchSearchingPlayers() {
+    if (!keyReady()) return [];
+    try {
+      const H = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=telegram_id,username,photo_url&duel_status=eq.searching&order=last_seen.desc&limit=6`, { headers: H });
+      if (!r.ok) return [];
+      const rows = await r.json();
+      return (Array.isArray(rows) ? rows : []).filter(p => !telegramId || Number(p.telegram_id) !== Number(telegramId));
+    } catch (e) { return []; }
+  }
   let duelAnimatedRound = 0;                                    // останній раунд, для якого вже показали анімацію ходів
   let duelTimerInt = null, duelTimerLeft = 0, duelTimerKey = '';  // клієнтський таймер вибору ходу (косметичний, з авто-ходом по нулю)
   const DUEL_MOVE_SECONDS = 20;
@@ -5987,17 +6021,18 @@ renderLeaderboard = async function(){
     } catch (e) { return { error: String((e && e.message) || e) }; }
   }
 
-  const DUEL_ERR_UK = {
-    target_offline: 'Гравець зараз не в мережі.',
-    target_busy: 'Гравець вже зайнятий іншою дуеллю.',
-    cannot_invite_self: 'Не можна викликати самого себе.',
-    player_not_found: 'Гравця не знайдено.',
-    target_not_found: 'Гравця не знайдено.',
-    duel_not_active: 'Дуель вже завершена.',
-    bad_move: 'Невірний хід.',
-    invalid_invite: 'Виклик більше недійсний.',
-    not_a_participant: 'Ти не береш участь у цій дуелі.'
+  const DUEL_ERR_KEYS = {
+    target_offline: 'duelErrTargetOffline',
+    target_busy: 'duelErrTargetBusy',
+    cannot_invite_self: 'duelErrCannotSelf',
+    player_not_found: 'duelErrPlayerNotFound',
+    target_not_found: 'duelErrPlayerNotFound',
+    duel_not_active: 'duelErrNotActive',
+    bad_move: 'duelErrBadMove',
+    invalid_invite: 'duelErrInvalidInvite',
+    not_a_participant: 'duelErrNotParticipant'
   };
+  function duelErrText(code) { return (DUEL_ERR_KEYS[code] && t(DUEL_ERR_KEYS[code])) || t('duelSomethingWrong'); }
   let duelToastT = null;
   function duelToast(msg) {
     const el = $('duel-toast');
@@ -6012,12 +6047,12 @@ renderLeaderboard = async function(){
   function closeDuelModal() { $('duel-modal').classList.add('off'); duelStopTimer(); }
 
   function applyDuelState(res) {
-    if (!res || res.error) { if (res && res.error) duelToast(DUEL_ERR_UK[res.error] || 'Дуель: щось пішло не так.'); return; }
+    if (!res || res.error) { if (res && res.error) duelToast(duelErrText(res.error)); return; }
     const prevDuel = curDuel;
     myTrophies = Number(res.trophies) || 0;
     curDuelStatus = res.duel_status || 'idle';
     curDuel = res.duel || null;
-    if (prevDuel && prevDuel.status === 'pending_accept' && !curDuel) duelToast('Виклик на дуель закрито.');
+    if (prevDuel && prevDuel.status === 'pending_accept' && !curDuel) duelToast(t('duelInviteClosed'));
     renderDuelUiFromState();
   }
 
@@ -6033,7 +6068,9 @@ renderLeaderboard = async function(){
 
   async function duelPoll() {
     if (!keyReady() || !telegramId) return;
-    applyDuelState(await duelRpc('duel_state', { p_me: telegramId }));
+    const [st, list] = await Promise.all([duelRpc('duel_state', { p_me: telegramId }), fetchSearchingPlayers()]);
+    searchingPlayers = list;
+    applyDuelState(st);
   }
   duelPoll();
   setInterval(duelPoll, 2200);
@@ -6129,19 +6166,26 @@ renderLeaderboard = async function(){
 
   function renderDuelTab() {
     const searching = curDuelStatus === 'searching';
+    const searchFeedHtml = searchingPlayers.length
+      ? `<div class="duel-searching-feed">${searchingPlayers.map(p => {
+          const nm = escapeHtml(String(p.username || uiText('Анонім')).replace(/^@/, '')).slice(0, 20);
+          return `<div class="duel-searching-item">${avatarImg(p.photo_url, 'duel-searching-av')}<span>⚔ ${t('duelSearchLine').replace('{name}', nm)}</span></div>`;
+        }).join('')}</div>`
+      : '';
     panelDuel.innerHTML = `<div class="duel-hub">
-      <div class="duel-trophy-line">🏆 Твої трофеї: <b>${fmt(myTrophies)}</b></div>
+      ${searchFeedHtml}
+      <div class="duel-trophy-line">🏆 ${t('duelMyTrophies')}: <b>${fmt(myTrophies)}</b></div>
       ${searching
-        ? `<button class="duel-random-btn searching" id="duel-toggle-btn" type="button">⏳ Пошук суперника… (натисни, щоб скасувати)</button>`
-        : `<button class="duel-random-btn" id="duel-toggle-btn" type="button">🎲 Випадкова дуель</button>`}
+        ? `<button class="duel-random-btn searching" id="duel-toggle-btn" type="button">⏳ ${t('duelSearchingCancel')}</button>`
+        : `<button class="duel-random-btn" id="duel-toggle-btn" type="button">🎲 ${t('duelRandomBtn')}</button>`}
       <div class="duel-rules">
-        <div class="duel-rules-title">⚔️ Хто кого перехитрить</div>
-        <div class="duel-rules-line">🗡️ Атака ⟶ перемагає ⟶ 💨 Ухилення</div>
-        <div class="duel-rules-line">💨 Ухилення ⟶ перемагає ⟶ 🛡️ Захист</div>
-        <div class="duel-rules-line">🛡️ Захист ⟶ перемагає ⟶ 🗡️ Атаку</div>
-        <div class="duel-rules-foot">Перший до 5 очок перемагає й забирає 70% трофеїв суперника.</div>
+        <div class="duel-rules-title">⚔️ ${t('duelRulesTitle')}</div>
+        <div class="duel-rules-line">🗡️ ${t('duelRuleAtkDodge')}</div>
+        <div class="duel-rules-line">💨 ${t('duelRuleDodgeDef')}</div>
+        <div class="duel-rules-line">🛡️ ${t('duelRuleDefAtk')}</div>
+        <div class="duel-rules-foot">${t('duelRulesFoot')}</div>
       </div>
-      <div class="duel-hint">Можна також викликати конкретного гравця кнопкою ⚔ прямо у списку «🏆 Топ».</div>
+      <div class="duel-hint">${t('duelHintInviteFromTop')}</div>
       ${duelRoadHtml()}
     </div>`;
     $('duel-toggle-btn').addEventListener('click', async () => {
@@ -6162,7 +6206,7 @@ renderLeaderboard = async function(){
       <div class="duel-platform">
         <div class="duel-fighter-img-wrap${actionCls ? ' act-' + actionCls : ''}"><img src="${skinPreviewUrl(skin || 'default')}" alt=""></div>
       </div>
-      <div class="duel-fighter-name">${escapeHtml(name || 'Анонім')}</div>
+      <div class="duel-fighter-name">${escapeHtml(name || uiText('Анонім'))}</div>
       <div class="duel-pips">${pips}</div>
     </div>`;
   }
@@ -6286,7 +6330,7 @@ renderLeaderboard = async function(){
     haptic('medium');
     const res = await duelRpc('duel_move', { p_me: telegramId, p_duel_id: curDuel.id, p_move: move });
     if (res && res.id) { curDuel = res; renderDuelModalContent(); }
-    else if (res && res.error) duelToast(DUEL_ERR_UK[res.error] || 'Не вдалося зробити хід.');
+    else if (res && res.error) duelToast(duelErrText(res.error));
   }
   async function respondDuel(accept) {
     haptic(accept ? 'medium' : 'light');
