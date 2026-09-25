@@ -390,7 +390,7 @@
   .ref-ok:active{transform:translateY(1px)}
 
   #panel-wpn,#panel-arm,#panel-skn,#panel-bnr,#panel-qst,#panel-lb,#panel-duel{
-    flex:0 0 auto;max-height:34vh;overflow-y:auto;
+    flex:0 0 auto;max-height:34vh;min-height:0;overflow-y:auto;overscroll-behavior:contain;
     padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));
     background:var(--ink);border-top:4px solid #4b3a8f;display:flex;flex-direction:column;gap:8px;
   }
@@ -398,15 +398,19 @@
   #panel-don{display:flex;flex-direction:column;gap:8px;max-height:56vh;overflow-y:auto;padding:2px 2px 4px}
 
   /* ---------- таблиця лідерів ---------- */
-  #panel-lb{gap:7px}
+  #panel-lb{gap:8px;min-width:0}
   .lb-refresh{
-    width:100%;border:0;border-radius:12px;padding:11px 12px;margin-bottom:2px;background:linear-gradient(135deg,#4b35a0,#2b5fc7,#4d2c91);background-size:220% 220%;animation:lbButtonGlow 5s ease infinite;color:var(--paper);
-    font-family:var(--pixel);font-size:9px;cursor:pointer;touch-action:manipulation;
+    width:100%;border:0;border-radius:12px;padding:11px 12px;margin-bottom:2px;
+    background:linear-gradient(135deg,#4b35a0,#2b5fc7,#4d2c91);background-size:220% 220%;
+    animation:lbButtonGlow 5s ease infinite;color:var(--paper);font-family:var(--pixel);
+    font-size:9px;cursor:pointer;touch-action:manipulation;
     box-shadow:inset 0 0 0 2px rgba(171,151,255,.7),inset 0 -4px 0 0 #21154b,0 4px 12px rgba(52,38,130,.25);
   }
   .lb-refresh:active{transform:translateY(1px)}
   .lb-row{
-    position:relative;display:flex;align-items:center;gap:9px;min-height:48px;padding:9px 13px;border-radius:13px;background:linear-gradient(135deg,#29204c,#171328 70%,#241946);
+    position:relative;display:grid;grid-template-columns:28px minmax(0,1fr) auto;
+    grid-template-rows:auto auto;column-gap:8px;row-gap:5px;align-items:center;min-width:0;
+    padding:10px;border-radius:13px;background:linear-gradient(135deg,#29204c,#171328 70%,#241946);
     box-shadow:inset 0 0 0 2px #5a478f,inset 0 -4px 0 0 #0d091a,0 5px 12px rgba(0,0,0,.24);
     overflow:hidden;isolation:isolate;transition:transform .15s ease,box-shadow .2s ease;
   }
@@ -417,15 +421,14 @@
   .lb-row.top3{background:linear-gradient(135deg,#4b2c1b,#2d1b12,#4a2817);box-shadow:inset 0 0 0 2px #d9925a,inset 0 -4px 0 0 #75431f,0 5px 14px rgba(217,146,90,.14)}
   .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55,0 5px 14px rgba(123,224,164,.13)}
   .lb-row.creator{
-    background:linear-gradient(115deg,#25104f,#3b1c78,#123d83,#5a2390,#211052);
-    background-size:400% 400%;animation:creatorGradient 4s ease infinite;
+    background:linear-gradient(115deg,#25104f,#3b1c78,#123d83,#5a2390,#211052);background-size:400% 400%;
+    animation:creatorGradient 4s ease infinite;
     box-shadow:inset 0 0 0 2px #a98cff,inset 0 -4px 0 0 #24124f,0 0 8px rgba(117,81,255,.65),0 0 22px rgba(54,110,255,.3);
   }
   .lb-row.creator::before{
     content:'✦  ✧  ★  ✦  ✧  ★  ✦';position:absolute;inset:-55% -10%;z-index:-1;pointer-events:none;
     font-size:10px;line-height:25px;letter-spacing:9px;word-spacing:7px;color:rgba(255,255,255,.8);
-    transform:rotate(-8deg);animation:creatorStars 3.2s linear infinite;opacity:.85;
-    text-shadow:0 0 5px #fff,0 0 10px #8c70ff;
+    transform:rotate(-8deg);animation:creatorStars 3.2s linear infinite;opacity:.85;text-shadow:0 0 5px #fff,0 0 10px #8c70ff;
   }
   .lb-row.creator::after{
     content:'';position:absolute;left:-30%;top:0;width:35%;height:100%;z-index:0;pointer-events:none;
@@ -435,22 +438,32 @@
   @keyframes creatorStars{0%{transform:translateY(-25px) rotate(-8deg)}100%{transform:translateY(42px) rotate(-8deg)}}
   @keyframes creatorShine{0%{left:-35%}100%{left:125%}}
   @keyframes lbButtonGlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-  .lb-name{font-weight:700;min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--o2)}
+
+  .lb-rank{grid-row:1 / span 2;width:28px;font-size:9px;color:var(--paper);text-align:center;font-weight:700}
+  .lb-name{
+    grid-column:2;grid-row:1;min-width:0;width:100%;font-size:10px;line-height:1.25;color:var(--paper);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;text-shadow:var(--o2);
+  }
   .lb-name.creator-name{color:#fff;text-shadow:0 0 5px #9d8cff,0 0 10px rgba(128,100,255,.7)}
   .lb-crown{display:inline-block;margin-right:3px;font-size:11px;filter:drop-shadow(0 0 3px rgba(255,215,75,.75));animation:crownFloat 2s ease-in-out infinite}
   @keyframes crownFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-  .lb-rank{width:24px;flex:none;font-size:10px;color:var(--paper);text-align:center;font-weight:700;text-shadow:0 0 5px rgba(255,255,255,.25)}
-  .lb-award{width:22px;flex:none;font-size:14px;text-align:center;line-height:1}
-  .lb-av{position:relative;flex:none;width:30px;height:30px}
-  .lb-dot{position:absolute;right:-3px;bottom:-3px;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2px #1a1240}
-  .lb-dot.on{background:#3ddc6e}
-  .lb-dot.off{background:#7a7a8c}
+
+  .lb-stats{grid-column:2;grid-row:2;display:flex;align-items:center;gap:10px;min-width:0;font-size:8px;line-height:1;white-space:nowrap}
+  .lb-stat-stars{color:var(--gold);text-shadow:var(--o2)}
+  .lb-stat-trophy{color:#ffcf70;text-shadow:var(--o2)}
+  .lb-actions{grid-column:3;grid-row:1 / span 2;display:flex;align-items:center;justify-content:flex-end;gap:5px}
+  .lb-action-btn{
+    flex:none;width:30px;height:30px;border:0;border-radius:8px;background:#2c1f5c;color:var(--paper);
+    font-family:var(--pixel);font-size:12px;cursor:pointer;touch-action:manipulation;
+    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 0 #241a52;
+  }
+  .lb-action-btn.duel{background:linear-gradient(180deg,#8f3636,#5b2020);box-shadow:inset 0 0 0 2px #ff8a8a,inset 0 -3px 0 0 #3a1414}
+  .lb-action-btn.admin{background:linear-gradient(180deg,#6c4bb8,#3f2b79);box-shadow:inset 0 0 0 2px #c2a7ff,inset 0 -3px 0 0 #281653}
+  .lb-action-btn:active{transform:translateY(1px)}
+  .lb-award,.lb-av,.lb-score,.lb-trophy,.lb-row-extra,.duel-search-line{display:none}
   .lb-online{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px;margin-bottom:6px;border-radius:9px;background:#241a52;color:var(--paper);font-family:var(--pixel);font-size:9px;box-shadow:inset 0 0 0 2px #3a2b7a}
   .lb-online .lb-dot{position:static;box-shadow:none}
   .lb-online b{color:#3ddc6e;font-weight:normal}
-  .lb-avatar{width:30px;height:30px;flex:none;border-radius:7px;image-rendering:pixelated;box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 2px 7px rgba(0,0,0,.3);background:#2c1f5c;object-fit:cover}
-  .lb-name{flex:1 1 auto;min-width:0;font-size:10px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
-  .lb-score{flex:none;font-size:10px;color:var(--gold);text-shadow:var(--o2);min-width:58px;text-align:right;font-weight:700;white-space:nowrap}
   .lb-empty{font-size:8px;color:var(--dim);text-align:center;line-height:1.8;padding:20px 8px}
   .referral-info{padding:8px 12px;margin-bottom:1px;border-radius:11px;background:linear-gradient(135deg,#302060,#1d3568);box-shadow:inset 0 0 0 2px #6f59c8,inset 0 -3px 0 0 #21164b,0 3px 10px rgba(70,55,150,.2);text-align:center}
   .referral-info-title{font-size:9px;color:var(--gold);line-height:1.3;text-shadow:var(--o2);margin-bottom:3px}
@@ -578,22 +591,29 @@
   .bnr-card{position:relative;display:flex;flex-direction:column;gap:6px;padding:8px;border-radius:10px;background:#241a4a;box-shadow:inset 0 0 0 2px #453385}
   .bnr-card.eq{box-shadow:inset 0 0 0 2px #7be0a4}
   .bnr-strip{position:relative;height:46px;border-radius:7px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
-  .bnr-strip .bnr-name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:9px/1 var(--pixel);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);padding:0 6px;text-align:center}
-  .bnr-strip.r0{background:linear-gradient(120deg,#4a5568,#2d3748)}
-  .bnr-strip.r1{background:linear-gradient(120deg,#7b3fe4,#3a1d8f,#a44bff);background-size:220% 220%}
-  .bnr-strip.r2{background:linear-gradient(120deg,#ff3d4d,#7a0d17,#ff6a3d);background-size:220% 220%}
-  .bnr-strip.r3{background:linear-gradient(115deg,#ffd23f,#a44bff,#3fa7ff,#ff3d4d,#ffd23f);background-size:400% 400%}
-  .bnr-strip.anim{animation:bnr-move 3.5s ease-in-out infinite}
-  .bnr-strip.r3.anim{animation:bnr-move 3s linear infinite}
-  @keyframes bnr-move{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-  .bnr-strip::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.10) 0 2px,transparent 2px 10px)}
-  .bnr-strip.r3::before{content:'';position:absolute;inset:0;background:radial-gradient(1.4px 1.4px at 12% 30%,#fff,transparent),radial-gradient(1.2px 1.2px at 34% 62%,#fff,transparent),radial-gradient(1.6px 1.6px at 58% 22%,#fff,transparent),radial-gradient(1.2px 1.2px at 78% 70%,#fff,transparent),radial-gradient(1.4px 1.4px at 92% 40%,#fff,transparent);animation:nw-tw 2.4s ease-in-out infinite}
+  .bnr-strip .bnr-name{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;font:9px/1 var(--pixel);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.8);padding:0 6px;text-align:center}
+  .bnr-strip::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(105deg,transparent 25%,rgba(255,255,255,.22) 45%,transparent 65%);transform:translateX(-120%);animation:bnrShine 3.8s linear infinite}
+  @keyframes bnrShine{to{transform:translateX(120%)}}
+  .bnr-strip.r0{background:linear-gradient(135deg,#596273,#242a36);box-shadow:inset 0 0 0 1px #9ba6b8}
+  .bnr-strip.r0::before{content:'';position:absolute;inset:-40%;background:repeating-linear-gradient(115deg,transparent 0 10px,rgba(255,255,255,.08) 11px 13px);animation:bnrSteel 4s linear infinite}
+  @keyframes bnrSteel{to{transform:translateX(28px)}}
+  .bnr-strip.r1{background:linear-gradient(120deg,#173f2b,#2c8a55,#65c77b,#173f2b);background-size:260% 260%}
+  .bnr-strip.r1::before{content:'';position:absolute;inset:0;background:radial-gradient(12px 8px at 15% 70%,rgba(255,255,255,.3),transparent),radial-gradient(18px 10px at 70% 30%,rgba(190,255,210,.28),transparent);animation:bnrNature 5s ease-in-out infinite}
+  @keyframes bnrNature{50%{transform:translate(16px,-4px) scale(1.08)}}
+  .bnr-strip.r2{background:linear-gradient(120deg,#164a7d,#38a9df,#b7f0ff,#17608f);background-size:300% 300%}
+  .bnr-strip.r2::before{content:'';position:absolute;left:-20%;right:-20%;top:9px;height:10px;border-radius:50%;border-top:2px solid rgba(255,255,255,.7);border-bottom:2px solid rgba(255,255,255,.25);transform:rotate(-5deg);animation:bnrAir 2.8s ease-in-out infinite}
+  @keyframes bnrAir{50%{transform:translateX(35px) rotate(-5deg)}}
+  .bnr-strip.r3{background:linear-gradient(115deg,#08143b,#3820a0,#00a9d6,#8b32d8,#08143b);background-size:420% 420%}
+  .bnr-strip.r3::before{content:'';position:absolute;inset:0;background:radial-gradient(1.5px 1.5px at 12% 30%,#fff,transparent),radial-gradient(1.2px 1.2px at 34% 62%,#fff,transparent),radial-gradient(1.6px 1.6px at 58% 22%,#fff,transparent),radial-gradient(1.2px 1.2px at 78% 70%,#fff,transparent),radial-gradient(1.4px 1.4px at 92% 40%,#fff,transparent);animation:nw-tw 2.4s ease-in-out infinite}
+  .bnr-strip.anim{animation:bnrMove 4s ease-in-out infinite}
+  .bnr-strip.r2.anim{animation:bnrMove 3s ease-in-out infinite}
+  .bnr-strip.r3.anim{animation:bnrMove 2.6s linear infinite}
+  @keyframes bnrMove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
   .bnr-foot{display:flex;align-items:center;justify-content:space-between;gap:6px}
   .bnr-rname{font-size:8px;color:#b9c8ff}
-  .bnr-r0-tx{color:#c6ccd8}.bnr-r1-tx{color:#c9a0ff}.bnr-r2-tx{color:#ff8f8f}.bnr-r3-tx{color:#ffd76a}
+  .bnr-r0-tx{color:#c6ccd8}.bnr-r1-tx{color:#78e0a0}.bnr-r2-tx{color:#7ddcff}.bnr-r3-tx{color:#c8a7ff}
   .bnr-road-tag{font-size:7px;padding:2px 5px;border-radius:5px;background:#1a1240;color:#8fe9ff;box-shadow:inset 0 0 0 1px #3fa7ff}
-  /* мініатюрний банер у рядку топу */
-  .lb-bnr-bg{position:absolute;inset:0;border-radius:inherit;opacity:.55;pointer-events:none;z-index:0}
+  .lb-bnr-bg{position:absolute;inset:0;border-radius:inherit;opacity:.25;pointer-events:none;z-index:0}
   .lb-bnr-bg .bnr-strip{height:100%;border-radius:inherit}
   .lb-bnr-bg .bnr-name{display:none}
   .lb-row{position:relative;isolation:isolate}
@@ -717,7 +737,7 @@
   .road-season{font-size:7px;color:#b9c8ff}
   .road-progress-line{font-size:7px;color:#eef1ff;text-align:center;margin:4px 0 8px;line-height:1.5}
   .road-progress-line b{color:var(--gold)}
-  .road-track{position:relative;display:flex;gap:9px;overflow-x:auto;overflow-y:hidden;padding:10px 6px 12px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .road-track{position:relative;display:flex;gap:9px;width:100%;min-width:0;max-width:100%;overflow-x:scroll;overflow-y:hidden;padding:10px 6px 12px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x;scroll-snap-type:x proximity;scrollbar-width:thin}
   .road-track::-webkit-scrollbar{height:5px}
   .road-track::-webkit-scrollbar-thumb{background:#6f59d8;border-radius:3px}
   .road-track::before{content:"";position:absolute;left:16px;right:16px;top:31px;height:3px;z-index:0;border-radius:2px;
@@ -2404,14 +2424,14 @@ const SKINS = [
    cost — ціна в 💎 у магазині; road:true — банер НЕ продається, лише нагорода
    «Дороги слави» за трофеї (див. duelRoadReward). anim:true — переливається. */
 const BANNERS = [
-  { id:'bn_steel',   name:'Сталь',        rarity:0, cost:100,  anim:false },
-  { id:'bn_forest',  name:'Ліс',          rarity:0, cost:100,  anim:false },
-  { id:'bn_sand',    name:'Пустеля',      rarity:0, cost:100,  anim:false },
-  { id:'bn_aurora',  name:'Аврора',       rarity:1, cost:300,  anim:true },
-  { id:'bn_portal',  name:'Портал',       rarity:1, cost:300,  anim:true },
-  { id:'bn_nebula',  name:'Туманність',   rarity:1, cost:300,  anim:true },
-  { id:'bn_volcano', name:'Вулкан',       rarity:2, cost:700,  anim:true },
-  { id:'bn_dragon',  name:'Кров дракона', rarity:2, cost:700,  anim:true },
+  { id:'bn_steel',   name:'Сталь',        rarity:0, cost:100,  anim:false, theme:'steel' },
+  { id:'bn_forest',  name:'Ліс',          rarity:0, cost:100,  anim:false, theme:'nature' },
+  { id:'bn_sand',    name:'Пустеля',      rarity:0, cost:100,  anim:false, theme:'air' },
+  { id:'bn_aurora',  name:'Аврора',       rarity:1, cost:300,  anim:true, theme:'air' },
+  { id:'bn_portal',  name:'Портал',       rarity:1, cost:300,  anim:true, theme:'space' },
+  { id:'bn_nebula',  name:'Туманність',   rarity:1, cost:300,  anim:true, theme:'space' },
+  { id:'bn_volcano', name:'Вулкан',       rarity:2, cost:700,  anim:true, theme:'fire' },
+  { id:'bn_dragon',  name:'Кров дракона', rarity:2, cost:700,  anim:true, theme:'fire' },
   { id:'bn_galaxy',  name:'Галактика',    rarity:3, cost:2500, anim:true },
   { id:'bn_nova',    name:'Наднова',      rarity:3, cost:2500, anim:true },
   /* нагороди «Дороги слави» (не продаються) */
@@ -2419,11 +2439,11 @@ const BANNERS = [
   { id:'bn_road5200', name:'Чемпіон арени', rarity:0, cost:0, anim:false, road:true },
   { id:'bn_road10k',  name:'Легенда арени', rarity:2, cost:0, anim:true,  road:true }
 ];
-const BNR_RNAME = ['Звичайний','Епічний','Червоний','Зірковий'];
+const BNR_RNAME = ['Звичайний','Епічний','Міфічний','Космічний'];
 function bannerStripHtml(id, extraCls) {
   const b = BANNERS.find(x => x.id === id);
   if (!b) return '';
-  return `<div class="bnr-strip r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-name">${uiText(b.name)}</span></div>`;
+  return `<div class="bnr-strip r${b.rarity} theme-${b.theme || 'default'}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-name">${uiText(b.name)}</span></div>`;
 }
 function renderBanners() {
   panelBnr.innerHTML = BANNERS.map(b => {
@@ -3703,6 +3723,7 @@ setInterval(sendPresence, 30000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) sendPresence(); });
 
 async function renderLeaderboard() {
+  const keepPanelScroll = panelLb.scrollTop;
   panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button><div class="lb-empty">' + uiText('Завантаження…') + '</div>';
   bindInviteBtn();
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
@@ -3711,36 +3732,70 @@ async function renderLeaderboard() {
     panelLb.querySelector('.lb-empty').innerHTML = uiText('Таблицю лідерів ще не підключено.') + '<br>' + uiText('Встав свій Supabase ANON_KEY у коді гри.');
     return;
   }
+
   const [top, onlineN] = await Promise.all([fetchLeaderboard(100), fetchOnlineCount()]);
   const onlineHtml = onlineN === null ? '' : `<div class="lb-online"><i class="lb-dot on"></i><span>${t('onlineNow')}: <b>${onlineN}</b></span></div>`;
+
   if (!top || !top.length) {
     panelLb.querySelector('.lb-empty').innerHTML = uiText('Поки що тут порожньо.') + '<br>' + uiText('Зіграй і стань першим у рейтингу!');
     return;
   }
+
   const rowsHtml = top.map((p, i) => {
     const rank = i + 1;
-    const award = awardFor(rank);
     const isMe = (p.username || '') === playerName;
     const rawName = String(p.username || uiText('Анонім'));
     const isCreator = rawName.replace(/^@/, '').toLowerCase() === 'sergixlol';
-    const cls = ['lb-row']; if (rank <= 3) cls.push('top' + rank); if (isMe) cls.push('me'); if (isCreator) cls.push('creator');
-    const name = escapeHtml(rawName).slice(0, 20);
-    const creatorName = isCreator ? '<span class="lb-crown">👑</span><span class="lb-name creator-name">' + name + '</span>' : '<span class="lb-name">' + name + '</span>';
+    const cls = ['lb-row'];
+    if (rank <= 3) cls.push('top' + rank);
+    if (isMe) cls.push('me');
+    if (isCreator) cls.push('creator');
+
+    const name = escapeHtml(rawName).slice(0, 32);
+    const creatorName = isCreator ? '<span class="lb-crown">👑</span>' + name : name;
+
     const tid = p.telegram_id;
     const isMePlayer = !!(telegramId && tid && Number(tid) === Number(telegramId));
-    const isSearching = p.duel_status === 'searching';
     const canDuel = keyReady() && telegramId && tid && !isMePlayer && p.online && p.duel_status !== 'busy';
-    const searchLine = isSearching ? `<div class="duel-search-line">⚔ ${t('duelSearchLine').replace('{name}', name)}</div>` : '';
-    const duelBtn = canDuel ? `<button class="duel-inv-btn" type="button" data-duel-invite="${escapeHtml(String(tid))}" title="${t('duelInviteTitle')}">⚔</button>` : '';
-    const trophyBadge = p.trophies ? `<span class="lb-trophy" title="${t('trophiesTitle')}">🏆${fmt(p.trophies)}</span>` : '';
-    const extraLine = (trophyBadge || duelBtn) ? `<div class="lb-row-extra">${trophyBadge}${duelBtn}</div>` : '';
+
+    const actions = [];
+    if (canDuel) {
+      actions.push(`<button class="lb-action-btn duel" type="button" data-duel-invite="${escapeHtml(String(tid))}" title="${t('duelInviteTitle')}">⚔</button>`);
+    }
+    if (isCreator) {
+      actions.push(`<button class="lb-action-btn admin" type="button" data-admin-player="${escapeHtml(rawName.replace(/^@/,''))}" title="Налаштування">⚙</button>`);
+    }
+
     const eqBnrId = p.equipped_banner || (p.progress && p.progress.banners && p.progress.banners.equipped) || null;
-    const bnrBg = eqBnrId && BANNERS.find(x => x.id === eqBnrId) ? `<div class="lb-bnr-bg">${bannerStripHtml(eqBnrId)}</div>` : '';
-    return `<div class="${cls.join(' ')}">${bnrBg}<span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span>${creatorName}<span class="lb-score">${fmt(p.score || 0)}</span>${extraLine}${searchLine}</div>`;
+    const bnrBg = eqBnrId && BANNERS.find(x => x.id === eqBnrId)
+      ? `<div class="lb-bnr-bg">${bannerStripHtml(eqBnrId)}</div>` : '';
+
+    return `<div class="${cls.join(' ')}">
+      ${bnrBg}
+      <span class="lb-rank">${rank}</span>
+      <span class="lb-name${isCreator ? ' creator-name' : ''}">${creatorName}</span>
+      <div class="lb-stats">
+        <span class="lb-stat-stars">★ ${fmt(p.score || 0)}</span>
+        <span class="lb-stat-trophy">🏆 ${fmt(p.trophies || 0)}</span>
+      </div>
+      <div class="lb-actions">${actions.join('')}</div>
+    </div>`;
   }).join('');
-  panelLb.innerHTML = inviteBtnHtml() + onlineHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
+
+  panelLb.innerHTML = inviteBtnHtml() + onlineHtml +
+    '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
+
   bindInviteBtn();
+  bindAdminLeaderboardButtons();
+  panelLb.querySelectorAll('[data-duel-invite]').forEach(b => {
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      if (typeof sendDuelInvite === 'function') sendDuelInvite(b.dataset.duelInvite);
+    });
+  });
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
+
+  requestAnimationFrame(() => { panelLb.scrollTop = keepPanelScroll; });
 }
 
 const costPower = () => Math.ceil(CFG.POWER_BASE_COST * Math.pow(CFG.POWER_GROWTH, state.powerLvl - 1));
@@ -5801,10 +5856,12 @@ renderLeaderboard = async function(){
     const nameEl=row.querySelector('.lb-name');
     const name=nameEl?.textContent?.trim() || '';
     if (!name || name==='Анонім') return;
+    if (row.querySelector('[data-admin-player]')) return;
     const b=document.createElement('button');
-    b.className='admin-lb-btn'; b.type='button'; b.textContent='⚙';
+    b.className='lb-action-btn admin'; b.type='button'; b.textContent='⚙';
     b.dataset.adminPlayer=name.replace(/^@/,'');
-    row.appendChild(b);
+    const actions=row.querySelector('.lb-actions');
+    if (actions) actions.appendChild(b); else row.appendChild(b);
   });
   bindAdminLeaderboardButtons();
 };
@@ -5997,6 +6054,9 @@ renderLeaderboard = async function(){
   });
 
   function renderDuelTab() {
+    const oldTrack = panelDuel.querySelector('.road-track');
+    const keepRoadScroll = oldTrack ? oldTrack.scrollLeft : 0;
+    const keepPanelScroll = panelDuel.scrollTop;
     const searching = curDuelStatus === 'searching';
     panelDuel.innerHTML = `<div class="duel-hub">
       <div class="duel-trophy-line">🏆 Твої трофеї: <b>${fmt(myTrophies)}</b></div>
@@ -6013,6 +6073,12 @@ renderLeaderboard = async function(){
       <div class="duel-hint">Можна також викликати конкретного гравця кнопкою ⚔ прямо у списку «🏆 Топ».</div>
       ${duelRoadHtml()}
     </div>`;
+    requestAnimationFrame(() => {
+      const track = panelDuel.querySelector('.road-track');
+      if (track) track.scrollLeft = keepRoadScroll;
+      panelDuel.scrollTop = keepPanelScroll;
+    });
+
     $('duel-toggle-btn').addEventListener('click', async () => {
       haptic('light');
       if (curDuelStatus === 'searching') {
