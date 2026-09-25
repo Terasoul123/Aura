@@ -245,7 +245,6 @@
   .dn-hint{position:sticky;bottom:0;flex:none;text-align:center;padding:26px 0 6px;font:9px var(--pixel);color:#fff;text-shadow:var(--o2);background:linear-gradient(transparent,rgba(12,8,30,.96) 70%);pointer-events:none;transition:opacity .3s}
   .dn-hint.gone{opacity:0}.dn-hint b{display:block;font-size:14px;animation:dn-b .9s ease-in-out infinite alternate}
   @keyframes dn-b{to{transform:translateY(5px)}}
-  #upd-modal{position:fixed;inset:0;z-index:100001;display:flex;align-items:center;justify-content:center;background:rgba(10,6,24,.88);padding:24px}
   #cs-cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
   .cs-hint{position:absolute;left:0;right:0;bottom:16%;text-align:center;font:11px var(--pixel);color:#fff;text-shadow:var(--o2);pointer-events:none;opacity:0;transition:opacity .5s}
   .cs-hint.on{opacity:1;animation:cs-blink 1s ease-in-out infinite alternate}
@@ -389,72 +388,43 @@
     box-shadow:inset 0 0 0 2px var(--edge),inset 0 -4px 0 0 var(--edge-dark)}
   .ref-ok:active{transform:translateY(1px)}
 
-  #panel-wpn,#panel-arm,#panel-skn,#panel-bnr,#panel-qst,#panel-lb,#panel-duel{
+  #panel-wpn,#panel-arm,#panel-skn,#panel-qst,#panel-lb{
     flex:0 0 auto;max-height:34vh;overflow-y:auto;
     padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));
     background:var(--ink);border-top:4px solid #4b3a8f;display:flex;flex-direction:column;gap:8px;
   }
-  #panel-wpn.off,#panel-arm.off,#panel-skn.off,#panel-bnr.off,#panel-qst.off,#panel-lb.off,#panel-duel.off{display:none}
+  #panel-wpn.off,#panel-arm.off,#panel-skn.off,#panel-qst.off,#panel-lb.off{display:none}
   #panel-don{display:flex;flex-direction:column;gap:8px;max-height:56vh;overflow-y:auto;padding:2px 2px 4px}
 
   /* ---------- таблиця лідерів ---------- */
-  #panel-lb{gap:7px}
+  #panel-lb{gap:5px}
   .lb-refresh{
-    width:100%;border:0;border-radius:12px;padding:11px 12px;margin-bottom:2px;background:linear-gradient(135deg,#4b35a0,#2b5fc7,#4d2c91);background-size:220% 220%;animation:lbButtonGlow 5s ease infinite;color:var(--paper);
+    width:100%;border:0;border-radius:9px;padding:9px;margin-bottom:4px;background:linear-gradient(180deg,#3d2a7a,#2c1f5c);color:var(--paper);
     font-family:var(--pixel);font-size:9px;cursor:pointer;touch-action:manipulation;
-    box-shadow:inset 0 0 0 2px rgba(171,151,255,.7),inset 0 -4px 0 0 #21154b,0 4px 12px rgba(52,38,130,.25);
+    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -4px 0 0 #241a52;
   }
   .lb-refresh:active{transform:translateY(1px)}
   .lb-row{
-    position:relative;display:flex;align-items:center;gap:9px;min-height:48px;padding:9px 13px;border-radius:13px;background:linear-gradient(135deg,#29204c,#171328 70%,#241946);
-    box-shadow:inset 0 0 0 2px #5a478f,inset 0 -4px 0 0 #0d091a,0 5px 12px rgba(0,0,0,.24);
-    overflow:hidden;isolation:isolate;transition:transform .15s ease,box-shadow .2s ease;
+    display:flex;align-items:center;gap:6px;padding:8px 9px;border-radius:9px;background:var(--card);
+    box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -4px 0 0 #241a52;
   }
-  .lb-row:active{transform:scale(.992)}
-  .lb-row::after{content:'';position:absolute;left:10%;right:10%;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);pointer-events:none}
-  .lb-row.top1{background:linear-gradient(135deg,#4a3513,#2d2110,#4a3210);box-shadow:inset 0 0 0 2px #f5c95b,inset 0 -4px 0 0 #76500b,0 5px 14px rgba(245,201,91,.16)}
-  .lb-row.top2{background:linear-gradient(135deg,#39414f,#202630,#343b48);box-shadow:inset 0 0 0 2px #c9d3e0,inset 0 -4px 0 0 #56616f,0 5px 14px rgba(201,211,224,.12)}
-  .lb-row.top3{background:linear-gradient(135deg,#4b2c1b,#2d1b12,#4a2817);box-shadow:inset 0 0 0 2px #d9925a,inset 0 -4px 0 0 #75431f,0 5px 14px rgba(217,146,90,.14)}
-  .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55,0 5px 14px rgba(123,224,164,.13)}
-  .lb-row.creator{
-    background:linear-gradient(115deg,#25104f,#3b1c78,#123d83,#5a2390,#211052);
-    background-size:400% 400%;animation:creatorGradient 4s ease infinite;
-    box-shadow:inset 0 0 0 2px #a98cff,inset 0 -4px 0 0 #24124f,0 0 8px rgba(117,81,255,.65),0 0 22px rgba(54,110,255,.3);
-  }
-  .lb-row.creator::before{
-    content:'✦  ✧  ★  ✦  ✧  ★  ✦';position:absolute;inset:-55% -10%;z-index:-1;pointer-events:none;
-    font-size:10px;line-height:25px;letter-spacing:9px;word-spacing:7px;color:rgba(255,255,255,.8);
-    transform:rotate(-8deg);animation:creatorStars 3.2s linear infinite;opacity:.85;
-    text-shadow:0 0 5px #fff,0 0 10px #8c70ff;
-  }
-  .lb-row.creator::after{
-    content:'';position:absolute;left:-30%;top:0;width:35%;height:100%;z-index:0;pointer-events:none;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-18deg);animation:creatorShine 2.6s linear infinite;
-  }
-  @keyframes creatorGradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-  @keyframes creatorStars{0%{transform:translateY(-25px) rotate(-8deg)}100%{transform:translateY(42px) rotate(-8deg)}}
-  @keyframes creatorShine{0%{left:-35%}100%{left:125%}}
-  @keyframes lbButtonGlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-  .lb-name{font-weight:700;min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--o2)}
-  .lb-name.creator-name{color:#fff;text-shadow:0 0 5px #9d8cff,0 0 10px rgba(128,100,255,.7)}
-  .lb-crown{display:inline-block;margin-right:3px;font-size:11px;filter:drop-shadow(0 0 3px rgba(255,215,75,.75));animation:crownFloat 2s ease-in-out infinite}
-  @keyframes crownFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-  .lb-rank{width:24px;flex:none;font-size:10px;color:var(--paper);text-align:center;font-weight:700;text-shadow:0 0 5px rgba(255,255,255,.25)}
-  .lb-award{width:22px;flex:none;font-size:14px;text-align:center;line-height:1}
-  .lb-av{position:relative;flex:none;width:30px;height:30px}
+  .lb-row.top1{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -4px 0 0 #8a5a0a}
+  .lb-row.top2{box-shadow:inset 0 0 0 2px #c9d3e0,inset 0 -4px 0 0 #6b7684}
+  .lb-row.top3{box-shadow:inset 0 0 0 2px #d9925a,inset 0 -4px 0 0 #8a4d1f}
+  .lb-row.me{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -4px 0 0 #2f7a55}
+  .lb-rank{width:18px;flex:none;font-size:8px;color:var(--dim);text-align:center}
+  .lb-award{width:16px;flex:none;font-size:13px;text-align:center;line-height:1}
+  .lb-av{position:relative;flex:none;width:18px;height:18px}
   .lb-dot{position:absolute;right:-3px;bottom:-3px;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2px #1a1240}
   .lb-dot.on{background:#3ddc6e}
   .lb-dot.off{background:#7a7a8c}
   .lb-online{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px;margin-bottom:6px;border-radius:9px;background:#241a52;color:var(--paper);font-family:var(--pixel);font-size:9px;box-shadow:inset 0 0 0 2px #3a2b7a}
   .lb-online .lb-dot{position:static;box-shadow:none}
   .lb-online b{color:#3ddc6e;font-weight:normal}
-  .lb-avatar{width:30px;height:30px;flex:none;border-radius:7px;image-rendering:pixelated;box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 2px 7px rgba(0,0,0,.3);background:#2c1f5c;object-fit:cover}
-  .lb-name{flex:1 1 auto;min-width:0;font-size:10px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
-  .lb-score{flex:none;font-size:10px;color:var(--gold);text-shadow:var(--o2);min-width:58px;text-align:right;font-weight:700;white-space:nowrap}
+  .lb-avatar{width:18px;height:18px;flex:none;border-radius:3px;image-rendering:pixelated;box-shadow:inset 0 0 0 1px var(--edge-dark);background:#2c1f5c;object-fit:cover}
+  .lb-name{flex:1 1 auto;min-width:0;font-size:9px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lb-score{flex:none;font-size:9px;color:var(--gold);text-shadow:var(--o2);min-width:40px;text-align:right}
   .lb-empty{font-size:8px;color:var(--dim);text-align:center;line-height:1.8;padding:20px 8px}
-  .referral-info{padding:8px 12px;margin-bottom:1px;border-radius:11px;background:linear-gradient(135deg,#302060,#1d3568);box-shadow:inset 0 0 0 2px #6f59c8,inset 0 -3px 0 0 #21164b,0 3px 10px rgba(70,55,150,.2);text-align:center}
-  .referral-info-title{font-size:9px;color:var(--gold);line-height:1.3;text-shadow:var(--o2);margin-bottom:3px}
-  .referral-info-desc{font-size:8px;color:var(--paper);line-height:1.45;font-weight:700}
   .quest-bar{height:6px;background:#1a1030;border:1px solid #000;box-shadow:inset 0 0 0 1px #4b3a8f;margin-top:5px}
   .quest-bar-fill{height:100%;background:linear-gradient(#7be0a4,#4ea83a)}
   .wpn.done{--edge:#4ea83a;--edge-dark:#215c1e;opacity:.75}
@@ -573,162 +543,6 @@
   .lk-txt i{font-style:normal;font-size:8px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .lang-btn.active{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -3px 0 0 #8a5a0a;color:var(--gold)}
 
-
-  /* ---------- 🎫 БАНЕРИ v2: великі унікальні сцени ---------- */
-  .bnr-card{
-    position:relative;display:flex;flex-direction:column;gap:9px;padding:10px;margin-bottom:8px;
-    border-radius:14px;background:linear-gradient(145deg,#211744,#2c1d58);
-    box-shadow:inset 0 0 0 2px #4f3b8b,inset 0 -5px 0 0 #17102f,0 5px 14px rgba(0,0,0,.24);
-    overflow:hidden;
-  }
-  .bnr-card.eq{box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -5px 0 0 #28583e,0 0 15px rgba(123,224,164,.18)}
-  .bnr-strip{
-    position:relative;width:100%;height:82px;min-height:82px;border-radius:10px;overflow:hidden;
-    box-shadow:inset 0 0 0 2px rgba(255,255,255,.30),0 4px 10px rgba(0,0,0,.25);
-    isolation:isolate;background:#222;
-  }
-  .bnr-strip .bnr-name{
-    position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;
-    font:12px/1 var(--pixel);letter-spacing:.3px;color:#fff;text-shadow:0 2px 3px #000,0 0 8px rgba(0,0,0,.8);
-    padding:0 10px;text-align:center;
-  }
-  .bnr-strip::after{
-    content:'';position:absolute;inset:0;z-index:5;pointer-events:none;
-    background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.20) 45%,transparent 62%);
-    transform:translateX(-130%);animation:bannerShine 4s linear infinite;
-  }
-  @keyframes bannerShine{to{transform:translateX(130%)}}
-
-  /* 1. СТАЛЬ — холодний метал, рухомі діагональні пластини */
-  .banner-bn_steel{background:linear-gradient(135deg,#aeb8c7 0%,#4e5a6d 26%,#202836 58%,#687587 100%)}
-  .banner-bn_steel::before{
-    content:'';position:absolute;inset:-30%;z-index:1;
-    background:repeating-linear-gradient(125deg,transparent 0 16px,rgba(255,255,255,.16) 17px 21px,transparent 22px 38px);
-    animation:steelMove 4s linear infinite;
-  }
-  @keyframes steelMove{to{transform:translateX(48px)}}
-
-  /* 2. ЛІС — дерева, листя, туман */
-  .banner-bn_forest{background:linear-gradient(#173d2a 0%,#285d38 42%,#102719 100%)}
-  .banner-bn_forest::before{
-    content:'🌲  🌲    🌲  🌿   🌲    🌲';position:absolute;left:-20%;right:-20%;bottom:4px;
-    z-index:1;font-size:27px;letter-spacing:5px;white-space:nowrap;filter:saturate(.8) drop-shadow(0 3px 2px #07150d);
-    animation:forestMove 9s linear infinite;
-  }
-  .banner-bn_forest::after{
-    content:'•  ✦   ·   •     ✦   ·   •';position:absolute;inset:8px;z-index:5;
-    color:rgba(196,255,193,.8);font-size:10px;letter-spacing:10px;animation:leafFloat 4s ease-in-out infinite;
-    background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.16) 45%,transparent 62%);
-  }
-  @keyframes forestMove{to{transform:translateX(55px)}}
-  @keyframes leafFloat{50%{transform:translate(8px,5px)}}
-
-  /* 3. ПУСТЕЛЯ — сонце, дюни, гарячий вітер */
-  .banner-bn_sand{background:linear-gradient(#f8c866 0%,#e98939 43%,#8f4325 100%)}
-  .banner-bn_sand::before{
-    content:'';position:absolute;width:48px;height:48px;border-radius:50%;right:22px;top:9px;
-    background:#fff2a2;box-shadow:0 0 20px #fff0a0,0 0 45px rgba(255,236,126,.75);
-    animation:sunPulse 3s ease-in-out infinite;
-  }
-  .banner-bn_sand::after{
-    content:'';position:absolute;left:-10%;right:-10%;bottom:-15px;height:58px;
-    background:radial-gradient(90px 30px at 20% 50%,#d77732 0 65%,transparent 67%),radial-gradient(120px 38px at 70% 65%,#bd5b2d 0 65%,transparent 67%);
-    z-index:1;animation:duneMove 6s ease-in-out infinite;
-  }
-  @keyframes sunPulse{50%{transform:scale(1.08);box-shadow:0 0 28px #fff0a0,0 0 55px rgba(255,236,126,.9)}}
-  @keyframes duneMove{50%{transform:translateX(16px)}}
-
-  /* 4. АВРОРА — північне сяйво */
-  .banner-bn_aurora{background:linear-gradient(160deg,#081d3d,#0a5362 48%,#25145e)}
-  .banner-bn_aurora::before{
-    content:'';position:absolute;inset:-30%;
-    background:conic-gradient(from 190deg at 50% 80%,transparent 0 17%,rgba(65,255,178,.55) 22%,transparent 31%,rgba(95,177,255,.5) 42%,transparent 52%,rgba(205,104,255,.42) 63%,transparent 73%);
-    filter:blur(7px);animation:auroraMove 6s ease-in-out infinite;
-  }
-  @keyframes auroraMove{50%{transform:translateX(20px) rotate(4deg) scale(1.08)}}
-
-  /* 5. ПОРТАЛ — кільце, яке обертається */
-  .banner-bn_portal{background:radial-gradient(circle at 50% 50%,#8a65ff 0 7%,#2b1c72 15%,#08051e 48%,#03020c 100%)}
-  .banner-bn_portal::before{
-    content:'';position:absolute;width:92px;height:92px;left:50%;top:50%;transform:translate(-50%,-50%);
-    border-radius:50%;border:7px dotted #72e8ff;box-shadow:0 0 12px #72e8ff,0 0 30px #754cff,inset 0 0 18px #754cff;
-    animation:portalSpin 2.8s linear infinite;
-  }
-  @keyframes portalSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
-
-  /* 6. ТУМАННІСТЬ — кольорові хмари й зорі */
-  .banner-bn_nebula{background:linear-gradient(120deg,#080626,#34115d,#092c68,#10051e);background-size:240% 240%;animation:nebulaBg 7s ease-in-out infinite}
-  .banner-bn_nebula::before{
-    content:'';position:absolute;inset:-25%;
-    background:radial-gradient(circle at 20% 40%,rgba(255,80,195,.65),transparent 28%),radial-gradient(circle at 75% 55%,rgba(70,180,255,.62),transparent 30%),radial-gradient(circle at 50% 20%,rgba(130,80,255,.5),transparent 25%);
-    filter:blur(8px);animation:nebulaCloud 5s ease-in-out infinite;
-  }
-  @keyframes nebulaBg{50%{background-position:100% 20%}}
-  @keyframes nebulaCloud{50%{transform:translate(12px,-5px) scale(1.12)}}
-
-  /* 7. ЛАВА — вулканічний жар */
-  .banner-bn_volcano{background:linear-gradient(#311018,#7d1d12 48%,#170408)}
-  .banner-bn_volcano::before{
-    content:'';position:absolute;left:-10%;right:-10%;bottom:-12px;height:62px;
-    background:repeating-radial-gradient(ellipse at 20% 100%,#ffed62 0 7%,#ff5a21 8% 15%,#8e170e 16% 25%);
-    filter:blur(1px);animation:lavaFlow 2.4s linear infinite;
-  }
-  @keyframes lavaFlow{to{transform:translateX(38px)}}
-
-  /* 8. КРОВ ДРАКОНА — полум'я + очі */
-  .banner-bn_dragon{background:linear-gradient(145deg,#240308,#6d0a16,#160207)}
-  .banner-bn_dragon::before{
-    content:'🔥  🔥   🔥';position:absolute;left:5%;right:5%;bottom:0;z-index:1;
-    font-size:30px;letter-spacing:8px;animation:dragonFire 1.2s ease-in-out infinite alternate;
-    filter:drop-shadow(0 0 7px #ff5722);
-  }
-  .banner-bn_dragon::after{
-    content:'◉       ◉';position:absolute;left:0;right:0;top:20px;text-align:center;z-index:5;
-    color:#ffd447;font-size:17px;text-shadow:0 0 9px #ff2600;animation:dragonEyes 1.5s ease-in-out infinite;
-  }
-  @keyframes dragonFire{to{transform:translateY(-8px) scale(1.05)}}
-  @keyframes dragonEyes{50%{opacity:.55}}
-
-  /* 9. ГАЛАКТИКА — спіральна галактика */
-  .banner-bn_galaxy{background:radial-gradient(circle at 50% 50%,#fff 0 2%,#78d8ff 4%,#5b36d0 12%,#130b42 34%,#030313 100%)}
-  .banner-bn_galaxy::before{
-    content:'';position:absolute;width:130px;height:130px;left:50%;top:50%;
-    border-radius:50%;transform:translate(-50%,-50%) rotate(0deg);
-    border:8px solid rgba(112,207,255,.35);border-left-color:#ff75e9;border-right-color:#8b68ff;
-    box-shadow:0 0 20px #6fdcff,0 0 45px rgba(126,75,255,.65);animation:galaxySpin 5s linear infinite;
-  }
-  @keyframes galaxySpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
-
-  /* 10. СОНЯЧНИЙ ВИБУХ — проміння */
-  .banner-bn_nova{background:radial-gradient(circle at 50% 50%,#fffbe0 0 5%,#ffd84d 12%,#ff8b1f 29%,#b51e36 57%,#25051c 100%)}
-  .banner-bn_nova::before{
-    content:'';position:absolute;inset:-30%;
-    background:repeating-conic-gradient(from 0deg,rgba(255,245,150,.0) 0 7deg,rgba(255,239,112,.35) 8deg 10deg);
-    animation:novaSpin 4s linear infinite;
-  }
-  @keyframes novaSpin{to{transform:rotate(360deg)}}
-
-  /* Нагородні банери дороги слави — окремі стилі */
-  .banner-bn_road1200{background:linear-gradient(135deg,#25304a,#596b83,#1b2435)}
-  .banner-bn_road1200::before{content:'🏆   ✦   🏆   ✦';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:25px;opacity:.45;animation:roadFloat 3s ease-in-out infinite}
-  .banner-bn_road5200{background:linear-gradient(120deg,#321a63,#b06cff,#263e9b,#321a63);background-size:300% 300%;animation:roadGradient 4s ease infinite}
-  .banner-bn_road5200::before{content:'⚔  ⚔  ⚔';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;opacity:.32}
-  .banner-bn_road10k{background:radial-gradient(circle at 50% 45%,#fff5b0,#ffbd3c 9%,#d53dff 25%,#3822a2 55%,#070521 100%)}
-  .banner-bn_road10k::before{content:'✦  ✧  ★  ✧  ✦';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;letter-spacing:7px;animation:roadFloat 2s ease-in-out infinite}
-  @keyframes roadFloat{50%{transform:translateY(-6px) rotate(2deg)}}
-  @keyframes roadGradient{50%{background-position:100% 40%}}
-
-  .bnr-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:34px}
-  .bnr-rname{font-size:9px;color:#fff;text-shadow:0 1px 2px #000}
-  .bnr-r0-tx{color:#d6dce8}.bnr-r1-tx{color:#cfa7ff}.bnr-r2-tx{color:#ff9a8f}.bnr-r3-tx{color:#ffe477}
-  .bnr-road-tag{font-size:8px;padding:3px 6px;border-radius:6px;background:#1a1240;color:#8fe9ff;box-shadow:inset 0 0 0 1px #3fa7ff}
-  .bnr-card .wpn-btn{min-height:34px}
-  /* У топі фон банера реально заповнює всю картку */
-  .lb-bnr-bg{position:absolute;inset:0;border-radius:inherit;opacity:.52;pointer-events:none;z-index:0;overflow:hidden}
-  .lb-bnr-bg .bnr-strip{width:100%;height:100%;min-height:100%;border-radius:inherit;box-shadow:none}
-  .lb-bnr-bg .bnr-name{display:none}
-  .lb-row{position:relative;isolation:isolate}
-  .lb-row>*{position:relative;z-index:1}
   /* ---------- НОВИНИ (космічне вікно) ---------- */
   #btn-news{position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 112px);left:10px;width:40px;height:40px;border:0;border-radius:11px;pointer-events:auto;cursor:pointer;z-index:6;
     background:linear-gradient(135deg,#3a1d8f,#0b2a6b,#5b2bb8,#0b6b8f);background-size:300% 300%;animation:nw-btn 5s linear infinite;
@@ -770,220 +584,6 @@
   #nw-ok:active{transform:translateY(1px)}
   #settings-ver{color:var(--gold)}
   @media (prefers-reduced-motion:reduce){.nw-box,.nw-box::before,.nw-box::after,#btn-news,.nw-title,#nw-ok,.nw-badge{animation:none}}
-
-  /* ---------- прихована адмін-панель ---------- */
-  #admin-modal{position:fixed;inset:0;z-index:100050;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,1,14,.86)}
-  #admin-modal.off{display:none}
-  .admin-box{width:100%;max-width:560px;max-height:94vh;max-height:94dvh;overflow-y:auto;background:var(--ink);
-    border-radius:18px 18px 0 0;box-shadow:0 0 0 2px #ffb84d,0 -8px 28px -6px rgba(255,184,77,.35);
-    padding:18px 12px calc(16px + env(safe-area-inset-bottom,0px));}
-  .admin-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:10px;margin-bottom:10px;border-bottom:2px solid #3a2d70}
-  .admin-title{font-size:12px;color:#ffcf70;text-shadow:var(--o2)}
-  .admin-sub{font-size:7px;color:var(--dim);margin-top:4px}
-  .admin-close,.admin-back,.admin-save{border:0;border-radius:8px;padding:9px 11px;background:#2c1f5c;color:var(--paper);
-    font-family:var(--pixel);font-size:8px;box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 #241a52;cursor:pointer}
-  .admin-save{background:#356f48;box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -3px 0 #214c32}
-  .admin-back{width:100%;margin-bottom:9px}
-  .admin-section{padding:9px;border-radius:10px;background:#241a52;box-shadow:inset 0 0 0 2px #3a2d70;margin-bottom:9px}
-  .admin-section h3{font-size:9px;color:var(--gold);margin:0 0 8px}
-  .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-  .admin-field{display:flex;flex-direction:column;gap:4px}
-  .admin-field label{font-size:7px;color:var(--dim)}
-  .admin-field input{width:100%;border:0;border-radius:7px;padding:8px;background:#1b1035;color:#fff;font:8px var(--pixel);box-shadow:inset 0 0 0 1px #5b47b0}
-  .admin-player{display:flex;align-items:center;gap:9px;margin-bottom:8px}
-  .admin-player img{width:34px;height:34px;border-radius:6px;object-fit:cover;image-rendering:pixelated;box-shadow:inset 0 0 0 2px #5b47b0}
-  .admin-player-name{font-size:10px;color:#fff}
-  .admin-player-id{font-size:7px;color:var(--dim);margin-top:4px}
-  .admin-list{display:flex;flex-direction:column;gap:6px}
-  .admin-item{display:flex;align-items:center;gap:7px;padding:7px;border-radius:8px;background:#2c1f5c;box-shadow:inset 0 0 0 1px #4b3a8f}
-  .admin-item-main{flex:1;min-width:0}
-  .admin-item-name{font-size:8px;color:#fff;line-height:1.4}
-  .admin-item-meta{font-size:7px;color:var(--dim);margin-top:2px}
-  .admin-mini{border:0;border-radius:6px;padding:7px 9px;background:#3d2a7a;color:#fff;font:9px var(--pixel);box-shadow:inset 0 0 0 1px #5b47b0;cursor:pointer}
-  .admin-mini.plus{background:#356f48;box-shadow:inset 0 0 0 1px #7be0a4}
-  .admin-mini.minus{background:#713b4b;box-shadow:inset 0 0 0 1px #d4778b}
-  .admin-check{width:17px;height:17px;accent-color:var(--gold);flex:none}
-  .admin-status{font-size:8px;line-height:1.7;color:#9cf0b8;text-align:center;min-height:16px;margin:3px 0 8px}
-  .admin-error{color:#ff9b9b}
-  .admin-empty{font-size:8px;color:var(--dim);text-align:center;padding:10px}
-  .admin-lb-btn{flex:none;border:0;border-radius:7px;padding:7px 8px;background:#6b4b16;color:#fff2c8;font:8px var(--pixel);box-shadow:inset 0 0 0 1px #ffcf70;cursor:pointer}
-  .lb-row .admin-lb-btn{margin-left:4px}
-
-  /* ---------- ⚔ Дуель: доповнення до рядків «Топ» ---------- */
-  .lb-row{flex-wrap:wrap}
-  .duel-search-line{flex:1 0 100%;font-size:8px;color:var(--gold);text-shadow:var(--o2);padding-top:4px;animation:duelPulse 1.4s ease-in-out infinite}
-  @keyframes duelPulse{0%,100%{opacity:.55}50%{opacity:1}}
-  .duel-inv-btn{flex:none;border:0;border-radius:7px;padding:6px 9px;background:linear-gradient(180deg,#a33a3a,#5c1f1f);
-    color:#ffe3e3;font:10px var(--pixel);box-shadow:inset 0 0 0 1px #ff8a8a;cursor:pointer;touch-action:manipulation}
-  .duel-inv-btn:active{transform:translateY(1px)}
-  .lb-trophy{flex:none;font-size:8px;color:var(--gold);text-shadow:var(--o2);white-space:nowrap}
-  .lb-row-extra{flex:1 0 100%;display:flex;align-items:center;justify-content:flex-end;gap:8px;padding-top:4px}
-
-  /* ---------- ⚔ Повідомлення пошуку випадкової дуелі ---------- */
-  #duel-queue-notice{
-    position:relative;z-index:20;width:calc(100% - 12px);margin:0 6px 6px;padding:7px 9px;
-    border-radius:11px;background:linear-gradient(100deg,#251452,#173c67,#4b1c70,#251452);
-    background-size:260% 260%;animation:duelNoticeBg 5s ease infinite;
-    box-shadow:inset 0 0 0 2px #7f65e8,inset 0 -3px 0 0 #24134f,0 0 14px rgba(119,86,255,.22);
-    overflow:hidden;touch-action:manipulation;
-  }
-  #duel-queue-notice.off{display:none}
-  #duel-queue-notice::after{
-    content:'';position:absolute;top:0;bottom:0;left:-30%;width:30%;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
-    transform:skewX(-18deg);animation:duelNoticeShine 2.8s linear infinite;pointer-events:none;
-  }
-  @keyframes duelNoticeBg{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-  @keyframes duelNoticeShine{to{left:130%}}
-  .duel-queue-title{display:flex;align-items:center;gap:6px;color:#d9caff;font-size:7px;line-height:1.2;margin-bottom:5px}
-  .duel-queue-title b{color:#fff;font-size:8px}
-  .duel-queue-list{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
-  .duel-queue-list::-webkit-scrollbar{display:none}
-  .duel-queue-player{
-    flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:8px;
-    background:rgba(9,5,28,.52);box-shadow:inset 0 0 0 1px rgba(169,143,255,.42);
-    color:#fff;font-size:8px;white-space:nowrap
-  }
-  .duel-queue-avatar{width:22px;height:22px;border-radius:6px;object-fit:cover;background:#25194a}
-  .duel-queue-wait{color:#8fe9ff;font-size:7px}
-
-  /* ---------- ⚔ Дуель: вкладка-хаб ---------- */
-
-  .duel-hub{display:flex;flex-direction:column;gap:10px}
-  .duel-trophy-line{font-size:10px;color:var(--gold);text-shadow:var(--o2);text-align:center}
-  .duel-random-btn{width:100%;border:0;border-radius:12px;padding:14px;background:linear-gradient(135deg,#a33a3a,#7a2828,#5c1f1f);
-    background-size:220% 220%;color:#fff;font-family:var(--pixel);font-size:10px;cursor:pointer;touch-action:manipulation;
-    box-shadow:inset 0 0 0 2px #ff8a8a,inset 0 -4px 0 0 #3a1414,0 4px 12px rgba(163,58,58,.3)}
-  .duel-random-btn.searching{background:linear-gradient(135deg,#3d2a7a,#2c1f5c);animation:duelSearchPulse 1.4s ease-in-out infinite}
-  @keyframes duelSearchPulse{0%,100%{opacity:.72}50%{opacity:1}}
-  .duel-random-btn:active{transform:translateY(1px)}
-  .duel-rules{padding:11px;border-radius:11px;background:#241a52;box-shadow:inset 0 0 0 2px #3a2d70}
-  .duel-rules-title{font-size:9px;color:var(--gold);margin-bottom:8px;text-shadow:var(--o2)}
-  .duel-rules-line{font-size:8px;color:var(--paper);line-height:2}
-  .duel-rules-foot{font-size:7px;color:var(--dim);margin-top:8px;line-height:1.6}
-  .duel-hint{font-size:7px;color:var(--dim);text-align:center;line-height:1.6}
-
-  /* ---------- ⚔ Дуель: 🌌 Дорога слави (сезонний магазин нагород за трофеї) ---------- */
-  .road-wrap{position:relative;overflow:hidden;border-radius:14px;padding:12px 10px 14px;
-    background:radial-gradient(ellipse at 15% 0%,rgba(150,90,255,.5),transparent 55%),radial-gradient(ellipse at 92% 100%,rgba(0,210,255,.45),transparent 55%),radial-gradient(ellipse at 50% 50%,rgba(255,70,190,.16),transparent 60%),linear-gradient(160deg,#0a0730,#170b46 55%,#070420);
-    background-size:220% 220%,220% 220%,160% 160%,100% 100%;animation:nw-nebula 11s ease-in-out infinite,nw-glow 7s linear infinite;
-    box-shadow:inset 0 0 0 2px #6f59d8}
-  .road-wrap::before,.road-wrap::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background-repeat:no-repeat}
-  .road-wrap::before{background-image:radial-gradient(1.4px 1.4px at 8% 18%,#fff,transparent),radial-gradient(1.2px 1.2px at 24% 55%,#bfe6ff,transparent),radial-gradient(1.6px 1.6px at 46% 12%,#fff,transparent),radial-gradient(1.2px 1.2px at 64% 40%,#ffd6ff,transparent),radial-gradient(1.6px 1.6px at 82% 20%,#fff,transparent),radial-gradient(1.2px 1.2px at 93% 65%,#bfe6ff,transparent);animation:nw-tw 2.8s ease-in-out infinite}
-  .road-wrap::after{background-image:radial-gradient(1.4px 1.4px at 14% 75%,#fff,transparent),radial-gradient(1.8px 1.8px at 38% 88%,#ffe9a8,transparent),radial-gradient(1.2px 1.2px at 58% 70%,#fff,transparent),radial-gradient(1.6px 1.6px at 78% 85%,#bfe6ff,transparent);animation:nw-tw 3.6s ease-in-out infinite reverse}
-  .road-wrap>*{position:relative;z-index:1}
-  .road-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:4px}
-  .road-title{font-size:11px;line-height:1.4;background:linear-gradient(90deg,#8fe9ff,#c9a8ff,#ff9be6,#8fe9ff);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:nw-shine 4s linear infinite}
-  .road-season{font-size:7px;color:#b9c8ff}
-  .road-progress-line{font-size:7px;color:#eef1ff;text-align:center;margin:4px 0 8px;line-height:1.5}
-  .road-progress-line b{color:var(--gold)}
-  .road-track{position:relative;display:flex;gap:9px;overflow-x:auto;overflow-y:hidden;padding:10px 6px 12px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
-  .road-track::-webkit-scrollbar{height:5px}
-  .road-track::-webkit-scrollbar-thumb{background:#6f59d8;border-radius:3px}
-  .road-track::before{content:"";position:absolute;left:16px;right:16px;top:31px;height:3px;z-index:0;border-radius:2px;
-    background:linear-gradient(90deg,#7be0a4 0%,#7be0a4 var(--road-pct,0%),rgba(150,130,230,.32) var(--road-pct,0%),rgba(150,130,230,.32) 100%)}
-  .road-node{position:relative;z-index:1;flex:none;width:58px;display:flex;flex-direction:column;align-items:center;gap:3px;scroll-snap-align:center}
-  .road-node-ic{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;
-    background:#241a52;box-shadow:inset 0 0 0 2px #4b3a8f;transition:transform .15s ease}
-  .road-node.ready .road-node-ic{background:linear-gradient(180deg,#ffe27a,var(--gold));box-shadow:inset 0 0 0 2px #fff2b8,0 0 12px rgba(255,210,63,.75);color:#1b1035;animation:nw-pulse 1.3s ease-in-out infinite}
-  .road-node.done .road-node-ic{background:linear-gradient(180deg,#8fe9c0,#3fae74);box-shadow:inset 0 0 0 2px #d3f7e2}
-  .road-node.big .road-node-ic{width:40px;height:40px;font-size:18px;box-shadow:inset 0 0 0 2px #ff9be6,0 0 14px rgba(255,155,230,.65)}
-  .road-node.big.ready .road-node-ic{animation:nw-pulse 1.3s ease-in-out infinite,nw-glow 3s linear infinite}
-  .road-node-amt{font-size:7px;color:var(--gold);text-shadow:2px 2px 0 #120a2e;white-space:nowrap}
-  .road-node-th{font-size:6px;color:#b9c8ff;white-space:nowrap}
-  .road-node-chk{font-size:12px;color:#7be0a4}
-  .road-node-lock{font-size:10px;opacity:.55}
-  .road-claim-btn{border:0;border-radius:6px;padding:4px 7px;font:6px var(--pixel);color:#1b1035;cursor:pointer;touch-action:manipulation;
-    background:linear-gradient(180deg,#ffe27a,var(--gold));box-shadow:inset 0 0 0 1px #fff2b8}
-  .road-claim-btn:active{transform:translateY(1px)}
-  @media (prefers-reduced-motion:reduce){.road-wrap,.road-wrap::before,.road-wrap::after,.road-title,.road-node.ready .road-node-ic{animation:none}}
-
-  /* ---------- ⚔ Дуель: арена (модалка) ---------- */
-  #duel-modal{position:fixed;inset:0;z-index:100060;display:flex;align-items:center;justify-content:center;
-    padding:8px;box-sizing:border-box;background:rgba(3,1,14,.88);overscroll-behavior:contain}
-  #duel-modal.off{display:none}
-  .duel-box{width:min(560px,100%);max-width:560px;max-height:calc(100dvh - 16px);overflow-y:auto;overflow-x:hidden;
-    box-sizing:border-box;background:var(--ink);border-radius:18px;box-shadow:0 0 0 2px #ff6b6b,0 8px 28px -6px rgba(255,107,107,.35);
-    padding:14px 12px calc(12px + env(safe-area-inset-bottom,0px));text-align:center;-webkit-overflow-scrolling:touch}
-  .duel-title{font-size:12px;color:var(--gold);text-shadow:var(--o2);margin-bottom:14px}
-
-  /* ---------- 🏟 Арена дуелі: окрема "кімната" — підземелля з двома платформами ---------- */
-  .duel-scene{position:relative;overflow:hidden;border-radius:14px;margin-bottom:10px;padding:10px 6px 9px;
-    background:
-      radial-gradient(ellipse 140px 90px at 18% 100%,rgba(255,150,60,.16),transparent 60%),
-      radial-gradient(ellipse 140px 90px at 82% 100%,rgba(255,150,60,.16),transparent 60%),
-      linear-gradient(180deg,#0c0a16 0%,#171225 55%,#1f1830 100%);
-    box-shadow:inset 0 0 0 2px #4b3a8f,inset 0 30px 40px -20px rgba(0,0,0,.7)}
-  .duel-scene::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-    background-image:
-      repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 2px,transparent 2px 22px),
-      repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0 2px,transparent 2px 34px);
-    mask-image:linear-gradient(180deg,#000 0%,#000 62%,transparent 100%)}
-  .duel-scene::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 100% 70% at 50% 100%,transparent 40%,rgba(3,1,14,.55) 100%)}
-  .duel-torch{position:absolute;top:10px;width:5px;height:12px;border-radius:2px;background:linear-gradient(180deg,#ffcf6b,#ff7a2f);
-    box-shadow:0 0 10px 3px rgba(255,150,50,.85),0 0 26px 10px rgba(255,120,40,.35);animation:duelTorch 1.6s ease-in-out infinite}
-  .duel-torch.l{left:12px}.duel-torch.r{right:12px;animation-delay:.5s}
-  @keyframes duelTorch{0%,100%{opacity:.85;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.15)}}
-  .duel-arena{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:6px;padding:0 6px}
-  .duel-vs-badge{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);z-index:2;font-size:16px;color:#ff6b6b;
-    text-shadow:0 0 10px rgba(255,107,107,.8),var(--o2)}
-  .duel-fighter{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;width:46%;min-width:0}
-  .duel-platform{position:relative;width:78px;height:22px;max-width:100%;border-radius:50%;
-    background:radial-gradient(ellipse at 50% 30%,#6a5aa8,#372a68 55%,#221a44 100%);
-    box-shadow:inset 0 2px 0 rgba(255,255,255,.18),inset 0 -6px 10px rgba(0,0,0,.5),0 6px 10px -4px rgba(0,0,0,.6)}
-  .duel-fighter-img-wrap{position:absolute;left:50%;bottom:13px;transform:translateX(-50%);width:68px;height:68px;
-    display:flex;align-items:flex-end;justify-content:center;transition:transform .18s ease}
-  .duel-fighter-img-wrap img{width:68px;height:68px;object-fit:contain;object-position:bottom;image-rendering:pixelated;
-    filter:drop-shadow(0 6px 8px rgba(0,0,0,.55))}
-  .duel-fighter.opp .duel-fighter-img-wrap img{transform:scaleX(-1)}
-  .duel-fighter-img-wrap.act-attack{animation:duelAtkMe .45s ease}
-  .duel-fighter.opp .duel-fighter-img-wrap.act-attack{animation:duelAtkOpp .45s ease}
-  @keyframes duelAtkMe{0%{transform:translateX(-50%)}40%{transform:translate(calc(-50% + 14px),0)}100%{transform:translateX(-50%)}}
-  @keyframes duelAtkOpp{0%{transform:translateX(-50%)}40%{transform:translate(calc(-50% - 14px),0)}100%{transform:translateX(-50%)}}
-  .duel-fighter-img-wrap.act-defense::after{content:"🛡️";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    font-size:34px;opacity:0;animation:duelShield .7s ease}
-  @keyframes duelShield{0%{opacity:0;transform:scale(.5)}30%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1.3)}}
-  .duel-fighter-img-wrap.act-dodge{animation:duelDodge .4s ease}
-  @keyframes duelDodge{0%{transform:translateX(-50%)}25%{transform:translate(calc(-50% - 10px),-4px);opacity:.55}
-    50%{transform:translate(calc(-50% + 10px),-4px);opacity:.55}75%{transform:translateX(-50%);opacity:1}100%{transform:translateX(-50%)}}
-  .duel-fighter-name{font-size:8px;color:var(--paper);text-shadow:var(--o2);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
-  .duel-vs{font-size:15px;color:#ff6b6b;text-shadow:var(--o2);flex:none}
-  .duel-pips{display:flex;gap:4px;justify-content:center;margin-top:2px}
-  .duel-pip{width:9px;height:9px;border-radius:2px;background:#2c1f5c;box-shadow:inset 0 0 0 1px #4b3a8f}
-  .duel-pip.on{background:#ff6b6b;box-shadow:inset 0 0 0 1px #ff9a9a}
-  .duel-status-line{font-size:9px;color:var(--paper);line-height:1.7;margin-bottom:14px}
-  .duel-history{font-size:7px;color:var(--dim);line-height:1.6;margin-bottom:10px}
-  .duel-timer-wrap{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px}
-  .duel-timer{--p:0;position:relative;width:30px;height:30px;border-radius:50%;flex:none;
-    background:conic-gradient(var(--gold) calc(var(--p) * 1%),rgba(255,255,255,.12) 0);
-    box-shadow:inset 0 0 0 2px #241a52}
-  .duel-timer::after{content:attr(data-s);position:absolute;inset:2px;border-radius:50%;background:var(--ink);
-    display:flex;align-items:center;justify-content:center;font:9px var(--pixel);color:var(--paper)}
-  .duel-timer.low{--p:100}
-  .duel-timer.low::before{content:"";position:absolute;inset:-3px;border-radius:50%;box-shadow:0 0 10px 2px rgba(255,107,107,.7);animation:duelPulse .7s ease-in-out infinite}
-  .duel-timer-line{font-size:8px;color:var(--dim)}
-  .duel-moves{display:flex;gap:8px;margin-bottom:12px}
-  .duel-move-btn{flex:1;border:0;border-radius:12px;padding:12px 4px;background:linear-gradient(180deg,#3d2a7a,#2c1f5c);color:var(--paper);
-    font-family:var(--pixel);font-size:8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;
-    box-shadow:inset 0 0 0 2px var(--edge),inset 0 -4px 0 0 var(--edge-dark)}
-  .duel-move-btn span{font-size:17px}
-  .duel-move-btn:active{transform:translateY(1px)}
-  .duel-accept-row,.duel-end-row{display:flex;gap:8px}
-  .duel-btn-accept,.duel-btn-decline,.duel-btn-ok,.duel-btn-forfeit{flex:1;border:0;border-radius:10px;padding:11px;font-family:var(--pixel);font-size:9px;cursor:pointer;touch-action:manipulation}
-  .duel-btn-accept{background:#356f48;color:#fff;box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -3px 0 #214c32}
-  .duel-btn-decline,.duel-btn-forfeit{background:#713b4b;color:#fff;box-shadow:inset 0 0 0 2px #d4778b,inset 0 -3px 0 #4a1f29}
-  .duel-btn-ok{background:linear-gradient(180deg,#4a3793,#2c1f5c);color:#fff;box-shadow:inset 0 0 0 2px var(--gold),inset 0 -3px 0 #8a5a0a}
-  .duel-result-icon{font-size:32px;margin-bottom:8px}
-  .duel-result-title{font-size:13px;margin-bottom:10px;text-shadow:var(--o2)}
-  .duel-result-title.win{color:#7be0a4}
-  .duel-result-title.lose{color:#ff8a8a}
-  .duel-reward{font-size:11px;color:var(--gold);text-shadow:var(--o2);margin:8px 0 16px}
-
-  #duel-toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
-    z-index:100070;background:#2c1f5c;color:#fff;padding:10px 16px;border-radius:10px;font:9px var(--pixel);
-    box-shadow:inset 0 0 0 2px #ff6b6b,0 4px 14px rgba(0,0,0,.4);max-width:86%;text-align:center}
-  #duel-toast.off{display:none}
-
 </style>
 </head>
 
@@ -1176,7 +776,7 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
       <span id="btn-music-fb">💿</span>
     </button>
 
-    <button id="btn-settings" type="button" title="${t('lbSettings')}">⚙️</button>
+    <button id="btn-settings" type="button" title="Налаштування">⚙️</button>
     <button id="btn-news" type="button" title="Новини">📰<span class="nw-dot off" id="btn-news-dot"></span></button>
 
     <div id="hud">
@@ -1203,13 +803,10 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
     <div id="hint">Тапай по екрану!</div>
   </div>
 
-  <div id="duel-queue-notice" class="off" aria-live="polite"></div>
-
   <div id="tabs">
     <button class="tab active" id="tab-upg" type="button">⚙ Прокачка</button>
     <button class="tab" id="tab-qst" type="button">📜 Завдання</button>
     <button class="tab" id="tab-lb" type="button">🏆 Топ</button>
-    <button class="tab" id="tab-duel" type="button">⚔ Дуель</button>
   </div>
 
   <div id="subtabs">
@@ -1217,7 +814,6 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
     <button class="subtab" id="sub-wpn" type="button"><span class="subtab-ic">⚔</span>Зброя</button>
     <button class="subtab" id="sub-arm" type="button"><span class="subtab-ic">🛡</span>Броня</button>
     <button class="subtab" id="sub-skn" type="button"><span class="subtab-ic">🎭</span>Образи</button>
-    <button class="subtab" id="sub-bnr" type="button"><span class="subtab-ic">🎫</span>Банери</button>
   </div>
 
   <div id="ref-modal" class="off">
@@ -1262,31 +858,8 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
   <div id="panel-wpn" class="off"></div>
   <div id="panel-arm" class="off"></div>
   <div id="panel-skn" class="off"></div>
-  <div id="panel-bnr" class="off"></div>
   <div id="panel-qst" class="off"></div>
   <div id="panel-lb" class="off"></div>
-  <div id="panel-duel" class="off"></div>
-
-
-  <div id="duel-modal" class="off">
-    <div class="duel-box" id="duel-box"></div>
-  </div>
-  <div id="duel-toast" class="off"></div>
-
-  <div id="admin-modal" class="off">
-    <div class="admin-box">
-      <div class="admin-head">
-        <div>
-          <div class="admin-title">🛠 АДМІН-ПАНЕЛЬ</div>
-          <div class="admin-sub">Керування вибраним гравцем</div>
-        </div>
-        <button class="admin-close" id="admin-close" type="button">✕</button>
-      </div>
-      <button class="admin-back" id="admin-back" type="button">← Повернутися до свого акаунта</button>
-      <div id="admin-status" class="admin-status"></div>
-      <div id="admin-content"></div>
-    </div>
-  </div>
 
   <div id="music-modal" class="off">
     <div class="shop-box">
@@ -1469,7 +1042,6 @@ const I18N = {
     'sub-wpn': '⚔Зброя',
     'sub-arm': '🛡Броня',
     'sub-skn': '🎭Образи',
-    'sub-bnr': '🎫Банери',
     'up-power-name': 'Сила кліку',
     'up-auto-name': 'Автоклік',
     'music-title': '🎵 Плейлист',
@@ -1478,31 +1050,6 @@ const I18N = {
     'settings-lang-label': 'МОВА / LANGUAGE',
     'music-now-title-empty': 'Трек не обрано',
     'ref-modal-ok': 'OK',
-    'referral-title': '👥 Реферальна система',
-    'referral-desc': 'За кожного друга, який приєднається за твоїм посиланням і дійде до 3-го поверху → +20💎 тобі, назавжди!',
-    duelSearchLine: '{name} шукає суперника на дуель…',
-    duelInviteTitle: 'Викликати на дуель',
-    duelPickMove: 'Обери хід, поки не скінчився час',
-    trophiesTitle: 'Трофеї дуелей',
-    roadTitle: '🌌 Дорога слави',
-    roadSeason: 'Сезон {n} дуелей',
-    roadClaim: 'Забрати',
-    duelChallengeTitle: 'Виклик на дуель!',
-    duelChallengesRest: 'викликає тебе на дуель. Приймаєш?',
-    duelDecline: '❌ Відхилити',
-    duelAccept: '✅ Прийняти',
-    duelWaitingTitle: 'Очікування відповіді…',
-    duelWaitingPrefix: 'Чекаємо, поки',
-    duelWaitingSuffix: 'прийме виклик.',
-    duelCancelInvite: '✕ Скасувати виклик',
-    duelMoveMade: '⏳ Хід зроблено. Чекаємо суперника…',
-    moveAttack: 'Атака', moveDefense: 'Захист', moveDodge: 'Ухилення',
-    duelRoundTitle: 'Раунд {round} · до 5 перемог',
-    duelForfeit: '🏳️ Здатися',
-    duelHistoryLine: 'Раунд {round}: {m1} проти {m2} — {result}',
-    duelDraw: 'нічия', duelYouWon: 'твоя перемога', duelOppWon: 'перемога суперника',
-    duelWinTitle: 'Перемога!', duelLoseTitle: 'Поразка', duelTrophySuffix: 'трофеїв',
-    duelDeclinedMsg: 'Гравець відхилив виклик.', duelCancelledMsg: 'Дуель скасовано.',
     perClick: 'за клік', autoSuffix: 'авто', perSec: '/с',
     lvl: 'рів.', click: 'Клік', auto: 'Авто',
     floor: 'Поверх', top: 'Вершина вежі'
@@ -1532,31 +1079,6 @@ const I18N = {
     'settings-lang-label': 'LANGUAGE / МОВА',
     'music-now-title-empty': 'No track selected',
     'ref-modal-ok': 'OK',
-    'referral-title': '👥 Referral system',
-    'referral-desc': 'For every friend who joins with your link and reaches the 3rd floor → you get +20💎, forever!',
-    duelSearchLine: '{name} is looking for a duel opponent…',
-    duelInviteTitle: 'Challenge to a duel',
-    duelPickMove: 'Pick a move before time runs out',
-    trophiesTitle: 'Duel trophies',
-    roadTitle: '🌌 Road of Glory',
-    roadSeason: 'Duel Season {n}',
-    roadClaim: 'Claim',
-    duelChallengeTitle: 'Duel challenge!',
-    duelChallengesRest: 'is challenging you to a duel. Accept?',
-    duelDecline: '❌ Decline',
-    duelAccept: '✅ Accept',
-    duelWaitingTitle: 'Waiting for response…',
-    duelWaitingPrefix: 'Waiting for',
-    duelWaitingSuffix: 'to accept the challenge.',
-    duelCancelInvite: '✕ Cancel challenge',
-    duelMoveMade: '⏳ Move made. Waiting for opponent…',
-    moveAttack: 'Attack', moveDefense: 'Defense', moveDodge: 'Dodge',
-    duelRoundTitle: 'Round {round} · first to 5 wins',
-    duelForfeit: '🏳️ Forfeit',
-    duelHistoryLine: 'Round {round}: {m1} vs {m2} — {result}',
-    duelDraw: 'draw', duelYouWon: 'you won', duelOppWon: 'opponent won',
-    duelWinTitle: 'Victory!', duelLoseTitle: 'Defeat', duelTrophySuffix: 'trophies',
-    duelDeclinedMsg: 'The player declined the challenge.', duelCancelledMsg: 'Duel cancelled.',
     perClick: 'per tap', autoSuffix: 'auto', perSec: '/s',
     lvl: 'lvl', click: 'Click', auto: 'Auto',
     floor: 'Floor', top: 'Top of the tower'
@@ -1572,31 +1094,6 @@ const I18N = {
     'up-power-name': 'Сила клика', 'up-auto-name': 'Автоклик', 'music-title': '🎵 Плейлист',
     'shop-title': '🛒 Магазин', 'settings-title': '⚙️ Настройки', 'settings-lang-label': 'ЯЗЫК / LANGUAGE',
     'music-now-title-empty': 'Трек не выбран', 'ref-modal-ok': 'OK',
-    'referral-title': '👥 Реферальная система',
-    'referral-desc': 'За каждого друга, который присоединится по твоей ссылке и дойдёт до 3-го этажа → тебе +20💎, навсегда!',
-    duelSearchLine: '{name} ищет соперника на дуэль…',
-    duelInviteTitle: 'Вызвать на дуэль',
-    duelPickMove: 'Выбери ход, пока не закончилось время',
-    trophiesTitle: 'Трофеи дуэлей',
-    roadTitle: '🌌 Дорога славы',
-    roadSeason: 'Сезон {n} дуэлей',
-    roadClaim: 'Забрать',
-    duelChallengeTitle: 'Вызов на дуэль!',
-    duelChallengesRest: 'вызывает тебя на дуэль. Принимаешь?',
-    duelDecline: '❌ Отклонить',
-    duelAccept: '✅ Принять',
-    duelWaitingTitle: 'Ожидание ответа…',
-    duelWaitingPrefix: 'Ждём, пока',
-    duelWaitingSuffix: 'примет вызов.',
-    duelCancelInvite: '✕ Отменить вызов',
-    duelMoveMade: '⏳ Ход сделан. Ждём соперника…',
-    moveAttack: 'Атака', moveDefense: 'Защита', moveDodge: 'Уклонение',
-    duelRoundTitle: 'Раунд {round} · до 5 побед',
-    duelForfeit: '🏳️ Сдаться',
-    duelHistoryLine: 'Раунд {round}: {m1} против {m2} — {result}',
-    duelDraw: 'ничья', duelYouWon: 'твоя победа', duelOppWon: 'победа соперника',
-    duelWinTitle: 'Победа!', duelLoseTitle: 'Поражение', duelTrophySuffix: 'трофеев',
-    duelDeclinedMsg: 'Игрок отклонил вызов.', duelCancelledMsg: 'Дуэль отменена.',
     perClick: 'за клик', autoSuffix: 'авто', perSec: '/с', lvl: 'ур.', click: 'Клик', auto: 'Авто',
     floor: 'Этаж', top: 'Вершина башни'
   }
@@ -1808,56 +1305,6 @@ Object.assign(I18N.ru, { botTitle:'Подозрительная активнос
 Object.assign(I18N.uk, { onlineNow:'Зараз онлайн', loopOne:'Повтор треку', loopAll:'Далі по колу' });
 Object.assign(I18N.en, { onlineNow:'Online now', loopOne:'Repeat track', loopAll:'Play next, loop' });
 Object.assign(I18N.ru, { onlineNow:'Сейчас онлайн', loopOne:'Повтор трека', loopAll:'Дальше по кругу' });
-
-Object.assign(I18N.uk, {
-  lbRefresh:'Оновити', lbInvite:'Запросити друга', lbOnline:'Зараз онлайн',
-  lbEmpty:'Поки що тут порожньо.', lbPlayFirst:'Зіграй і стань першим у рейтингу!',
-  lbNotConnected:'Таблицю лідерів ще не підключено.', lbAnon:'Анонім', lbSettings:'Налаштування',
-  duelTrophies:'Твої трофеї:', duelRandom:'🎲 Випадкова дуель',
-  duelSearching:'⏳ Пошук суперника… (натисни, щоб скасувати)',
-  duelRulesTitle:'⚔️ Хто кого перехитрить',
-  duelRuleAttack:'🗡️ Атака ⟶ перемагає ⟶ 💨 Ухилення',
-  duelRuleDodge:'💨 Ухилення ⟶ перемагає ⟶ 🛡️ Захист',
-  duelRuleDefense:'🛡️ Захист ⟶ перемагає ⟶ 🗡️ Атаку',
-  duelRuleFoot:'Перший до 5 очок перемагає й забирає 70% трофеїв суперника.',
-  duelHint:'Можна також викликати конкретного гравця кнопкою ⚔ прямо у списку «🏆 Топ».',
-  duelQueueTitle:'⚔️ Випадкова дуель — зараз шукають суперника:',
-  duelQueueWait:'чекає суперника', duelQueueMe:'ти чекаєш…',
-  duelQueueNone:'', shopPaid:'⭐ Оплата пройшла!'
-});
-Object.assign(I18N.en, {
-  lbRefresh:'Refresh', lbInvite:'Invite a friend', lbOnline:'Online now',
-  lbEmpty:"It's empty here for now.", lbPlayFirst:'Play and become the first on the leaderboard!',
-  lbNotConnected:'The leaderboard is not connected yet.', lbAnon:'Anonymous', lbSettings:'Settings',
-  duelTrophies:'Your trophies:', duelRandom:'🎲 Random duel',
-  duelSearching:'⏳ Searching for an opponent… (tap to cancel)',
-  duelRulesTitle:'⚔️ Who can outsmart whom',
-  duelRuleAttack:'🗡️ Attack ⟶ beats ⟶ 💨 Dodge',
-  duelRuleDodge:'💨 Dodge ⟶ beats ⟶ 🛡️ Defense',
-  duelRuleDefense:'🛡️ Defense ⟶ beats ⟶ 🗡️ Attack',
-  duelRuleFoot:'First to 5 points wins and takes 70% of the opponent’s trophies.',
-  duelHint:'You can also challenge a specific player with the ⚔ button directly in the «🏆 Top» list.',
-  duelQueueTitle:'⚔️ Random duel — players currently looking for an opponent:',
-  duelQueueWait:'waiting for an opponent', duelQueueMe:'you are waiting…',
-  duelQueueNone:'', shopPaid:'⭐ Payment successful!'
-});
-Object.assign(I18N.ru, {
-  lbRefresh:'Обновить', lbInvite:'Пригласить друга', lbOnline:'Сейчас онлайн',
-  lbEmpty:'Пока здесь пусто.', lbPlayFirst:'Сыграй и стань первым в рейтинге!',
-  lbNotConnected:'Таблица лидеров ещё не подключена.', lbAnon:'Аноним', lbSettings:'Настройки',
-  duelTrophies:'Твои трофеи:', duelRandom:'🎲 Случайная дуэль',
-  duelSearching:'⏳ Поиск соперника… (нажми, чтобы отменить)',
-  duelRulesTitle:'⚔️ Кто кого перехитрит',
-  duelRuleAttack:'🗡️ Атака ⟶ побеждает ⟶ 💨 Уклонение',
-  duelRuleDodge:'💨 Уклонение ⟶ побеждает ⟶ 🛡️ Защиту',
-  duelRuleDefense:'🛡️ Защита ⟶ побеждает ⟶ 🗡️ Атаку',
-  duelRuleFoot:'Первый до 5 очков побеждает и забирает 70% трофеев соперника.',
-  duelHint:'Можно также вызвать конкретного игрока кнопкой ⚔ прямо в списке «🏆 Топ».',
-  duelQueueTitle:'⚔️ Случайная дуэль — сейчас ищут соперника:',
-  duelQueueWait:'ждёт соперника', duelQueueMe:'ты ждёшь…',
-  duelQueueNone:'', shopPaid:'⭐ Оплата прошла!'
-});
-
 Object.assign(I18N.uk, { resetTitle:'Прогрес скинуто', resetText:'Адміністрація обнулила твій ігровий прогрес. Якщо це помилка — напиши в підтримку.' });
 Object.assign(I18N.en, { resetTitle:'Progress reset', resetText:'The administration has reset your game progress. If this is a mistake, contact support.' });
 Object.assign(I18N.ru, { resetTitle:'Прогресс сброшен', resetText:'Администрация обнулила твой игровой прогресс. Если это ошибка — напиши в поддержку.' });
@@ -1878,8 +1325,10 @@ Object.assign(I18N.ru, {
 });
 
 I18N.uk['auth-btn'] = 'Відкрити в Telegram'; I18N.en['auth-btn'] = 'Open in Telegram'; I18N.ru['auth-btn'] = 'Открыть в Telegram';
-Object.assign(I18N.uk, { maintTitle: 'Технічна перерва', maintText: 'Зараз ми оновлюємо гру.<br>Вийди з гри та відпочинь пару хвилин ☕ Повертайся трохи пізніше — прогрес нікуди не подінеться.' });
-Object.assign(I18N.en, { maintTitle: 'Maintenance break', maintText: 'We\'re updating the game right now.<br>Leave the game and take a short break for a couple of minutes ☕ Come back a bit later — your progress is safe.' });
+Object.assign(I18N.uk, { maintTitle: 'Технічна перерва', maintText: 'Зараз ми оновлюємо гру.<br>Вийди з гри та відпочинь кілька хвилин — прогрес нікуди не подінеться, повертайся трохи пізніше.' });
+Object.assign(I18N.en, { maintTitle: 'Maintenance break', maintText: 'We\'re updating the game right now.<br>Please close the app and take a short break — your progress is safe, come back in a few minutes.' });
+Object.assign(I18N.uk, { updTitle: 'Доступне оновлення', updText: 'Ми щойно випустили нове оновлення гри!<br>Натисни кнопку нижче, щоб вийти та зайти знову і отримати нову версію.', updBtn: 'Оновити гру' });
+Object.assign(I18N.en, { updTitle: 'Update available', updText: 'We just released a new game update!<br>Tap the button below to restart the app and get the new version.', updBtn: 'Update game' });
 Object.assign(I18N.uk, { dailyTitle: 'Щоденна нагорода', dailyDay: 'День', dailyClaim: 'Забрати', dailyNext: 'Наступна нагорода — завтра', dailyDone: 'Усі 7 нагород отримано!' });
 Object.assign(I18N.en, { dailyTitle: 'Daily reward', dailyDay: 'Day', dailyClaim: 'Claim', dailyNext: 'Next reward — tomorrow', dailyDone: 'All 7 rewards claimed!' });
 Object.assign(I18N.ru, { dailyTitle: 'Ежедневная награда', dailyDay: 'День', dailyClaim: 'Забрать', dailyNext: 'Следующая награда — завтра', dailyDone: 'Все 7 наград получены!' });
@@ -1898,7 +1347,8 @@ Object.assign(I18N.ru, { csOdds: 'Шансы кейса и призов в ру�
 Object.assign(I18N.uk, { cvTitle: 'Обмін алмазів на зірки', cvNote: 'Курс: 1 💎 = 300 ★. Це невигідно — міняй лише за потреби.', dnHint: 'Гортай вниз — там ще набори' });
 Object.assign(I18N.en, { cvTitle: 'Diamonds → stars exchange', cvNote: 'Rate: 1 💎 = 300 ★. Not a great deal — exchange only if you need to.', dnHint: 'Scroll down — more packs below' });
 Object.assign(I18N.ru, { cvTitle: 'Обмен алмазов на звёзды', cvNote: 'Курс: 1 💎 = 300 ★. Невыгодно — меняй только при необходимости.', dnHint: 'Листай вниз — там ещё наборы' });
-Object.assign(I18N.ru, { maintTitle: 'Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Выйди из игры и отдохни пару минут ☕ Возвращайся чуть позже — прогресс никуда не денется.' });
+Object.assign(I18N.ru, { maintTitle: 'Техническая пауза', maintText: 'Сейчас мы обновляем игру.<br>Выйди из игры и отдохни пару минут — прогресс никуда не денется, возвращайся чуть позже.' });
+Object.assign(I18N.ru, { updTitle: 'Доступно обновление', updText: 'Мы только что выпустили новое обновление игры!<br>Нажми кнопку ниже, чтобы выйти и зайти снова и получить новую версию.', updBtn: 'Обновить игру' });
 let curLang = (() => {
   try {
     const saved = localStorage.getItem('lang');
@@ -1912,10 +1362,6 @@ let curLang = (() => {
   if (tgCode) { try { localStorage.setItem('lang', pick); } catch (e) {} }
   return pick;
 })();
-
-Object.assign(I18N.uk, { shopOneTime:'одноразова покупка', shopPayment:'Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.' });
-Object.assign(I18N.en, { shopOneTime:'one-time purchase', shopPayment:'Payment is made with official Telegram Stars. The reward is credited instantly to this account.' });
-Object.assign(I18N.ru, { shopOneTime:'разовая покупка', shopPayment:'Оплата — официальными Telegram Stars. Начисление происходит мгновенно на этот аккаунт.' });
 function t(key) { return (I18N[curLang] && I18N[curLang][key] !== undefined) ? I18N[curLang][key] : (I18N.uk[key] !== undefined ? I18N.uk[key] : key); }
 function applyStaticI18n() {
   document.documentElement.lang = curLang;
@@ -1937,7 +1383,6 @@ function applyStaticI18n() {
   $('sub-wpn')      && ($('sub-wpn').innerHTML = '<span class="subtab-ic">⚔</span>' + t('sub-wpn').replace('⚔',''));
   $('sub-arm')      && ($('sub-arm').innerHTML = '<span class="subtab-ic">🛡</span>' + t('sub-arm').replace('🛡',''));
   $('sub-skn')      && ($('sub-skn').innerHTML = '<span class="subtab-ic">🎭</span>' + t('sub-skn').replace('🎭',''));
-  $('sub-bnr')      && ($('sub-bnr').innerHTML = '<span class="subtab-ic">🎫</span>' + t('sub-bnr').replace('🎫',''));
   document.querySelectorAll('#up-power .up-name')[0] && (document.querySelectorAll('#up-power .up-name')[0].textContent = t('up-power-name'));
   document.querySelectorAll('#up-auto .up-name')[0]  && (document.querySelectorAll('#up-auto .up-name')[0].textContent = t('up-auto-name'));
   document.querySelectorAll('#music-modal .shop-title')[0] && (document.querySelectorAll('#music-modal .shop-title')[0].textContent = t('music-title'));
@@ -2017,7 +1462,7 @@ function showAuthBlock(text, title, opts) {
   document.title = shownTitle;
   const authTitleEl = document.querySelector('.auth-title');
   if (authTitleEl && title) authTitleEl.textContent = title;
-  if (window.AuraLoader) { window.AuraLoader.block({ title: shownTitle, text: text || t('auth-text'), btn: t('auth-btn'), icon: opts && opts.icon, hideBtn: !!(opts && opts.hideBtn) }); return; }
+  if (window.AuraLoader) { window.AuraLoader.block({ title: shownTitle, text: text || t('auth-text'), btn: (opts && opts.btn) || t('auth-btn'), icon: opts && opts.icon, hideBtn: !!(opts && opts.hideBtn) }); return; }
   if (blockEl) blockEl.classList.remove('off');
 }
 
@@ -2421,8 +1866,8 @@ const TIERS = [
   { at: 35000000000,  dMin: 800,  dMax: 1400 }
 ];
 /* Складність монстрів по поверхах (індекс = floorTier; останній — вершина вежі) */
-const TIER_HP  = [0, 60, 150, 350, 700, 1400, 2600, 5000, 9500, 18000];
-const TIER_DMG = [0, 2, 4, 7, 11, 17, 25, 36, 50, 70];
+const TIER_HP  = [0, 80, 250, 700, 1500, 3200, 6800, 14000, 28000, 55000];
+const TIER_DMG = [0, 3, 8, 16, 26, 42, 65, 95, 135, 190];
 
 /* --- Зброя: більший урон по монстрах, купується за зірки або діаманти --- */
 const WEAPONS = [
@@ -2615,73 +2060,6 @@ const SKINS = [
     fx:{ back:rzBack(-3, 9, 6, 21, '#f2f0fa', '#b8b4d4'),
          front:[...rzSkirt('#1a1424', '#0c0810', '#8a5cd0'), ...rzFly(2, 0, '#b878ff', '#f0d8ff')] } },
 ];
-
-/* ===== 🎫 Банери (кастомізація, видно в топі гравців) =====
-   rarity: 0 звичайний · 1 фіолетовий (епічний) · 2 червоний · 3 зірковий.
-   cost — ціна в 💎 у магазині; road:true — банер НЕ продається, лише нагорода
-   «Дороги слави» за трофеї (див. duelRoadReward). anim:true — переливається. */
-const BANNERS = [
-  { id:'bn_steel',   name:'Сталь',          rarity:0, cost:100,  anim:false },
-  { id:'bn_forest',  name:'Ліс',            rarity:0, cost:100,  anim:true },
-  { id:'bn_sand',    name:'Пустеля',        rarity:0, cost:100,  anim:true },
-  { id:'bn_aurora',  name:'Аврора',         rarity:1, cost:300,  anim:true },
-  { id:'bn_portal',  name:'Портал',         rarity:1, cost:300,  anim:true },
-  { id:'bn_nebula',  name:'Туманність',     rarity:1, cost:300,  anim:true },
-  { id:'bn_volcano', name:'Лава',           rarity:2, cost:700,  anim:true },
-  { id:'bn_dragon',  name:'Кров дракона',   rarity:2, cost:700,  anim:true },
-  { id:'bn_galaxy',  name:'Галактика',      rarity:3, cost:2500, anim:true },
-  { id:'bn_nova',    name:'Сонячний вибух', rarity:3, cost:2500, anim:true },
-  /* нагороди «Дороги слави» (не продаються) */
-  { id:'bn_road1200', name:'Претендент',    rarity:0, cost:0, anim:true, road:true },
-  { id:'bn_road5200', name:'Чемпіон арени', rarity:0, cost:0, anim:true, road:true },
-  { id:'bn_road10k',  name:'Легенда арени', rarity:2, cost:0, anim:true, road:true }
-];
-const BNR_RNAME = ['Звичайний','Епічний','Червоний','Зірковий'];
-function bannerStripHtml(id, extraCls) {
-  const b = BANNERS.find(x => x.id === id);
-  if (!b) return '';
-  return `<div class="bnr-strip r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-name">${uiText(b.name)}</span></div>`;
-}
-function renderBanners() {
-  panelBnr.innerHTML = BANNERS.map(b => {
-    const owned = state.banners.owned.includes(b.id);
-    const eq = state.banners.equipped === b.id;
-    const can = !owned && !b.road && state.diamonds >= b.cost;
-    let btn;
-    if (eq) btn = `<button class="wpn-btn owned" disabled>★ ${uiText('Одягнено')}</button>`;
-    else if (owned) btn = `<button class="wpn-btn" data-eq-bnr="${b.id}">${uiText('Одягнути')}</button>`;
-    else if (b.road) btn = `<button class="wpn-btn" disabled>${uiText('Дорога слави')}</button>`;
-    else btn = priceBtn('diamond', b.cost, can, 'data-buy-bnr', b.id);
-    return `<div class="bnr-card${eq ? ' eq' : ''}">${bannerStripHtml(b.id)}<div class="bnr-foot"><span class="bnr-rname bnr-r${b.rarity}-tx">${uiText(BNR_RNAME[b.rarity])}${b.road ? ' <span class="bnr-road-tag">🌌</span>' : ''}</span>${btn}</div></div>`;
-  }).join('');
-  if (!panelBnr.querySelector('.bnr-clear')) {
-    panelBnr.insertAdjacentHTML('afterbegin', `<button class="wpn-btn bnr-clear" data-eq-bnr="" style="align-self:flex-start">${uiText('Без банера')}</button>`);
-  }
-  panelBnr.querySelectorAll('[data-buy-bnr]').forEach(el => el.addEventListener('click', () => buyBanner(el.dataset.buyBnr)));
-  panelBnr.querySelectorAll('[data-eq-bnr]').forEach(el => el.addEventListener('click', () => equipBanner(el.dataset.eqBnr || null)));
-}
-function buyBanner(id) {
-  const b = BANNERS.find(x => x.id === id);
-  if (!b || b.road || state.banners.owned.includes(id) || state.diamonds < b.cost) { hapticNote('error'); return; }
-  state.diamonds -= b.cost;
-  state.banners.owned.push(id);
-  state.banners.equipped = id;
-  dirty = true; uiDirty = true; shopSig = '';
-  hapticNote('success'); save();
-  burst(cx, cy - 10, 20, 80, SPARK);
-}
-function equipBanner(id) {
-  if (id && !state.banners.owned.includes(id)) return;
-  state.banners.equipped = id || null;
-  dirty = true; uiDirty = true; shopSig = '';
-  haptic('light'); save();
-}
-function grantBanner(id) {   // видає банер (кейс/дорога слави); повертає true якщо новий, false якщо вже був (компенсація)
-  if (state.banners.owned.includes(id)) return false;
-  state.banners.owned.push(id);
-  if (!state.banners.equipped) state.banners.equipped = id;
-  return true;
-}
 /* ===== Баланс скінів: бонус залежить від ЦІНИ =====
    Цінність скіна V у ★: зірки — як є, діаманти — за курсом обмінника (1 💎 = 300 ★).
    Загальний бюджет бонусів росте з V, а скіни за 💎 сильніші за скіни за ★ тієї ж цінності
@@ -2773,7 +2151,7 @@ const UPGRADES = [
   { id:'regen',   name:'Регенерація',        ic:'💚', cur:'star', base:3500,  g:1.30, max:40, show:l => `ХП +${(l * 0.5).toFixed(1)}/с` },
   { id:'tough',   name:'Стійкість',          ic:'🧱', cur:'star', base:10000, g:1.50, max:15, show:l => `−${l} урону` },
   { id:'hunter',  name:'Мисливець',          ic:'🏹', cur:'star', base:5000,  g:1.30, max:30, show:l => `Монстр кожні ${Math.max(30, 120 - l * 2)}с` },
-  { id:'diaLuck', name:'Нюх на діаманти',    ic:'🔍', cur:'star', base:20000, g:1.30, max:40, show:l => `Шанс 💎: ${10 + l}%` },
+  { id:'diaLuck', name:'Нюх на діаманти',    ic:'🔍', cur:'star', base:20000, g:1.30, max:40, show:l => `Шанс 💎: ${18 + l}%` },
   { id:'goldrush',name:'Золота лихоманка',   ic:'🪙', cur:'star', base:8000,  g:1.30, max:30, show:l => `Здобич з монстрів +${l * 3}%` },
   { id:'ironwill',name:'Залізна воля',       ic:'🦾', cur:'star', base:6500,  g:1.35, max:25, show:l => `Макс. ХП +${l * 10} (плоско)` },
   { id:'swift',   name:'Прудкість',          ic:'🌀', cur:'star', base:9000,  g:1.30, max:20, show:l => `Швидкість автокліку +${l * 2}%` },
@@ -2800,7 +2178,7 @@ const luckChance  = () => upLvl('lucky') * 0.01;
 const regenPerSec = () => upLvl('regen') * 0.5 + upLvl('dregen') * 0.3;
 const encTime     = () => Math.max(30, CFG.ENC_TIME_SEC - upLvl('hunter') * 2);
 const diaMul      = () => 1 + upLvl('dmagnet') * 0.08 + skinBuff('dia');
-const diaChance   = () => 0.10 + upLvl('diaLuck') * 0.01;
+const diaChance   = () => 0.18 + upLvl('diaLuck') * 0.01;
 
 /* --- Максимум ХП з урахуванням прокачки здоров'я --- */
 function hpMax() { return Math.round((CFG.HP_MAX + state.hpLvl * CFG.HP_PER_LEVEL) * (1 + hpBonus()) + upLvl('ironwill') * 10); }
@@ -2904,14 +2282,14 @@ const MONSTER_SPRITES = {
 
 const MONSTER_META = {
   slime:    { label:'Слизень',    hpMul:1.0,  dmgMul:1.0,  scoreMul:1.0  },
-  goblin:   { label:'Гоблін',     hpMul:1.35, dmgMul:1.12, scoreMul:1.4  },
-  skeleton: { label:'Скелет',     hpMul:1.8,  dmgMul:1.32, scoreMul:2.0  },
-  bat:      { label:'Кажан',      hpMul:2.25, dmgMul:1.55, scoreMul:2.6  },
-  spider:   { label:'Павук',      hpMul:2.9,  dmgMul:1.8,  scoreMul:3.4  },
-  lava:     { label:'Лава-воїн',  hpMul:3.8,  dmgMul:2.1,  scoreMul:4.4  },
-  ghost:    { label:'Привид',     hpMul:5.0,  dmgMul:2.45, scoreMul:5.8  },
-  demon:    { label:'Демон',      hpMul:6.8,  dmgMul:2.8,  scoreMul:7.6  },
-  boss:     { label:'Бос',        hpMul:11,   dmgMul:3.6,  scoreMul:14   }
+  goblin:   { label:'Гоблін',     hpMul:1.6,  dmgMul:1.3,  scoreMul:1.4  },
+  skeleton: { label:'Скелет',     hpMul:2.4,  dmgMul:1.7,  scoreMul:2.0  },
+  bat:      { label:'Кажан',      hpMul:3.2,  dmgMul:2.2,  scoreMul:2.6  },
+  spider:   { label:'Павук',      hpMul:4.4,  dmgMul:2.9,  scoreMul:3.4  },
+  lava:     { label:'Лава-воїн',  hpMul:6.0,  dmgMul:3.8,  scoreMul:4.4  },
+  ghost:    { label:'Привид',     hpMul:8.2,  dmgMul:4.9,  scoreMul:5.8  },
+  demon:    { label:'Демон',      hpMul:11.5, dmgMul:6.4,  scoreMul:7.6  },
+  boss:     { label:'Бос',        hpMul:22,   dmgMul:9.5,  scoreMul:14   }
 };
 /* Пул можливих монстрів для кожного з 9 поверхів (випадково один з 2-3) */
 const FLOOR_MONSTERS = [
@@ -3265,9 +2643,7 @@ function defaultState() {
     monstersKilled: 0, questsClaimed: [], kills: { slime: 0, goblin: 0, skeleton: 0, bat: 0, spider: 0, lava: 0, ghost: 0, demon: 0, boss: 0 },
     referredBy: null, refRewardGiven: false, invitesCount: 0, botWarns: 0,   // реферальна система
     cases: 0,   // невідкриті кейси (куплені за Telegram Stars або 💎)
-    daily: { n: 0, day: '' },   // щоденні нагороди: n — скільки з 7 забрано, day — дата останнього забирання
-    duelRoad: { claimed: [] },   // дорога слави дуелей: пороги трофеїв, за які вже забрано нагороду
-    banners: { owned: [], equipped: null }   // банери: колекція + який зараз одягнено (видно в топі)
+    daily: { n: 0, day: '' }   // щоденні нагороди: n — скільки з 7 забрано, day — дата останнього забирання
   };
 }
 /* Перетворює довільний "сирий" об'єкт збереження (з localStorage або з хмари)
@@ -3288,9 +2664,6 @@ function sanitizeState(s) {
     const n = Math.floor(Number(s.daily.n));
     if (Number.isFinite(n)) d.daily.n = Math.max(0, Math.min(7, n));
     if (typeof s.daily.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s.daily.day)) d.daily.day = s.daily.day;
-  }
-  if (s.duelRoad && typeof s.duelRoad === 'object' && Array.isArray(s.duelRoad.claimed)) {
-    d.duelRoad.claimed = [...new Set(s.duelRoad.claimed.map(Number).filter(x => Number.isFinite(x) && x > 0))];
   }
   if (Array.isArray(s.questsClaimed)) d.questsClaimed = s.questsClaimed.filter(id => typeof id === 'string');
   if (s.kills && typeof s.kills === 'object') {
@@ -3321,12 +2694,6 @@ function sanitizeState(s) {
     }
   }
   if (typeof s.skin === 'string' && d.skins.includes(s.skin)) d.skin = s.skin;
-  if (s.banners && typeof s.banners === 'object') {
-    const bids = new Set(BANNERS.map(b => b.id));
-    if (Array.isArray(s.banners.owned)) d.banners.owned = [...new Set(s.banners.owned.filter(id => bids.has(id)))];
-    if (typeof s.banners.equipped === 'string' && (s.banners.equipped === null || d.banners.owned.includes(s.banners.equipped))) d.banners.equipped = s.banners.equipped;
-    else if (s.banners.equipped && d.banners.owned.includes(s.banners.equipped)) d.banners.equipped = s.banners.equipped;
-  }
   if (s.viewMode === 'walls' || s.viewMode === 'sky') d.viewMode = s.viewMode;
   if (d.powerLvl < 1) d.powerLvl = 1;
   d.floorTier = TIERS.filter(x => d.totalStars > x.at).length;   // поверх рахується від загальної кількості зірок
@@ -3518,14 +2885,26 @@ setTimeout(() => { resetReady = true; }, 8000);                      // якщо
 setInterval(checkReset, 15000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) checkReset(); });
 
-/* ===== Технічна перерва (режим обслуговування) =====
-   Один рядок у таблиці public.app_settings (key='maintenance', value=true/false).
-   Адмін (@Sergixlol) вмикає/вимикає цей булевий прапорець прямо в Supabase
-   Table Editor — двома кліками, без деплою й без коду. Всі гравці, КРІМ
-   акаунтів зі списку ADMIN_USERNAMES, при value=true бачать екран технічної
-   перерви (той самий стиль, що й блокування/бан) із кнопками на канал,
-   підтримку і TikTok. Сам адмін продовжує грати й тестити як звично —
-   перевірка обходить його за Telegram-юзернеймом. */
+/* ===== Технічна перерва + перевірка версії гри =====
+   Технічна перерва: один рядок у public.app_settings (key='maintenance',
+   value=true/false). Адмін (@Sergixlol) вмикає/вимикає прапорець прямо в
+   Supabase Table Editor — без деплою й без коду. Всі гравці, КРІМ акаунтів
+   зі списку ADMIN_USERNAMES, при value=true бачать екран технічної перерви
+   (той самий стиль, що й блокування/бан), навіть якщо вони саме грають —
+   перевірка йде раз на 15 сек і одразу перекриває гру повідомленням та
+   пропозицією вийти і відпочити кілька хвилин.
+
+   Версія гри: один рядок у public.app_version (id=1, version='1.2.3').
+   Після кожного деплою нового коду (і піднятого NEWS[0].ver у розділі
+   "НОВИНИ / ВЕРСІЯ" вище) онови це значення в Supabase, щоб воно
+   ЗБІГАЛОСЯ з NEWS[0].ver:
+     update public.app_version set version = 'X.Y.Z', updated_at = now() where id = 1;
+   Усі гравці, які вже завантажили СТАРУ версію коду (навіть якщо просто
+   продовжують грати), протягом ~15 сек побачать повідомлення про
+   оновлення з кнопкою — натискання виводить із гри і заново відкриває
+   бота, після чого підвантажується вже новий код.
+   Нові гравці, що заходять уже ПІСЛЯ деплою, одразу отримують новий код
+   з правильною версією і жодного повідомлення не бачать. */
 const ADMIN_USERNAMES = ['sergixlol']; // без «@», малими літерами
 function isAdmin() {
   try {
@@ -3544,22 +2923,33 @@ function maintenanceLinksHtml() {
     `<button type="button" class="mb" data-link="${escapeHtml(url)}"><span class="mb-ic">${ic}</span><span class="mb-tx"><b>${escapeHtml(label)}</b><i>${escapeHtml(sub)}</i></span></button>`
   ).join('') + '</div>';
 }
-let inMaintenance = false;
-async function checkMaintenance() {
+let appBlockState = null; // null | 'maint' | 'update'
+async function checkAppStatus() {
   if (isAdmin() || !keyReady()) return;
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/app_settings?key=eq.maintenance&select=value`, {
-      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
-    });
-    if (!r.ok) return;
-    const rows = await r.json();
-    const on = !!(rows && rows[0] && rows[0].value);
-    if (on) {
-      if (!inMaintenance) { try { save(); syncProgressToCloud(true); } catch (e) {} }   // гравець онлайн — зберігаємо прогрес перед екраном перерви
-      inMaintenance = true;
-      showAuthBlock(t('maintText') + maintenanceLinksHtml(), t('maintTitle'), { icon: '🛠', hideBtn: true });
-    } else if (inMaintenance) {
-      inMaintenance = false;
+    const H = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
+    const [mRes, vRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/app_settings?key=eq.maintenance&select=value`, { headers: H }),
+      fetch(`${SUPABASE_URL}/rest/v1/app_version?id=eq.1&select=version`, { headers: H })
+    ]);
+    const mRows = mRes.ok ? await mRes.json() : [];
+    const vRows = vRes.ok ? await vRes.json() : [];
+    const maintOn = !!(mRows && mRows[0] && mRows[0].value);
+    const serverVer = (vRows && vRows[0] && vRows[0].version) || '';
+    const versionMismatch = !!serverVer && serverVer !== NEWS[0].ver;
+
+    if (maintOn) {
+      if (appBlockState !== 'maint') {
+        appBlockState = 'maint';
+        showAuthBlock(t('maintText') + maintenanceLinksHtml(), t('maintTitle'), { icon: '🛠', hideBtn: true });
+      }
+    } else if (versionMismatch) {
+      if (appBlockState !== 'update') {
+        appBlockState = 'update';
+        showAuthBlock(t('updText'), t('updTitle'), { icon: '🚀', hideBtn: false, btn: t('updBtn') });
+      }
+    } else if (appBlockState) {
+      appBlockState = null;
       if (window.AuraLoader && window.AuraLoader.unblock) window.AuraLoader.unblock();
       try { applyStaticI18n(); } catch (e) {}
       const blockEl = $('auth-block');
@@ -3567,8 +2957,8 @@ async function checkMaintenance() {
     }
   } catch (e) {}
 }
-checkMaintenance();
-setInterval(checkMaintenance, 10000);
+setTimeout(checkAppStatus, 0); // відкладено, бо NEWS оголошується нижче по коду
+setInterval(checkAppStatus, 15000);
 
 async function fetchLeaderboard(limit) {
   if (!keyReady()) return null; // ключ ще не вставлено
@@ -3578,7 +2968,7 @@ async function fetchLeaderboard(limit) {
       const rp = await fetch(`${SUPABASE_URL}/rest/v1/rpc/leaderboard_top`, { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: JSON.stringify({ lim: limit }) });
       if (rp.ok) return await rp.json();
     } catch (e) {}
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score,photo_url,equipped_banner&order=score.desc&limit=${limit}`, { headers: H });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score,photo_url&order=score.desc&limit=${limit}`, { headers: H });
     if (!r.ok) return [];
     return await r.json();
   } catch (e) { return []; }
@@ -3587,42 +2977,15 @@ async function fetchLeaderboard(limit) {
 /* Раз на 5 секунд (і при виході з гри) відправляємо свій рахунок і
    прогрес у Supabase — upsert по telegram_id: якщо рядка гравця ще нема,
    Supabase створить новий, якщо є — оновить score і progress. */
-function adminVersionOf(progress) {
-  const v = Number(progress && progress.__adminVersion);
-  return Number.isFinite(v) ? v : 0;
-}
-
 async function syncProgressToCloud(force) {
   if (!keyReady() || !telegramId) return;
-  if (!resetReady && !force) return;
+  if (!resetReady && !force) return;            // поки не перевірили прапорець скидання — старий локальний прогрес у хмару не шлемо
   if (cloudSaving) {
     if (!force) return;
     for (let i = 0; i < 30 && cloudSaving; i++) await new Promise(r => setTimeout(r, 100));
   }
   cloudSaving = true;
   try {
-    // Якщо адмін уже змінив акаунт, спочатку приймаємо адмінську версію.
-    try {
-      const check = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?telegram_id=eq.${telegramId}&select=progress,reset_progress&limit=1`, {
-        headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
-      });
-      if (check.ok) {
-        const rows = await check.json();
-        const remote = rows && rows[0];
-        const remoteVersion = adminVersionOf(remote && remote.progress);
-        const localVersion = adminVersionOf(state);
-        if (remoteVersion > localVersion && remote && remote.progress) {
-          const cloud = sanitizeState(remote.progress);
-          Object.assign(state, cloud);
-          state.__adminVersion = remoteVersion;
-          dirty = false; uiDirty = true;
-          try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(state)); } catch (e) {}
-          renderUI();
-          return;
-        }
-      }
-    } catch (e) {}
-
     await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?on_conflict=telegram_id`, {
       method: 'POST',
       headers: {
@@ -3664,8 +3027,7 @@ async function loadProgressFromCloud() {
   const row = await fetchCloudProgress();
   if (!row || !row.progress || row.reset_progress === true) return;   // reset_progress = true → старий прогрес з хмари не відновлюємо
   const cloud = sanitizeState(row.progress);
-  // Адмінська версія має пріоритет навіть якщо totalStars стало менше.
-  if (adminVersionOf(cloud) > adminVersionOf(state) || cloud.totalStars > state.totalStars) {
+  if (cloud.totalStars > state.totalStars) {
     const keepDaily = (cloud.daily.n > state.daily.n || (cloud.daily.n === state.daily.n && cloud.daily.day > state.daily.day)) ? cloud.daily : state.daily;
     Object.assign(state, cloud);
     state.daily = { n: keepDaily.n, day: keepDaily.day };
@@ -3823,10 +3185,10 @@ let dnSeen = false;   // підказка «гортай вниз» показу
 function renderDonate() {
   const card = t => `<div class="don-card"><div class="don-ic">${t.ic}</div>
     <div class="don-mid"><div class="don-name">${fmt(t.diamonds)}💎 + ${fmt(t.game)}★</div>
-    <div class="don-get">${t('shopOneTime')}</div></div>
+    <div class="don-get">${uiText('одноразова покупка')}</div></div>
     <button class="don-buy" type="button" data-tier="${t.id}">⭐ ${fmt(t.stars)}</button></div>`;
   const keepTop = panelDon.scrollTop;   // перемальовування не має скидати прокрутку
-  panelDon.innerHTML = caseCardHtml() + `<div class="don-note">${t('shopPayment')}</div>`
+  panelDon.innerHTML = caseCardHtml() + `<div class="don-note">${uiText('Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.')}</div>`
     + DONATE_TIERS.map(card).join('') + converterHtml() + (dnSeen ? '' : `<div class="dn-hint" id="dn-hint"><b>▼</b>${t('dnHint')}</div>`);
   panelDon.scrollTop = keepTop;
   panelDon.querySelectorAll('[data-conv]').forEach(b => b.addEventListener('click', () => convertDiamonds(Number(b.dataset.conv))));
@@ -3852,7 +3214,7 @@ async function buyTier(tierId, btn) {
       if (btn) btn.disabled = false;
       if (status === 'paid') {
         hapticNote('success');
-        floater(t('shopPaid'), cx * S, (cy - 70) * S);
+        floater('⭐ Оплата пройшла!', cx * S, (cy - 70) * S);
         setTimeout(claimReferralBonus, 1500);
         setTimeout(claimReferralBonus, 5000);
         setTimeout(claimCases, 1500); setTimeout(claimCases, 5000);
@@ -3890,10 +3252,9 @@ function awardFor(rank) {
   return '';
 }
 
-const referralInfoHtml = () => '<div class="referral-info"><div class="referral-info-title">' + uiText('referral-title') + '</div><div class="referral-info-desc">' + uiText('referral-desc') + '</div></div>';
-const inviteBtnHtml = () => referralInfoHtml() + '<button class="lb-refresh" id="lb-invite-btn" type="button">👥 ' + t('lbInvite') + ' (' + fmt(state.invitesCount || 0) + ')</button>';
+const inviteBtnHtml = () => '<button class="lb-refresh" id="lb-invite-btn" type="button">👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')</button>';
 function bindInviteBtn() { const b = $('lb-invite-btn'); if (b) b.addEventListener('click', shareReferralLink); }
-function refreshInviteBtn() { const b = $('lb-invite-btn'); if (b) b.textContent = '👥 ' + t('lbInvite') + ' (' + fmt(state.invitesCount || 0) + ')'; }
+function refreshInviteBtn() { const b = $('lb-invite-btn'); if (b) b.textContent = '👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')'; }
 
 async function fetchOnlineCount() {
   if (!keyReady()) return null;
@@ -3920,81 +3281,31 @@ setInterval(sendPresence, 30000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) sendPresence(); });
 
 async function renderLeaderboard() {
-  if (!keyReady()) {
-    panelLb.innerHTML = inviteBtnHtml() + '<div class="lb-empty">' + t('lbNotConnected') + '<br>' + t('lbNotConnected') + ' ' + (curLang === 'en' ? 'Insert your Supabase ANON_KEY in the game code.' : curLang === 'ru' ? 'Вставь свой Supabase ANON_KEY в код игры.' : 'Встав свій Supabase ANON_KEY у коді гри.') + '</div>';
-    bindInviteBtn();
-    return;
-  }
-
-  const keepScroll = panelLb.scrollTop;
-  panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + t('lbRefresh') + '</button><div class="lb-empty">' + uiText('Завантаження…') + '</div>';
-  bindInviteBtn();
-
-  const [top, onlineN] = await Promise.all([fetchLeaderboard(100), fetchOnlineCount()]);
-  const onlineHtml = onlineN === null ? '' : `<div class="lb-online"><i class="lb-dot on"></i><span>${t('onlineNow')}: <b>${onlineN}</b></span></div>`;
-
-  if (!top || !top.length) {
-    panelLb.querySelector('.lb-empty').innerHTML = t('lbEmpty') + '<br>' + t('lbPlayFirst');
-    $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
-    return;
-  }
-
-  const rowsHtml = top.map((p, i) => {
-    const rank = i + 1;
-    const rawName = String(p.username || t('lbAnon'));
-    const cleanName = rawName.replace(/^@/, '').toLowerCase();
-    const isMe = !!(telegramId && p.telegram_id && Number(p.telegram_id) === Number(telegramId));
-    const isCreator = cleanName === 'sergixlol';
-
-    const cls = ['lb-row'];
-    if (rank <= 3) cls.push('top' + rank);
-    if (isMe) cls.push('me');
-    if (isCreator) cls.push('creator');
-
-    const displayName = escapeHtml(rawName).slice(0, 32);
-    const nameHtml = isCreator
-      ? `<span class="lb-name creator-name"><span class="lb-crown">👑</span>${displayName}</span>`
-      : `<span class="lb-name">${displayName}</span>`;
-
-    const tid = p.telegram_id;
-    const duelBtn = (telegramId && tid && !isMe)
-      ? `<button class="lb-action-btn duel" type="button" data-duel-invite="${escapeHtml(String(tid))}" title="${t('duelInviteTitle')}">⚔</button>`
-      : '';
-    const adminBtn = isCreator && adminAllowedClient()
-      ? `<button class="lb-action-btn admin" type="button" data-admin-player="${escapeHtml(cleanName)}" title="${t('lbSettings')}">⚙</button>`
-      : '';
-
-    const eqBnrId = p.equipped_banner || (p.progress && p.progress.banners && p.progress.banners.equipped) || null;
-    const bnrBg = eqBnrId && BANNERS.find(x => x.id === eqBnrId)
-      ? `<div class="lb-bnr-bg">${bannerStripHtml(eqBnrId)}</div>` : '';
-
-    return `<div class="${cls.join(' ')}">
-      ${bnrBg}
-      <span class="lb-rank">${rank}</span>
-      ${nameHtml}
-      <div class="lb-stats">
-        <span class="lb-stat-stars">★ ${fmt(p.score || 0)}</span>
-        <span class="lb-stat-trophy">🏆 ${fmt(p.trophies || 0)}</span>
-      </div>
-      <div class="lb-actions">${duelBtn}${adminBtn}</div>
-    </div>`;
-  }).join('');
-
-  panelLb.innerHTML = inviteBtnHtml() + onlineHtml +
-    '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + t('lbRefresh') + '</button>' + rowsHtml;
-
+  panelLb.innerHTML = inviteBtnHtml() + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button><div class="lb-empty">' + uiText('Завантаження…') + '</div>';
   bindInviteBtn();
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
-  bindAdminLeaderboardButtons();
 
-  panelLb.querySelectorAll('[data-duel-invite]').forEach(b => {
-    b.addEventListener('click', e => {
-      e.stopPropagation();
-      inviteDuelPlayer(b.dataset.duelInvite);
-    });
-  });
-
-  requestAnimationFrame(() => { panelLb.scrollTop = keepScroll; });
+  if (!keyReady()) {
+    panelLb.querySelector('.lb-empty').innerHTML = uiText('Таблицю лідерів ще не підключено.') + '<br>' + uiText('Встав свій Supabase ANON_KEY у коді гри.');
+    return;
+  }
+  const [top, onlineN] = await Promise.all([fetchLeaderboard(100), fetchOnlineCount()]);
+  const onlineHtml = onlineN === null ? '' : `<div class="lb-online"><i class="lb-dot on"></i><span>${t('onlineNow')}: <b>${onlineN}</b></span></div>`;
+  if (!top || !top.length) {
+    panelLb.querySelector('.lb-empty').innerHTML = uiText('Поки що тут порожньо.') + '<br>' + uiText('Зіграй і стань першим у рейтингу!');
+    return;
+  }
+  const rowsHtml = top.map((p, i) => {
+    const rank = i + 1;
+    const award = awardFor(rank);
+    const isMe = (p.username || '') === playerName;
+    const cls = ['lb-row']; if (rank <= 3) cls.push('top' + rank); if (isMe) cls.push('me');
+    const name = escapeHtml(String(p.username || uiText('Анонім'))).slice(0, 20);
+    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span><span class="lb-name">${name}</span><span class="lb-score">${fmt(p.score || 0)}</span></div>`;
+  }).join('');
+  panelLb.innerHTML = inviteBtnHtml() + onlineHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
+  bindInviteBtn();
+  $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
 }
 
 const costPower = () => Math.ceil(CFG.POWER_BASE_COST * Math.pow(CFG.POWER_GROWTH, state.powerLvl - 1));
@@ -4558,8 +3869,8 @@ function startEncounter() {
   const kind = monsterKindForTier(lvl);
   const meta = MONSTER_META[kind];
   const ti = Math.min(lvl, TIER_HP.length - 1);
-  const baseHp = Math.round(18 + state.steps * 0.10 + TIER_HP[ti] + state.totalStars * 0.00012 + Math.random() * 12);
-  const baseDmg = Math.round(2 + TIER_DMG[ti] + Math.floor(Math.sqrt(state.totalStars / 50000)) + Math.random() * 2);
+  const baseHp = Math.round(25 + state.steps * 0.25 + TIER_HP[ti] + state.totalStars * 0.0003 + Math.random() * 20);
+  const baseDmg = Math.round(4 + TIER_DMG[ti] + Math.floor(Math.sqrt(state.totalStars / 20000)) + Math.random() * 3);
   const baseHpMax = Math.round(baseHp * meta.hpMul);
   /* HP не може бути меншим за N ударів гравця — інакше сильна зброя вбиває монстрів з 1 удару */
   const avgHit = weaponDmg() * dmgMul() * (1 + critChance() * (critMul() - 1));
@@ -4591,11 +3902,12 @@ function hitMonster() {
   uiDirty = true;
   if (combat.hp <= 0) onMonsterDefeated();
 }
-const MONSTER_DIA_MIN = 1, MONSTER_DIA_MAX = 2; // завжди 1-2 алмази, незалежно від поверху — алмази тепер цінні
+const MONSTER_DIA_RANGE = [[0,1],[2,3],[5,10],[10,20],[18,32],[30,55],[50,90],[85,150],[150,260]];
 function monsterDiaReward(tier) {
-  if (Math.random() >= diaChance()) return 0;   // базово 10%, +1% за рівень «Нюх на діаманти»
-  const base = MONSTER_DIA_MIN + Math.floor(Math.random() * (MONSTER_DIA_MAX - MONSTER_DIA_MIN + 1));
-  return Math.max(1, Math.round(base * diaMul()));
+  const r = MONSTER_DIA_RANGE[Math.min(tier, MONSTER_DIA_RANGE.length - 1)];
+  const base = r[0] + Math.floor(Math.random() * (r[1] - r[0] + 1));
+  const bonus = Math.floor(upLvl('diaLuck') * 0.1);
+  return Math.max(0, Math.round((base + bonus) * diaMul()));
 }
 function onMonsterDefeated() {
   const reward = Math.round(combat.reward * rewardMul());
@@ -4617,34 +3929,13 @@ function onMonsterDefeated() {
   hapticNote('success');
 }
 function onPlayerDeath() {
-  /* Поразка стає трохи відчутнішою на високих поверхах, але без жорсткого вайпу.
-     Втрачаються: частина поточних зірок, трохи загального прогресу та сходинок. */
-  const deathFloor = Math.max(0, Math.min(state.floorTier, TIERS.length - 1));
-  const skinProtection = (1 - Math.min(0.9, skinBuff('death')));
-  const scoreRate = Math.min(0.22, 0.08 + deathFloor * 0.015);
-  const progressRate = Math.min(0.09, 0.025 + deathFloor * 0.006);
-  const stepRate = Math.min(0.10, 0.025 + deathFloor * 0.006);
-  const loss = Math.round(state.score * scoreRate * skinProtection);
-  const progressLoss = Math.round(state.totalStars * progressRate * skinProtection);
-  const stepLoss = Math.max(deathFloor > 0 ? 1 : 0, Math.round(state.steps * stepRate * skinProtection));
-
+  const loss = Math.round(state.score * CFG.DEATH_LOSS * (1 - Math.min(0.9, skinBuff('death'))));
   state.score = Math.max(0, state.score - loss);
-  state.totalStars = Math.max(0, state.totalStars - progressLoss);
-  state.steps = Math.max(0, state.steps - stepLoss);
-  state.floorTier = TIERS.filter(x => state.totalStars > x.at).length;
-
-  /* Герой візуально падає вниз на втрачені сходинки. */
-  visTarget = Math.max(0, state.steps);
-  if (pos > visTarget + MAX_JUMP_LEAD) pos = visTarget + MAX_JUMP_LEAD;
-  bgPos = Math.min(bgPos, Math.max(0, state.steps));
-
   state.hp = hpMax();
   combat = null;
   spawnAcc = 0;
   $('combat-hud').classList.add('off');
-  if (loss > 0) floater('−' + fmt(loss) + ' ★', cx * S, (cy - 26) * S);
-  if (progressLoss > 0) floater('−' + fmt(progressLoss) + ' прогрес', cx * S, (cy - 44) * S);
-  if (stepLoss > 0) floater('↘ −' + fmt(stepLoss) + ' сход.', cx * S, (cy - 62) * S);
+  floater('−' + fmt(loss), cx * S, (cy - 26) * S);
   dirty = true; uiDirty = true;
   hapticNote('error');
 }
@@ -4714,12 +4005,12 @@ btnAuto.addEventListener('click', () => {
    а всередині "Прокачки" — свої підвкладки: основне / зброя / броня / образи */
 const tabsBar = $('tabs');
 const tabUpg = $('tab-upg'), tabQst = $('tab-qst'), tabLb = $('tab-lb');
-const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelBnr = $('panel-bnr'), panelQst = $('panel-qst'), panelLb = $('panel-lb'), panelDon = $('panel-don');
+const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelQst = $('panel-qst'), panelLb = $('panel-lb'), panelDon = $('panel-don');
 const subtabsBar = $('subtabs');
-const subUps = $('sub-ups'), subWpn = $('sub-wpn'), subArm = $('sub-arm'), subSkn = $('sub-skn'), subBnr = $('sub-bnr');
+const subUps = $('sub-ups'), subWpn = $('sub-wpn'), subArm = $('sub-arm'), subSkn = $('sub-skn');
 
 const mainTabs = [['upg', tabUpg], ['qst', tabQst], ['lb', tabLb]];
-const subTabs  = [['ups', subUps, panelUpg], ['wpn', subWpn, panelWpn], ['arm', subArm, panelArm], ['skn', subSkn, panelSkn], ['bnr', subBnr, panelBnr]];
+const subTabs  = [['ups', subUps, panelUpg], ['wpn', subWpn, panelWpn], ['arm', subArm, panelArm], ['skn', subSkn, panelSkn]];
 let curSub = 'ups';
 let tabsCollapsed = false;   // сховані всі панелі — лишаються тільки 3 кнопки внизу
 
@@ -4782,27 +4073,6 @@ document.querySelectorAll('#settings-modal [data-link]').forEach(b => b.addEvent
 /* ================= НОВИНИ / ВЕРСІЯ ================= */
 /* Щоб показати нову новину всім: додай новий обʼєкт ПЕРШИМ у масив NEWS (з новою ver/date/time) — вікно зʼявиться знову при запуску. */
 const NEWS = [
-  { ver: '1.4.0', date: '25.09.2026', time: '10:28',
-    title: { uk: 'Дуелі, Дорога слави та банери', en: 'Duels, Road of Glory & banners', ru: 'Дуэли, Дорога славы и баннеры' },
-    items: {
-      uk: ['⚔️ Додали дуелі 1 на 1: викликай гравця з топу або шукай випадкового суперника', '🏟 Нова арена дуелей: окрема сцена-підземелля, однаковий розмір персонажів у обох бійців і таймер на вибір ходу', '🌌 Додали «Дорогу слави» — сезонні нагороди за трофеї дуелей', '💎 Алмази тепер цінуються значно більше — з монстрів вони випадають набагато рідше', '🎫 Додали банери (вкладка «Кастомізація»): 4 рідкості, показуються в топі гравців, можна отримати з кейса, у магазині або на «Дорозі слави»'],
-      en: ['⚔️ Added 1v1 duels: challenge a player from the leaderboard or search for a random opponent', '🏟 New duel arena: a separate dungeon scene, both fighters now the same size, plus a move-choice timer', '🌌 Added the "Road of Glory" — seasonal rewards for duel trophies', '💎 Diamonds are now worth a lot more — they drop from monsters much more rarely', '🎫 Added banners (Customization tab): 4 rarities, shown on the leaderboard, obtainable from the case, the shop, or the Road of Glory'],
-      ru: ['⚔️ Добавили дуэли 1 на 1: вызови игрока из топа или найди случайного соперника', '🏟 Новая арена дуэлей: отдельная сцена-подземелье, одинаковый размер персонажей у обоих бойцов и таймер на выбор хода', '🌌 Добавили «Дорогу славы» — сезонные награды за трофеи дуэлей', '💎 Алмазы теперь ценятся намного больше — с монстров они выпадают куда реже', '🎫 Добавили баннеры (вкладка «Кастомизация»): 4 редкости, отображаются в топе игроков, можно получить из кейса, в магазине или на «Дороге славы»']
-    } },
-  { ver: '1.3.0', date: '24.09.2026', time: '21:46',
-    title: { uk: 'Велике оновлення: Топ, реферали та баланс', en: 'Big update: Leaderboard, referrals & balance', ru: 'Большое обновление: Топ, рефералы и баланс' },
-    items: {
-      uk: ['🏆 Повністю оновили дизайн «Топу» — ширші та красивіші картки гравців', '👑 @sergixlol отримав особливе оформлення творця гри', '🔍 Додали пошук гравця за ніком і сортування за алфавітом', '👥 Реферальна система: друг доходить до 3-го поверху → тобі +20💎', '⚖️ Збалансували монстрів: на високих поверхах вони тепер не такі жирні та не так швидко забирають ХП', '💀 Після поразки втрачається частина зірок і прогресу, а герой відступає на кілька сходинок — коефіцієнт залежить від поверху'],
-      en: ['🏆 Completely redesigned the leaderboard with wider, richer player cards', '👑 @sergixlol now has special game creator styling', '🔍 Added player search by nickname and alphabetical sorting', '👥 Referral system: friend reaches the 3rd floor → you get +20💎', '⚖️ Rebalanced monsters: higher floors are now less tanky and deal less damage', '💀 After defeat, you lose some stars and progress, and the hero falls back a few steps — the coefficient depends on the floor'],
-      ru: ['🏆 Полностью обновили дизайн «Топа» — карточки игроков стали шире и красивее', '👑 @sergixlol получил особое оформление создателя игры', '🔍 Добавили поиск игрока по нику и сортировку по алфавиту', '👥 Реферальная система: друг дойдёт до 3-го этажа → тебе +20💎', '⚖️ Сбалансировали монстров: на высоких этажах они теперь не такие жирные и наносят меньше урона', '💀 После поражения теряется часть звёзд и прогресса, а герой отступает на несколько ступенек — коэффициент зависит от этажа']
-    } },
-  { ver: '1.2.0', date: '24.09.2026', time: '18:14',
-    title: { uk: 'Кейси, щоденні нагороди та звуки', en: 'Cases, daily rewards & sounds', ru: 'Кейсы, ежедневные награды и звуки' },
-    items: {
-      uk: ['🎁 Щоденні нагороди на 7 днів — на 7-й день скін', '📦 Космічний кейс: тапай, збирай енергію й крути рулетку (4 рідкості)', '💎 Обмін алмазів на зірки в магазині', '🔊 Звуки кнопок і кейса, нова музика в плейлисті', '🛠 Технічна перерва тепер зʼявляється і в тих, хто вже грає', '🔄 Повідомлення, коли вийшла нова версія гри'],
-      en: ['🎁 7-day daily rewards — a skin on day 7', '📦 Cosmic case: tap to charge it, then spin the roulette (4 rarities)', '💎 Diamonds → stars exchange in the shop', '🔊 Button & case sounds, new music in the playlist', '🛠 Maintenance break now also shows for players who are already in the game', '🔄 A notice when a new game version is released'],
-      ru: ['🎁 Ежедневные награды на 7 дней — на 7-й день скин', '📦 Космический кейс: тапай, копи энергию и крути рулетку (4 редкости)', '💎 Обмен алмазов на звёзды в магазине', '🔊 Звуки кнопок и кейса, новая музыка в плейлисте', '🛠 Техническая пауза теперь появляется и у тех, кто уже играет', '🔄 Уведомление, когда вышла новая версия игры']
-    } },
   { ver: '1.1.0', date: '24.09.2026', time: '17:04',
     title: { uk: 'Велике оновлення', en: 'Big update', ru: 'Большое обновление' },
     items: {
@@ -4818,7 +4088,6 @@ const NEWS = [
       ru: ['🏰 Башня с этажами и монстрами', '⚔️ Оружие и броня', '🎭 Образы героя с бафами (за звёзды и алмазы)']
     } }
 ];
-const GAME_VERSION = '1.4.0';
 const NEWS_UI = {
   uk: { title: '📰 Новини та оновлення', ver: 'Версія гри', upd: 'Оновлено', nw: 'НОВЕ', tt: 'TikTok канал', sup: 'Підтримка (Telegram)', news: 'Новини каналу Telegram' },
   en: { title: '📰 News & updates', ver: 'Game version', upd: 'Updated', nw: 'NEW', tt: 'TikTok channel', sup: 'Support (Telegram)', news: 'Telegram channel news' },
@@ -4879,45 +4148,6 @@ if (!newsSeen()) {
     else if (tries > 300) clearInterval(iv);
   }, 500);
 }
-
-/* ===== Нова версія гри: коли на хостингу з'явився оновлений код, гравцям, що зараз онлайн, зразу показуємо «перезайди».
-   Спосіб: раз на хвилину дешевий HEAD-запит до самої сторінки — якщо змінився ETag / Last-Modified / розмір, значить залито новий index.html.
-   Додатково один раз після старту порівнюємо версію в NEWS (на випадок, коли Telegram віддав старий кеш).
-   Щоб усі гравці побачили новину про реліз, новий обʼєкт NEWS має бути першим у масиві. NEWS_ID автоматично робить її новою для кожного браузера/гравця. */
-Object.assign(I18N.uk, { updTitle: 'Вийшло оновлення!', updText: 'Вийди з гри та зайди знову, щоб завантажити нову версію. Твій прогрес збережено.', updBtn: 'Закрити гру' });
-Object.assign(I18N.en, { updTitle: 'Update available!', updText: 'Leave the game and open it again to load the new version. Your progress is saved.', updBtn: 'Close game' });
-Object.assign(I18N.ru, { updTitle: 'Вышло обновление!', updText: 'Выйди из игры и зайди снова, чтобы загрузить новую версию. Твой прогресс сохранён.', updBtn: 'Закрыть игру' });
-let updShown = false, updBase = null, updHeadBad = false;
-function showUpdateNotice() {
-  if (updShown) return; updShown = true;
-  try { save(); syncProgressToCloud(true); } catch (e) {}
-  const el = document.createElement('div'); el.id = 'upd-modal';
-  el.innerHTML = `<div class="ref-box"><div class="ref-icon">🚀</div><div class="ref-title">${t('updTitle')}</div><div style="font-family:var(--pixel);font-size:9px;line-height:1.9;color:var(--dim);margin:8px 0 14px">${t('updText')}</div><button class="ref-ok" id="upd-btn" type="button">${t('updBtn')}</button></div>`;
-  document.body.appendChild(el); hapticNote('success');
-  $('upd-btn').addEventListener('click', () => { try { if (tg && tg.close) { tg.close(); return; } } catch (e) {} location.reload(); });
-}
-const updUrl = () => { const u = new URL(location.href); u.hash = ''; u.searchParams.set('_v', Date.now()); return u.toString(); };
-async function checkUpdate() {
-  if (updShown || document.hidden) return;
-  try {
-    const r = await fetch(updUrl(), { method: 'HEAD', cache: 'no-store' });
-    if (!r.ok) { updHeadBad = true; return; }
-    const sig = [r.headers.get('etag'), r.headers.get('last-modified'), r.headers.get('content-length')].join('|');
-    if (sig === '||') { updHeadBad = true; return; }
-    if (updBase === null) updBase = sig; else if (sig !== updBase) showUpdateNotice();
-  } catch (e) {}
-}
-async function checkUpdateVersion() {
-  if (updShown) return;
-  try {
-    const r = await fetch(updUrl(), { cache: 'no-store' }); if (!r.ok) return;
-    const m = (await r.text()).match(/const NEWS = \[\s*\{ ver: '([^']+)', date: '([^']*)', time: '([^']*)'/);
-    if (m && (m[1] + '|' + m[2] + ' ' + m[3]) !== NEWS_ID) showUpdateNotice();
-  } catch (e) {}
-}
-setTimeout(checkUpdate, 5000); setTimeout(checkUpdateVersion, 20000);
-setInterval(checkUpdate, 60000); setInterval(() => { if (updHeadBad) checkUpdateVersion(); }, 300000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) checkUpdate(); });
 
 settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettings(); });
 $('lang-uk').addEventListener('click', () => { haptic('light'); setLang('uk'); });
@@ -5167,14 +4397,14 @@ function shopSignature() {
   const can = list => list.map(x => (balanceOf(x.cur) >= x.cost ? 1 : 0)).join('');
   return [curTab, state.weapons.join(), state.armor.join(), state.skins.join(), state.skin, state.hpLvl, hpMax(),
     can(WEAPONS), can(ARMOR), can(SKINS), UPGRADES.map(u => upLvl(u.id) + (upLvl(u.id) < u.max && balanceOf(u.cur) >= upCost(u) ? 'y' : 'n')).join(''), state.score >= costHp() ? 1 : 0, state.diamonds >= CASE_DIAMONDS ? 1 : 0, state.cases,
-    state.questsClaimed.join(), state.banners.owned.join(), state.banners.equipped, Math.floor(state.steps/25), state.floorTier, state.monstersKilled, state.autoLvl, state.powerLvl,
+    state.questsClaimed.join(), Math.floor(state.steps/25), state.floorTier, state.monstersKilled, state.autoLvl, state.powerLvl,
     state.kills.slime, state.kills.goblin, state.kills.skeleton, state.kills.bat, state.kills.spider, state.kills.lava, state.kills.ghost, state.kills.demon, state.kills.boss, state.hpLvl, Math.floor(state.diamonds/5)].join('|');
 }
 function renderShops() {
   const sig = shopSignature();
   if (sig === shopSig) return;
   shopSig = sig;
-  renderWeapons(); renderArmor(); renderSkins(); renderBanners(); renderDonate(); renderMoreUps(); renderQuests();
+  renderWeapons(); renderArmor(); renderSkins(); renderDonate(); renderMoreUps(); renderQuests();
 }
 
 /* --- Завдання --- */
@@ -5400,10 +4630,10 @@ function caseCardHtml() {
 const CASE_DIAMONDS = 150;   // ціна кейса в 💎; за справжні Telegram Stars — 50 ⭐ (тариф 'case' на сервері)
 const CS_COL = ['#9aa0ac', '#a44bff', '#ff3d4d', '#3fa7ff'];
 const CS_ITEMS = [
-  { r:0, s:5000,  w:32 }, { r:0, s:10000, w:24 }, { r:0, bn:'bn_steel', w:4 }, { r:0, bn:'bn_forest', w:4 }, { r:0, bn:'bn_sand', w:4 },
-  { r:1, d:100, w:7 }, { r:1, d:200, w:4 }, { r:1, s:60000, w:7 }, { r:1, skin:'mage', w:5 }, { r:1, skin:'shadow', w:3 }, { r:1, bn:'bn_aurora', w:2 }, { r:1, bn:'bn_portal', w:2 },
-  { r:2, d:300, w:2.2 }, { r:2, d:500, w:1.3 }, { r:2, s:120000, w:2.5 }, { r:2, skin:'phoenix', w:1.2 }, { r:2, skin:'crystal', w:.8 }, { r:2, bn:'bn_volcano', w:1 },
-  { r:3, skin:'starlord', w:1.3 }, { r:3, skin:'dragon', w:.5 }, { r:3, bn:'bn_galaxy', w:.7 }
+  { r:0, s:5000,  w:35 }, { r:0, s:10000, w:27 },
+  { r:1, d:100, w:7 }, { r:1, d:200, w:4 }, { r:1, s:60000, w:8 }, { r:1, skin:'mage', w:5 }, { r:1, skin:'shadow', w:3 },
+  { r:2, d:300, w:2.5 }, { r:2, d:500, w:1.5 }, { r:2, s:120000, w:3 }, { r:2, skin:'phoenix', w:1.2 }, { r:2, skin:'crystal', w:.8 },
+  { r:3, skin:'starlord', w:1.4 }, { r:3, skin:'dragon', w:.6 }
 ];
 let csBusy = false;
 document.body.insertAdjacentHTML('beforeend', '<div id="case-modal" class="off"></div>');
@@ -5413,24 +4643,18 @@ const CS_DROP = [[80, 17, 3, 0], [40, 45, 13, 2], [15, 40, 38, 7], [0, 20, 50, 3
 function csPick(w) { let x = Math.random() * w.reduce((a, b) => a + b, 0); for (let i = 0; i < w.length; i++) { if ((x -= w[i]) < 0) return i; } return w.length - 1; }
 function csRollFrom(tier) { const r = csPick(CS_DROP[tier]), pool = CS_ITEMS.filter(i => i.r === r); return pool[csPick(pool.map(i => i.w))]; }
 function csLabel(it) {
-  if (it.bn)   return ['🎫', uiText(BANNERS.find(x => x.id === it.bn).name)];
   if (it.skin) return ['🎭', uiText(SKINS.find(x => x.id === it.skin).name)];
   return it.d ? ['💎', '+' + fmt(it.d)] : ['★', '+' + fmt(it.s)];
 }
 function csCard(it, win) {
   let pic, tx;
-  if (it.bn) { pic = `<span class="cs-pv" style="display:flex;align-items:center;justify-content:center;font-size:20px">🎫</span>`; tx = uiText(BANNERS.find(x => x.id === it.bn).name); }
-  else if (it.skin) { pic = `<img class="cs-pv" src="${skinPreviewUrl(it.skin)}" alt="">`; tx = uiText(SKINS.find(x => x.id === it.skin).name); }
+  if (it.skin) { pic = `<img class="cs-pv" src="${skinPreviewUrl(it.skin)}" alt="">`; tx = uiText(SKINS.find(x => x.id === it.skin).name); }
   else { pic = `<b>${it.d ? '💎' : '★'}</b>`; tx = '+' + fmt(it.d || it.s); }
   return `<div class="cs-it r${it.r}${win ? ' win' : ''}" style="--rc:${CS_COL[it.r]}">${pic}<span>${escapeHtml(tx)}</span></div>`;
 }
 function csGrant(it) {
   if (it.s) { state.score += it.s; return ''; }
   if (it.d) { state.diamonds += it.d; return ''; }
-  if (it.bn) {
-    if (!grantBanner(it.bn)) { const b = BANNERS.find(x => x.id === it.bn); const c = Math.floor(b.cost / 2); state.diamonds += c; return '+' + fmt(c) + '💎'; }
-    return '';
-  }
   if (state.skins.includes(it.skin)) { const c = Math.floor(SKINS.find(x => x.id === it.skin).cost / 2); state.diamonds += c; return '+' + fmt(c) + '💎'; }
   state.skins.push(it.skin); return '';
 }
@@ -5849,600 +5073,7 @@ $('btn-view').textContent = state.viewMode === 'walls' ? '☁' : '🏯';
 if (state.steps > 0) hintEl.classList.add('off');
 renderUI();
 requestAnimationFrame(frame);
-/* ==========================================================================
-   10. ПРИХОВАНА АДМІН-ПАНЕЛЬ
-   ВАЖЛИВО: доступ до змін у БД перевіряється серверною Supabase Edge Function.
-   Саме приховування кнопки в HTML НЕ є захистом.
-   ========================================================================== */
-const ADMIN_EDGE_FUNCTION = `${SUPABASE_URL}/functions/v1/admin-player`;
-let adminTarget = null;
-let adminDraft = null;
-
-function adminAllowedClient() {
-  try {
-    const u = tg?.initDataUnsafe?.user;
-    return !!(u && u.username && String(u.username).toLowerCase() === 'sergixlol');
-  } catch (e) { return false; }
-}
-function adminStatus(text, error=false) {
-  const el = $('admin-status');
-  if (!el) return;
-  el.textContent = text || '';
-  el.classList.toggle('admin-error', !!error);
-}
-function adminNum(v, fallback=0) {
-  const n = Math.floor(Number(v));
-  return Number.isFinite(n) && n >= 0 ? n : fallback;
-}
-function adminCall(action, payload={}) {
-  if (!adminAllowedClient()) return Promise.reject(new Error('forbidden'));
-  return fetch(ADMIN_EDGE_FUNCTION, {
-    method:'POST',
-    headers:{
-      apikey: SUPABASE_ANON_KEY,
-      Authorization:`Bearer ${SUPABASE_ANON_KEY}`,
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify({
-      action,
-      init_data: tg?.initData || '',
-      ...payload
-    })
-  }).then(async r => {
-    const data = await r.json().catch(()=>({}));
-    if (!r.ok || data?.error) throw new Error(data?.error || ('HTTP '+r.status));
-    return data;
-  });
-}
-
-function adminStateFieldsHtml(p) {
-  const st = p.progress || {};
-  const fields = [
-    ['score','Зірки',st.score],['diamonds','Геми',st.diamonds],['steps','Сходинки',st.steps],
-    ['powerLvl','Сила кліку',st.powerLvl],['autoLvl','Автоклік',st.autoLvl],['totalStars','Усього зірок',st.totalStars],
-    ['floorTier','Поверх',st.floorTier],['hp','HP',st.hp],['hpLvl','Рівень HP',st.hpLvl],
-    ['monstersKilled','Переможено монстрів',st.monstersKilled],['cases','Кейси',st.cases],
-    ['invitesCount','Запрошення',st.invitesCount],['botWarns','Попередження бота',st.botWarns]
-  ];
-  return `<div class="admin-grid">${fields.map(([k,l,v]) =>
-    `<div class="admin-field"><label>${escapeHtml(l)}</label><input type="number" min="0" step="1" data-admin-field="${k}" value="${adminNum(v)}"></div>`
-  ).join('')}</div>`;
-}
-
-function adminUpgradeHtml() {
-  const ups = adminDraft?.progress?.ups || {};
-  return `<div class="admin-list">${UPGRADES.map(u => {
-    const lvl = adminNum(ups[u.id]);
-    return `<div class="admin-item">
-      <div class="admin-item-main"><div class="admin-item-name">${escapeHtml(u.name)}</div><div class="admin-item-meta">Рівень: <b id="admin-up-${u.id}">${lvl}</b> / ${u.max}</div></div>
-      <button class="admin-mini minus" type="button" data-admin-up-minus="${escapeHtml(u.id)}">−</button>
-      <button class="admin-mini plus" type="button" data-admin-up-plus="${escapeHtml(u.id)}">+</button>
-    </div>`;
-  }).join('')}</div>
-  <button class="admin-save" id="admin-save-upgrades" type="button" style="width:100%;margin-top:8px">💾 Зберегти рівні покращень</button>`;
-}
-
-function adminOwnedListHtml(title, items, owned, attr) {
-  return `<div class="admin-section"><h3>${escapeHtml(title)}</h3><div class="admin-list">${items.map(x => {
-    const on = Array.isArray(owned) && owned.includes(x.id);
-    return `<div class="admin-item"><div class="admin-item-main"><div class="admin-item-name">${escapeHtml(x.name)}</div><div class="admin-item-meta">${escapeHtml(x.id)}</div></div>
-      <input class="admin-check" type="checkbox" ${on?'checked':''} data-admin-own="${escapeHtml(attr)}" data-admin-id="${escapeHtml(x.id)}"></div>`;
-  }).join('')}</div>
-  <button class="admin-save" type="button" data-admin-save-owned="${escapeHtml(attr)}" style="width:100%;margin-top:8px">💾 Зберегти</button></div>`;
-}
-
-function renderAdminPlayer() {
-  if (!adminDraft) return;
-  const p = adminDraft;
-  const st = p.progress || {};
-  const skins = Array.isArray(st.skins) ? st.skins : [];
-  const weapons = Array.isArray(st.weapons) ? st.weapons : [];
-  const armor = Array.isArray(st.armor) ? st.armor : [];
-  const content = $('admin-content');
-  content.innerHTML = `
-    <div class="admin-section">
-      <div class="admin-player">
-        ${avatarImg(p.photo_url,'')}
-        <div><div class="admin-player-name">${escapeHtml(p.username || 'Анонім')}</div><div class="admin-player-id">Telegram ID: ${escapeHtml(String(p.telegram_id || '—'))}</div></div>
-      </div>
-      ${adminStateFieldsHtml(p)}
-      <button class="admin-save" id="admin-save-fields" type="button" style="width:100%;margin-top:9px">💾 Зберегти параметри</button>
-    </div>
-    <div class="admin-section"><h3>⚡ Покращення</h3>${adminUpgradeHtml()}</div>
-    ${adminOwnedListHtml('⚔ Зброя', WEAPONS, weapons, 'weapons')}
-    ${adminOwnedListHtml('🛡 Броня', ARMOR, armor, 'armor')}
-    ${adminOwnedListHtml('🎭 Скіни', SKINS, skins, 'skins')}
-  `;
-  $('admin-save-fields').addEventListener('click', adminSaveFields);
-  $('admin-save-upgrades').addEventListener('click', adminSaveUpgrades);
-  content.querySelectorAll('[data-admin-up-plus]').forEach(b=>b.addEventListener('click',()=>{
-    const id=b.dataset.adminUpPlus, u=UPGRADES.find(x=>x.id===id);
-    if (!u) return;
-    adminDraft.progress.ups = adminDraft.progress.ups || {};
-    adminDraft.progress.ups[id] = Math.min(u.max, adminNum(adminDraft.progress.ups[id])+1);
-    renderAdminPlayer();
-  }));
-  content.querySelectorAll('[data-admin-up-minus]').forEach(b=>b.addEventListener('click',()=>{
-    const id=b.dataset.adminUpMinus;
-    adminDraft.progress.ups = adminDraft.progress.ups || {};
-    adminDraft.progress.ups[id] = Math.max(0, adminNum(adminDraft.progress.ups[id])-1);
-    renderAdminPlayer();
-  }));
-  content.querySelectorAll('[data-admin-save-owned]').forEach(b=>b.addEventListener('click',()=>adminSaveOwned(b.dataset.adminSaveOwned)));
-}
-
-async function openAdminPlayer(username) {
-  if (!adminAllowedClient()) return;
-  adminTarget = String(username || '').replace(/^@/,'');
-  if (!adminTarget) return;
-  $('admin-modal').classList.remove('off');
-  $('admin-content').innerHTML = '<div class="admin-empty">Завантаження даних гравця…</div>';
-  adminStatus('');
-  try {
-    const data = await adminCall('get_player',{username:adminTarget});
-    adminDraft = data.player;
-    renderAdminPlayer();
-  } catch (e) {
-    adminStatus('Не вдалося завантажити гравця: '+(e.message||e),true);
-  }
-}
-function closeAdminPlayer(){
-  adminTarget=null; adminDraft=null;
-  $('admin-modal').classList.add('off');
-  adminStatus('');
-  $('admin-content').innerHTML='';
-}
-async function adminSaveFields(){
-  if (!adminDraft) return;
-  const patch = {};
-  $('admin-content').querySelectorAll('[data-admin-field]').forEach(i => patch[i.dataset.adminField]=adminNum(i.value));
-  adminDraft.progress = {...adminDraft.progress,...patch};
-  try {
-    adminStatus('Збереження…');
-    const data=await adminCall('save_player',{username:adminTarget,patch:{progress:adminDraft.progress}});
-    adminDraft=data.player||adminDraft;
-    renderAdminPlayer();
-    adminStatus('✓ Параметри збережено');
-  } catch(e){ adminStatus('Помилка збереження: '+(e.message||e),true); }
-}
-async function adminSaveUpgrades(){
-  if (!adminDraft) return;
-  try {
-    adminStatus('Збереження покращень…');
-    const data=await adminCall('save_player',{username:adminTarget,patch:{progress:{ups:adminDraft.progress.ups||{}}}});
-    adminDraft=data.player||adminDraft;
-    renderAdminPlayer();
-    adminStatus('✓ Покращення збережено');
-  } catch(e){ adminStatus('Помилка збереження: '+(e.message||e),true); }
-}
-async function adminSaveOwned(kind){
-  if (!adminDraft) return;
-  const arr=[...$('admin-content').querySelectorAll(`[data-admin-own="${kind}"]`)].filter(x=>x.checked).map(x=>x.dataset.adminId);
-  if (kind==='weapons' && !arr.includes('fists')) arr.unshift('fists');
-  try {
-    adminStatus('Збереження…');
-    const progress={}; progress[kind]=arr;
-    if (kind==='skins' && !arr.includes(adminDraft.progress.skin)) progress.skin=arr.includes('default')?'default':arr[0]||'default';
-    const data=await adminCall('save_player',{username:adminTarget,patch:{progress}});
-    adminDraft=data.player||adminDraft;
-    renderAdminPlayer();
-    adminStatus('✓ Збережено');
-  } catch(e){ adminStatus('Помилка збереження: '+(e.message||e),true); }
-}
-$('admin-close').addEventListener('click',closeAdminPlayer);
-$('admin-back').addEventListener('click',closeAdminPlayer);
-$('admin-modal').addEventListener('click',e=>{if(e.target===$('admin-modal'))closeAdminPlayer();});
-
-/* Кнопки керування біля гравців у «Топ». Видимі тільки @sergixlol. */
-function adminLeaderboardButton(username){
-  if (!adminAllowedClient() || !username) return '';
-  return `<button class="admin-lb-btn" type="button" data-admin-player="${escapeHtml(String(username).replace(/^@/,''))}">⚙</button>`;
-}
-function bindAdminLeaderboardButtons(){
-  if (!adminAllowedClient()) return;
-  panelLb.querySelectorAll('[data-admin-player]').forEach(b=>{
-    b.addEventListener('click',e=>{e.stopPropagation();openAdminPlayer(b.dataset.adminPlayer);});
-  });
-}
-
-/* ==========================================================================
-   ⚔ ДУЕЛЬ (PvP «Хто кого перехитрить»): виклик онлайн-гравця зі списку «Топ»
-   або пошук випадкового суперника; 3 дії по колу (атака›ухилення›захист›атака),
-   перший до 5 очок перемагає і забирає 70% трофеїв переможеного.
-   Увесь стан гри лежить у Supabase (таблиці leaderboard/duels + RPC-функції
-   duel_queue_join/duel_invite/duel_move/duel_state тощо) — синхронізація між
-   двома пристроями відбувається через періодичний опитувальний запит (poll).
-   ========================================================================== */
-(function () {
-  const tabDuel = $('tab-duel'), panelDuel = $('panel-duel');
-  if (!tabDuel || !panelDuel) return;
-
-  mainTabs.push(['duel', tabDuel]);
-  tabDuel.addEventListener('click', () => { haptic('light'); selectTab('duel'); });
-
-  const _applyPanelsBase = applyPanels;
-  applyPanels = function () {
-    _applyPanelsBase();
-    const open = !tabsCollapsed;
-    panelDuel.classList.toggle('off', !open || curTab !== 'duel');
-  };
-
-  const _selectTabBase = selectTab;
-  selectTab = function (name) {
-    _selectTabBase(name);
-    if (!tabsCollapsed && name === 'duel') renderDuelTab();
-  };
-
-  let myTrophies = 0, curDuel = null, curDuelStatus = 'idle';
-  let duelAnimatedRound = 0;                                    // останній раунд, для якого вже показали анімацію ходів
-  let duelTimerInt = null, duelTimerLeft = 0, duelTimerKey = '';  // клієнтський таймер вибору ходу (косметичний, з авто-ходом по нулю)
-  const DUEL_MOVE_SECONDS = 20;
-
-  async function duelRpc(fn, body) {
-    if (!keyReady()) return { error: 'no_key' };
-    try {
-      const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
-        method: 'POST',
-        headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(body || {})
-      });
-      const data = await r.json().catch(() => null);
-      if (!r.ok) return { error: (data && data.message) || ('http_' + r.status) };
-      return data;
-    } catch (e) { return { error: String((e && e.message) || e) }; }
-  }
-
-  const DUEL_ERR_UK = {
-    target_offline: 'Гравець зараз не в мережі.',
-    target_busy: 'Гравець вже зайнятий іншою дуеллю.',
-    cannot_invite_self: 'Не можна викликати самого себе.',
-    player_not_found: 'Гравця не знайдено.',
-    target_not_found: 'Гравця не знайдено.',
-    duel_not_active: 'Дуель вже завершена.',
-    bad_move: 'Невірний хід.',
-    invalid_invite: 'Виклик більше недійсний.',
-    not_a_participant: 'Ти не береш участь у цій дуелі.'
-  };
-  let duelToastT = null;
-  function duelToast(msg) {
-    const el = $('duel-toast');
-    if (!el) return;
-    el.textContent = msg;
-    el.classList.remove('off');
-    clearTimeout(duelToastT);
-    duelToastT = setTimeout(() => el.classList.add('off'), 2600);
-  }
-
-  function openDuelModal() { $('duel-modal').classList.remove('off'); }
-  function closeDuelModal() { $('duel-modal').classList.add('off'); duelStopTimer(); }
-
-  function applyDuelState(res) {
-    if (!res || res.error) { if (res && res.error) duelToast(DUEL_ERR_UK[res.error] || 'Дуель: щось пішло не так.'); return; }
-    const prevDuel = curDuel;
-    myTrophies = Number(res.trophies) || 0;
-    curDuelStatus = res.duel_status || 'idle';
-    curDuel = res.duel || null;
-    if (prevDuel && prevDuel.status === 'pending_accept' && !curDuel) duelToast('Виклик на дуель закрито.');
-    renderDuelUiFromState();
-  }
-
-  function renderDuelUiFromState() {
-    if (!tabsCollapsed && curTab === 'duel') renderDuelTab();
-    if (curDuel && ['pending_accept', 'active', 'finished', 'declined', 'cancelled'].includes(curDuel.status)) {
-      renderDuelModalContent();
-      openDuelModal();
-    } else {
-      closeDuelModal();
-    }
-  }
-
-  async function renderRandomDuelQueueNotice() {
-    const el = $('duel-queue-notice');
-    if (!el || !keyReady()) return;
-    try {
-      const r = await fetch(
-        `${SUPABASE_URL}/rest/v1/leaderboard?duel_status=eq.searching&select=telegram_id,username,photo_url,duel_status&order=last_seen.desc&limit=8`,
-        { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
-      );
-      if (!r.ok) { el.classList.add('off'); return; }
-      const waiting = await r.json();
-      if (!Array.isArray(waiting) || !waiting.length) {
-        el.classList.add('off'); el.innerHTML=''; return;
-      }
-      el.innerHTML = `<div class="duel-queue-title">${t('duelQueueTitle')}</div>
-        <div class="duel-queue-list">${waiting.map(p=>{
-          const name=String(p.username||'Анонім');
-          const avatar=p.photo_url
-            ? `<img class="duel-queue-avatar" src="${escapeHtml(p.photo_url)}" alt="">`
-            : `<span class="duel-queue-avatar" style="display:flex;align-items:center;justify-content:center">⚔️</span>`;
-          const isMe=telegramId&&p.telegram_id&&Number(p.telegram_id)===Number(telegramId);
-          return `<div class="duel-queue-player">${avatar}<span>${escapeHtml(name).slice(0,22)}</span><span class="duel-queue-wait">${isMe?t('duelQueueMe'):t('duelQueueWait')}</span></div>`;
-        }).join('')}</div>`;
-      el.classList.remove('off');
-    } catch(e) { el.classList.add('off'); }
-  }
-
-  async function duelPoll() {
-    if (!keyReady() || !telegramId) return;
-    applyDuelState(await duelRpc('duel_state', { p_me: telegramId }));
-    renderRandomDuelQueueNotice();
-  }
-  duelPoll();
-  setInterval(duelPoll, 2200);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) duelPoll(); });
-
-  /* ---------- 🌌 Дорога слави: сезонний магазин нагород за трофеї дуелей ----------
-     Пороги кожні DUEL_ROAD_STEP трофеїв. Нагороди рахуються функцією duelRoadReward —
-     щоб поміняти нагороди наступного сезону, досить відредагувати цю функцію й підняти
-     DUEL_SEASON_NUM. Забрані пороги зберігаються в state.duelRoad.claimed (синхронізується
-     в хмару разом з рештою прогресу, як і щоденні нагороди). */
-  const DUEL_SEASON_NUM = 1;
-  const DUEL_ROAD_STEP  = 100;
-  const DUEL_ROAD_MAX   = 10000;
-  function duelRoadReward(th) {
-    if (th === 300)  return { type: 'case',    amount: 1 };
-    if (th === 1200) return { type: 'banner',  id: 'bn_road1200' };
-    if (th === 2500) return { type: 'skin',    id: 'rz_beatrice' };
-    if (th === 5000) return { type: 'diamond', amount: 700 };
-    if (th === 5200) return { type: 'banner',  id: 'bn_road5200' };
-    if (th === 10000) return { type: 'banner', id: 'bn_road10k' };
-    if (th % 1000 === 0) return { type: 'diamond', amount: 40 };
-    if (th % 500 === 0)  return { type: 'diamond', amount: 15 };
-    return { type: 'star', amount: th };
-  }
-  function duelRoadRewardMeta(r) {
-    if (!r) return null;
-    if (r.type === 'diamond') return { ic: '💎', tx: '+' + fmt(r.amount) };
-    if (r.type === 'star')    return { ic: '★', tx: '+' + fmt(r.amount) };
-    if (r.type === 'case')    return { ic: '🎁', tx: '×' + r.amount };
-    if (r.type === 'skin')    { const sk = SKINS.find(x => x.id === r.id); return { ic: '🎭', tx: sk ? uiText(sk.name) : '' }; }
-    if (r.type === 'banner')  { const bn = BANNERS.find(x => x.id === r.id); return { ic: '🎫', tx: bn ? uiText(bn.name) : '' }; }
-    return null;
-  }
-  function duelRoadGrant(r) {
-    if (r.type === 'diamond') { state.diamonds += r.amount; return '+' + fmt(r.amount) + '💎'; }
-    if (r.type === 'star')    { state.score    += r.amount; return '+' + fmt(r.amount) + '★'; }
-    if (r.type === 'case')    { state.cases    += r.amount; return '🎁 ×' + r.amount; }
-    if (r.type === 'banner') {
-      const bn = BANNERS.find(x => x.id === r.id);
-      if (!grantBanner(r.id)) { const c = Math.floor((bn ? bn.cost : 300) / 2) || 150; state.diamonds += c; return '+' + fmt(c) + '💎'; }
-      return '🎫 ' + (bn ? uiText(bn.name) : r.id);
-    }
-    if (r.type === 'skin') {
-      if (state.skins.includes(r.id)) { state.diamonds += 150; return '+150💎'; }
-      state.skins.push(r.id);
-      const sk = SKINS.find(x => x.id === r.id);
-      return '🎭 ' + (sk ? uiText(sk.name) : r.id);
-    }
-    return '';
-  }
-  function duelRoadClaim(thRaw) {
-    const th = Math.floor(Number(thRaw));
-    if (!Number.isFinite(th) || th <= 0 || myTrophies < th) return;
-    state.duelRoad = state.duelRoad || { claimed: [] };
-    if (state.duelRoad.claimed.includes(th)) return;
-    const r = duelRoadReward(th);
-    if (!r) return;
-    const txt = duelRoadGrant(r);
-    state.duelRoad.claimed.push(th);
-    dirty = true; uiDirty = true; shopSig = ''; save();
-    hapticNote('success');
-    floater('🌌 ' + txt, cx * S, (cy - 70) * S);
-    renderDuelTab();
-  }
-  function duelRoadHtml() {
-    const claimed = (state.duelRoad && state.duelRoad.claimed) || [];
-    const pct = Math.max(0, Math.min(100, (myTrophies / DUEL_ROAD_MAX) * 100));
-    let nodes = '';
-    for (let th = DUEL_ROAD_STEP; th <= DUEL_ROAD_MAX; th += DUEL_ROAD_STEP) {
-      const r = duelRoadReward(th), meta = duelRoadRewardMeta(r);
-      const isDone = claimed.includes(th);
-      const isReady = !isDone && myTrophies >= th;
-      const isBig = th === 300 || th === 2500 || th === 5000 || th === 10000;
-      const cls = ['road-node']; if (isBig) cls.push('big'); if (isDone) cls.push('done'); else if (isReady) cls.push('ready'); else cls.push('locked');
-      nodes += `<div class="${cls.join(' ')}">
-        <div class="road-node-ic">${meta.ic}</div>
-        <div class="road-node-amt">${escapeHtml(meta.tx)}</div>
-        <div class="road-node-th">🏆${fmt(th)}</div>
-        ${isDone ? `<div class="road-node-chk">✔</div>` : isReady ? `<button class="road-claim-btn" type="button" data-road-claim="${th}">${t('roadClaim')}</button>` : `<div class="road-node-lock">🔒</div>`}
-      </div>`;
-    }
-    return `<div class="road-wrap" style="--road-pct:${pct.toFixed(2)}%">
-      <div class="road-head"><span class="road-title">${t('roadTitle')}</span><span class="road-season">${t('roadSeason').replace('{n}', DUEL_SEASON_NUM)}</span></div>
-      <div class="road-track">${nodes}</div>
-    </div>`;
-  }
-  panelDuel.addEventListener('click', e => {
-    const b = e.target.closest('[data-road-claim]');
-    if (!b) return;
-    haptic('light');
-    duelRoadClaim(b.dataset.roadClaim);
-  });
-
-  function renderDuelTab() {
-    const searching = curDuelStatus === 'searching';
-    panelDuel.innerHTML = `<div class="duel-hub">
-      <div class="duel-trophy-line">🏆 ${t('duelTrophies')} <b>${fmt(myTrophies)}</b></div>
-      ${searching
-        ? `<button class="duel-random-btn searching" id="duel-toggle-btn" type="button">${t('duelSearching')}</button>`
-        : `<button class="duel-random-btn" id="duel-toggle-btn" type="button">${t('duelRandom')}</button>`}
-      <div class="duel-rules">
-        <div class="duel-rules-title">${t('duelRulesTitle')}</div>
-        <div class="duel-rules-line">${t('duelRuleAttack')}</div>
-        <div class="duel-rules-line">${t('duelRuleDodge')}</div>
-        <div class="duel-rules-line">${t('duelRuleDefense')}</div>
-        <div class="duel-rules-foot">${t('duelRuleFoot')}</div>
-      </div>
-      <div class="duel-hint">${t('duelHint')}</div>
-      ${duelRoadHtml()}
-    </div>`;
-    $('duel-toggle-btn').addEventListener('click', async () => {
-      haptic('light');
-      if (curDuelStatus === 'searching') {
-        applyDuelState(await duelRpc('duel_queue_cancel', { p_me: telegramId }));
-      } else {
-        applyDuelState(await duelRpc('duel_queue_join', { p_me: telegramId, p_name: playerName, p_photo: myPhotoUrl, p_skin: state.skin }));
-      }
-      renderRandomDuelQueueNotice();
-    });
-  }
-
-  function moveEmoji(m) { return m === 'attack' ? '🗡️' : m === 'defense' ? '🛡️' : m === 'dodge' ? '💨' : '❔'; }
-
-  function duelFighterHtml(name, skin, score, cls, actionCls) {
-    const pips = Array.from({ length: 5 }, (_, i) => `<span class="duel-pip${i < score ? ' on' : ''}"></span>`).join('');
-    return `<div class="duel-fighter ${cls}">
-      <div class="duel-platform">
-        <div class="duel-fighter-img-wrap${actionCls ? ' act-' + actionCls : ''}"><img src="${skinPreviewUrl(skin || 'default')}" alt=""></div>
-      </div>
-      <div class="duel-fighter-name">${escapeHtml(name || 'Анонім')}</div>
-      <div class="duel-pips">${pips}</div>
-    </div>`;
-  }
-
-  function duelStopTimer() { clearInterval(duelTimerInt); duelTimerInt = null; duelTimerKey = ''; }
-
-  function duelSceneHtml(myFighterHtml, oppFighterHtml) {
-    return `<div class="duel-scene"><span class="duel-torch l"></span><span class="duel-torch r"></span>
-      <div class="duel-vs-badge">⚔</div>
-      <div class="duel-arena">${myFighterHtml}${oppFighterHtml}</div>
-    </div>`;
-  }
-
-  function renderDuelModalContent() {
-    const box = $('duel-box');
-    if (!curDuel) { box.innerHTML = ''; duelStopTimer(); duelAnimatedRound = 0; return; }
-    const me = telegramId;
-    const iAmP1 = Number(curDuel.p1_id) === Number(me);
-    const myName = iAmP1 ? curDuel.p1_name : curDuel.p2_name, oppName = iAmP1 ? curDuel.p2_name : curDuel.p1_name;
-    const mySkin = iAmP1 ? curDuel.p1_skin : curDuel.p2_skin, oppSkin = iAmP1 ? curDuel.p2_skin : curDuel.p1_skin;
-    const myScore = iAmP1 ? curDuel.score1 : curDuel.score2, oppScore = iAmP1 ? curDuel.score2 : curDuel.score1;
-    const myMoved = iAmP1 ? curDuel.p1_moved : curDuel.p2_moved;
-
-    // якщо в історії з'явився щойно завершений раунд — на мить показуємо анімацію дії кожного бійця
-    const lastHist = curDuel.history && curDuel.history.length ? curDuel.history[curDuel.history.length - 1] : null;
-    let myAct = null, oppAct = null;
-    if (lastHist && lastHist.round !== duelAnimatedRound) {
-      myAct = iAmP1 ? lastHist.p1 : lastHist.p2;
-      oppAct = iAmP1 ? lastHist.p2 : lastHist.p1;
-      duelAnimatedRound = lastHist.round;
-    }
-    const arenaHtml = duelSceneHtml(
-      duelFighterHtml(myName, mySkin, myScore, 'me', myAct),
-      duelFighterHtml(oppName, oppSkin, oppScore, 'opp', oppAct)
-    );
-
-    if (curDuel.status === 'pending_accept') {
-      duelStopTimer();
-      if (Number(curDuel.p2_id) === Number(me) && !iAmP1) {
-        box.innerHTML = `<div class="duel-title">${t('duelChallengeTitle')}</div>${arenaHtml}
-          <div class="duel-status-line"><b>${escapeHtml(curDuel.p1_name)}</b> ${t('duelChallengesRest')}</div>
-          <div class="duel-accept-row"><button class="duel-btn-decline" id="duel-decline-btn" type="button">${t('duelDecline')}</button><button class="duel-btn-accept" id="duel-accept-btn" type="button">${t('duelAccept')}</button></div>`;
-        $('duel-accept-btn').addEventListener('click', () => respondDuel(true));
-        $('duel-decline-btn').addEventListener('click', () => respondDuel(false));
-      } else {
-        box.innerHTML = `<div class="duel-title">${t('duelWaitingTitle')}</div>${arenaHtml}
-          <div class="duel-status-line">${t('duelWaitingPrefix')} <b>${escapeHtml(oppName)}</b> ${t('duelWaitingSuffix')}</div>
-          <div class="duel-end-row"><button class="duel-btn-forfeit" id="duel-cancel-inv-btn" type="button">${t('duelCancelInvite')}</button></div>`;
-        $('duel-cancel-inv-btn').addEventListener('click', forfeitDuel);
-      }
-      return;
-    }
-
-    if (curDuel.status === 'active') {
-      let movesHtml, timerHtml = '';
-      const roundKey = curDuel.id + ':' + curDuel.round;
-      if (myMoved) {
-        duelStopTimer();
-        movesHtml = `<div class="duel-status-line">${t('duelMoveMade')}</div>`;
-      } else {
-        movesHtml = `<div class="duel-moves">
-          <button class="duel-move-btn" data-move="attack">🗡️<span>${t('moveAttack')}</span></button>
-          <button class="duel-move-btn" data-move="defense">🛡️<span>${t('moveDefense')}</span></button>
-          <button class="duel-move-btn" data-move="dodge">💨<span>${t('moveDodge')}</span></button>
-        </div>`;
-        timerHtml = `<div class="duel-timer-wrap"><div class="duel-timer" id="duel-timer-ring" data-s="${DUEL_MOVE_SECONDS}"></div><span class="duel-timer-line">${t('duelPickMove')}</span></div>`;
-        if (duelTimerKey !== roundKey) { duelTimerKey = roundKey; duelTimerLeft = DUEL_MOVE_SECONDS; duelStartTimer(); }
-      }
-      const hist = lastHist;
-      const histResult = hist ? (hist.winner === 'draw' ? t('duelDraw') : (hist.winner === (iAmP1 ? 'p1' : 'p2') ? t('duelYouWon') : t('duelOppWon'))) : '';
-      const histHtml = hist ? `<div class="duel-history">${t('duelHistoryLine').replace('{round}', hist.round).replace('{m1}', moveEmoji(hist.p1)).replace('{m2}', moveEmoji(hist.p2)).replace('{result}', histResult)}</div>` : '';
-      box.innerHTML = `<div class="duel-title">${t('duelRoundTitle').replace('{round}', curDuel.round)}</div>${arenaHtml}${histHtml}${timerHtml}${movesHtml}
-        <div class="duel-end-row"><button class="duel-btn-forfeit" id="duel-forfeit-btn" type="button">${t('duelForfeit')}</button></div>`;
-      if (!myMoved) {
-        box.querySelectorAll('.duel-move-btn').forEach(b => b.addEventListener('click', () => { duelStopTimer(); sendDuelMove(b.dataset.move); }));
-        duelUpdateTimerDom();
-      }
-      $('duel-forfeit-btn').addEventListener('click', forfeitDuel);
-      return;
-    }
-
-    duelStopTimer();
-    if (curDuel.status === 'finished') {
-      const iWon = Number(curDuel.winner_id) === Number(me);
-      box.innerHTML = `<div class="duel-result-icon">${iWon ? '🏆' : '💀'}</div>
-        <div class="duel-result-title ${iWon ? 'win' : 'lose'}">${iWon ? t('duelWinTitle') : t('duelLoseTitle')}</div>${arenaHtml}
-        <div class="duel-reward">${iWon ? '+' + fmt(curDuel.reward_winner) : '−' + fmt(curDuel.reward_loser)} 🏆 ${t('duelTrophySuffix')}</div>
-        <button class="duel-btn-ok" id="duel-ok-btn" type="button" style="width:100%">${t('ref-modal-ok')}</button>`;
-      $('duel-ok-btn').addEventListener('click', ackDuel);
-      return;
-    }
-
-    box.innerHTML = `<div class="duel-title">${curDuel.status === 'declined' ? t('duelDeclinedMsg') : t('duelCancelledMsg')}</div>
-      <button class="duel-btn-ok" id="duel-ok-btn" type="button" style="width:100%">${t('ref-modal-ok')}</button>`;
-    $('duel-ok-btn').addEventListener('click', ackDuel);
-  }
-
-  function duelUpdateTimerDom() {
-    const ring = $('duel-timer-ring');
-    if (!ring) return;
-    ring.style.setProperty('--p', Math.round((duelTimerLeft / DUEL_MOVE_SECONDS) * 100));
-    ring.dataset.s = duelTimerLeft;
-    ring.classList.toggle('low', duelTimerLeft <= 5);
-  }
-  function duelStartTimer() {
-    clearInterval(duelTimerInt);
-    duelUpdateTimerDom();
-    duelTimerInt = setInterval(() => {
-      duelTimerLeft--;
-      duelUpdateTimerDom();
-      if (duelTimerLeft <= 0) {
-        duelStopTimer();
-        const box = $('duel-box');
-        if (box && box.querySelector('.duel-move-btn')) sendDuelMove('dodge');   // час вийшов — автохід (ухилення, найбезпечніший)
-      }
-    }, 1000);
-  }
-
-  async function sendDuelMove(move) {
-    if (!curDuel) return;
-    haptic('medium');
-    const res = await duelRpc('duel_move', { p_me: telegramId, p_duel_id: curDuel.id, p_move: move });
-    if (res && res.id) { curDuel = res; renderDuelModalContent(); }
-    else if (res && res.error) duelToast(DUEL_ERR_UK[res.error] || 'Не вдалося зробити хід.');
-  }
-  async function respondDuel(accept) {
-    haptic(accept ? 'medium' : 'light');
-    applyDuelState(await duelRpc('duel_invite_respond', { p_me: telegramId, p_duel_id: curDuel.id, p_accept: accept, p_skin: state.skin }));
-  }
-  async function forfeitDuel() {
-    if (!curDuel) return;
-    haptic('heavy');
-    applyDuelState(await duelRpc('duel_forfeit', { p_me: telegramId, p_duel_id: curDuel.id }));
-  }
-  async function ackDuel() {
-    applyDuelState(await duelRpc('duel_ack', { p_me: telegramId }));
-  }
-  async function inviteDuelPlayer(tid) {
-    haptic('light');
-    applyDuelState(await duelRpc('duel_invite', { p_from: telegramId, p_from_name: playerName, p_from_photo: myPhotoUrl, p_from_skin: state.skin, p_to: Number(tid) }));
-  }
-
 })();
-
-})();
-
-
 </script>
 </body>
 </html>
