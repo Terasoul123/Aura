@@ -389,12 +389,12 @@
     box-shadow:inset 0 0 0 2px var(--edge),inset 0 -4px 0 0 var(--edge-dark)}
   .ref-ok:active{transform:translateY(1px)}
 
-  #panel-wpn,#panel-arm,#panel-skn,#panel-qst,#panel-lb{
+  #panel-wpn,#panel-arm,#panel-skn,#panel-qst,#panel-lb,#panel-duel{
     flex:0 0 auto;max-height:34vh;overflow-y:auto;
     padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));
     background:var(--ink);border-top:4px solid #4b3a8f;display:flex;flex-direction:column;gap:8px;
   }
-  #panel-wpn.off,#panel-arm.off,#panel-skn.off,#panel-qst.off,#panel-lb.off{display:none}
+  #panel-wpn.off,#panel-arm.off,#panel-skn.off,#panel-qst.off,#panel-lb.off,#panel-duel.off{display:none}
   #panel-don{display:flex;flex-direction:column;gap:8px;max-height:56vh;overflow-y:auto;padding:2px 2px 4px}
 
   /* ---------- таблиця лідерів ---------- */
@@ -653,6 +653,70 @@
   .admin-lb-btn{flex:none;border:0;border-radius:7px;padding:7px 8px;background:#6b4b16;color:#fff2c8;font:8px var(--pixel);box-shadow:inset 0 0 0 1px #ffcf70;cursor:pointer}
   .lb-row .admin-lb-btn{margin-left:4px}
 
+  /* ---------- ⚔ Дуель: доповнення до рядків «Топ» ---------- */
+  .lb-row{flex-wrap:wrap}
+  .duel-search-line{flex:1 0 100%;font-size:8px;color:var(--gold);text-shadow:var(--o2);padding-top:4px;animation:duelPulse 1.4s ease-in-out infinite}
+  @keyframes duelPulse{0%,100%{opacity:.55}50%{opacity:1}}
+  .duel-inv-btn{flex:none;border:0;border-radius:7px;padding:6px 9px;background:linear-gradient(180deg,#a33a3a,#5c1f1f);
+    color:#ffe3e3;font:10px var(--pixel);box-shadow:inset 0 0 0 1px #ff8a8a;cursor:pointer;touch-action:manipulation}
+  .duel-inv-btn:active{transform:translateY(1px)}
+  .lb-trophy{flex:none;font-size:8px;color:var(--gold);text-shadow:var(--o2);white-space:nowrap}
+
+  /* ---------- ⚔ Дуель: вкладка-хаб ---------- */
+  .duel-hub{display:flex;flex-direction:column;gap:10px}
+  .duel-trophy-line{font-size:10px;color:var(--gold);text-shadow:var(--o2);text-align:center}
+  .duel-random-btn{width:100%;border:0;border-radius:12px;padding:14px;background:linear-gradient(135deg,#a33a3a,#7a2828,#5c1f1f);
+    background-size:220% 220%;color:#fff;font-family:var(--pixel);font-size:10px;cursor:pointer;touch-action:manipulation;
+    box-shadow:inset 0 0 0 2px #ff8a8a,inset 0 -4px 0 0 #3a1414,0 4px 12px rgba(163,58,58,.3)}
+  .duel-random-btn.searching{background:linear-gradient(135deg,#3d2a7a,#2c1f5c);animation:duelSearchPulse 1.4s ease-in-out infinite}
+  @keyframes duelSearchPulse{0%,100%{opacity:.72}50%{opacity:1}}
+  .duel-random-btn:active{transform:translateY(1px)}
+  .duel-rules{padding:11px;border-radius:11px;background:#241a52;box-shadow:inset 0 0 0 2px #3a2d70}
+  .duel-rules-title{font-size:9px;color:var(--gold);margin-bottom:8px;text-shadow:var(--o2)}
+  .duel-rules-line{font-size:8px;color:var(--paper);line-height:2}
+  .duel-rules-foot{font-size:7px;color:var(--dim);margin-top:8px;line-height:1.6}
+  .duel-hint{font-size:7px;color:var(--dim);text-align:center;line-height:1.6}
+
+  /* ---------- ⚔ Дуель: арена (модалка) ---------- */
+  #duel-modal{position:fixed;inset:0;z-index:100060;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,1,14,.86)}
+  #duel-modal.off{display:none}
+  .duel-box{width:100%;max-width:560px;max-height:92vh;max-height:92dvh;overflow-y:auto;background:var(--ink);
+    border-radius:18px 18px 0 0;box-shadow:0 0 0 2px #ff6b6b,0 -8px 28px -6px rgba(255,107,107,.35);
+    padding:18px 14px calc(16px + env(safe-area-inset-bottom,0px));text-align:center}
+  .duel-title{font-size:12px;color:var(--gold);text-shadow:var(--o2);margin-bottom:14px}
+  .duel-arena{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px}
+  .duel-fighter{display:flex;flex-direction:column;align-items:center;gap:6px;width:42%;min-width:0}
+  .duel-fighter img{width:100%;max-width:96px;height:auto;image-rendering:pixelated;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}
+  .duel-fighter.opp img{transform:scaleX(-1)}
+  .duel-fighter-name{font-size:8px;color:var(--paper);text-shadow:var(--o2);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .duel-vs{font-size:15px;color:#ff6b6b;text-shadow:var(--o2);flex:none}
+  .duel-pips{display:flex;gap:4px;justify-content:center;margin-top:2px}
+  .duel-pip{width:9px;height:9px;border-radius:2px;background:#2c1f5c;box-shadow:inset 0 0 0 1px #4b3a8f}
+  .duel-pip.on{background:#ff6b6b;box-shadow:inset 0 0 0 1px #ff9a9a}
+  .duel-status-line{font-size:9px;color:var(--paper);line-height:1.7;margin-bottom:14px}
+  .duel-history{font-size:7px;color:var(--dim);line-height:1.6;margin-bottom:10px}
+  .duel-moves{display:flex;gap:8px;margin-bottom:12px}
+  .duel-move-btn{flex:1;border:0;border-radius:12px;padding:12px 4px;background:linear-gradient(180deg,#3d2a7a,#2c1f5c);color:var(--paper);
+    font-family:var(--pixel);font-size:8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;
+    box-shadow:inset 0 0 0 2px var(--edge),inset 0 -4px 0 0 var(--edge-dark)}
+  .duel-move-btn span{font-size:17px}
+  .duel-move-btn:active{transform:translateY(1px)}
+  .duel-accept-row,.duel-end-row{display:flex;gap:8px}
+  .duel-btn-accept,.duel-btn-decline,.duel-btn-ok,.duel-btn-forfeit{flex:1;border:0;border-radius:10px;padding:11px;font-family:var(--pixel);font-size:9px;cursor:pointer;touch-action:manipulation}
+  .duel-btn-accept{background:#356f48;color:#fff;box-shadow:inset 0 0 0 2px #7be0a4,inset 0 -3px 0 #214c32}
+  .duel-btn-decline,.duel-btn-forfeit{background:#713b4b;color:#fff;box-shadow:inset 0 0 0 2px #d4778b,inset 0 -3px 0 #4a1f29}
+  .duel-btn-ok{background:linear-gradient(180deg,#4a3793,#2c1f5c);color:#fff;box-shadow:inset 0 0 0 2px var(--gold),inset 0 -3px 0 #8a5a0a}
+  .duel-result-icon{font-size:32px;margin-bottom:8px}
+  .duel-result-title{font-size:13px;margin-bottom:10px;text-shadow:var(--o2)}
+  .duel-result-title.win{color:#7be0a4}
+  .duel-result-title.lose{color:#ff8a8a}
+  .duel-reward{font-size:11px;color:var(--gold);text-shadow:var(--o2);margin:8px 0 16px}
+
+  #duel-toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
+    z-index:100070;background:#2c1f5c;color:#fff;padding:10px 16px;border-radius:10px;font:9px var(--pixel);
+    box-shadow:inset 0 0 0 2px #ff6b6b,0 4px 14px rgba(0,0,0,.4);max-width:86%;text-align:center}
+  #duel-toast.off{display:none}
+
 </style>
 </head>
 
@@ -876,6 +940,7 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
     <button class="tab active" id="tab-upg" type="button">⚙ Прокачка</button>
     <button class="tab" id="tab-qst" type="button">📜 Завдання</button>
     <button class="tab" id="tab-lb" type="button">🏆 Топ</button>
+    <button class="tab" id="tab-duel" type="button">⚔ Дуель</button>
   </div>
 
   <div id="subtabs">
@@ -929,7 +994,13 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
   <div id="panel-skn" class="off"></div>
   <div id="panel-qst" class="off"></div>
   <div id="panel-lb" class="off"></div>
+  <div id="panel-duel" class="off"></div>
 
+
+  <div id="duel-modal" class="off">
+    <div class="duel-box" id="duel-box"></div>
+  </div>
+  <div id="duel-toast" class="off"></div>
 
   <div id="admin-modal" class="off">
     <div class="admin-box">
@@ -3398,7 +3469,14 @@ async function renderLeaderboard() {
     const cls = ['lb-row']; if (rank <= 3) cls.push('top' + rank); if (isMe) cls.push('me'); if (isCreator) cls.push('creator');
     const name = escapeHtml(rawName).slice(0, 20);
     const creatorName = isCreator ? '<span class="lb-crown">👑</span><span class="lb-name creator-name">' + name + '</span>' : '<span class="lb-name">' + name + '</span>';
-    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span>${creatorName}<span class="lb-score">${fmt(p.score || 0)}</span></div>`;
+    const tid = p.telegram_id;
+    const isMePlayer = !!(telegramId && tid && Number(tid) === Number(telegramId));
+    const isSearching = p.duel_status === 'searching';
+    const canDuel = keyReady() && telegramId && tid && !isMePlayer && p.online && p.duel_status !== 'busy';
+    const searchLine = isSearching ? `<div class="duel-search-line">⚔ ${name} жде суперника в дуель…</div>` : '';
+    const duelBtn = canDuel ? `<button class="duel-inv-btn" type="button" data-duel-invite="${escapeHtml(String(tid))}" title="Викликати на дуель">⚔</button>` : '';
+    const trophyBadge = p.trophies ? `<span class="lb-trophy" title="Трофеї дуелей">🏆${fmt(p.trophies)}</span>` : '';
+    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span>${creatorName}${trophyBadge}<span class="lb-score">${fmt(p.score || 0)}</span>${duelBtn}${searchLine}</div>`;
   }).join('');
   panelLb.innerHTML = inviteBtnHtml() + onlineHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
   bindInviteBtn();
@@ -5458,6 +5536,234 @@ renderLeaderboard = async function(){
   });
   bindAdminLeaderboardButtons();
 };
+
+/* ==========================================================================
+   ⚔ ДУЕЛЬ (PvP «Хто кого перехитрить»): виклик онлайн-гравця зі списку «Топ»
+   або пошук випадкового суперника; 3 дії по колу (атака›ухилення›захист›атака),
+   перший до 5 очок перемагає і забирає 70% трофеїв переможеного.
+   Увесь стан гри лежить у Supabase (таблиці leaderboard/duels + RPC-функції
+   duel_queue_join/duel_invite/duel_move/duel_state тощо) — синхронізація між
+   двома пристроями відбувається через періодичний опитувальний запит (poll).
+   ========================================================================== */
+(function () {
+  const tabDuel = $('tab-duel'), panelDuel = $('panel-duel');
+  if (!tabDuel || !panelDuel) return;
+
+  mainTabs.push(['duel', tabDuel]);
+  tabDuel.addEventListener('click', () => { haptic('light'); selectTab('duel'); });
+
+  const _applyPanelsBase = applyPanels;
+  applyPanels = function () {
+    _applyPanelsBase();
+    const open = !tabsCollapsed;
+    panelDuel.classList.toggle('off', !open || curTab !== 'duel');
+  };
+
+  const _selectTabBase = selectTab;
+  selectTab = function (name) {
+    _selectTabBase(name);
+    if (!tabsCollapsed && name === 'duel') renderDuelTab();
+  };
+
+  let myTrophies = 0, curDuel = null, curDuelStatus = 'idle';
+
+  async function duelRpc(fn, body) {
+    if (!keyReady()) return { error: 'no_key' };
+    try {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+        method: 'POST',
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body || {})
+      });
+      const data = await r.json().catch(() => null);
+      if (!r.ok) return { error: (data && data.message) || ('http_' + r.status) };
+      return data;
+    } catch (e) { return { error: String((e && e.message) || e) }; }
+  }
+
+  const DUEL_ERR_UK = {
+    target_offline: 'Гравець зараз не в мережі.',
+    target_busy: 'Гравець вже зайнятий іншою дуеллю.',
+    cannot_invite_self: 'Не можна викликати самого себе.',
+    player_not_found: 'Гравця не знайдено.',
+    target_not_found: 'Гравця не знайдено.',
+    duel_not_active: 'Дуель вже завершена.',
+    bad_move: 'Невірний хід.',
+    invalid_invite: 'Виклик більше недійсний.',
+    not_a_participant: 'Ти не береш участь у цій дуелі.'
+  };
+  let duelToastT = null;
+  function duelToast(msg) {
+    const el = $('duel-toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.remove('off');
+    clearTimeout(duelToastT);
+    duelToastT = setTimeout(() => el.classList.add('off'), 2600);
+  }
+
+  function openDuelModal() { $('duel-modal').classList.remove('off'); }
+  function closeDuelModal() { $('duel-modal').classList.add('off'); }
+
+  function applyDuelState(res) {
+    if (!res || res.error) { if (res && res.error) duelToast(DUEL_ERR_UK[res.error] || 'Дуель: щось пішло не так.'); return; }
+    const prevDuel = curDuel;
+    myTrophies = Number(res.trophies) || 0;
+    curDuelStatus = res.duel_status || 'idle';
+    curDuel = res.duel || null;
+    if (prevDuel && prevDuel.status === 'pending_accept' && !curDuel) duelToast('Виклик на дуель закрито.');
+    renderDuelUiFromState();
+  }
+
+  function renderDuelUiFromState() {
+    if (!tabsCollapsed && curTab === 'duel') renderDuelTab();
+    if (curDuel && ['pending_accept', 'active', 'finished', 'declined', 'cancelled'].includes(curDuel.status)) {
+      renderDuelModalContent();
+      openDuelModal();
+    } else {
+      closeDuelModal();
+    }
+  }
+
+  async function duelPoll() {
+    if (!keyReady() || !telegramId) return;
+    applyDuelState(await duelRpc('duel_state', { p_me: telegramId }));
+  }
+  duelPoll();
+  setInterval(duelPoll, 2200);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) duelPoll(); });
+
+  function renderDuelTab() {
+    const searching = curDuelStatus === 'searching';
+    panelDuel.innerHTML = `<div class="duel-hub">
+      <div class="duel-trophy-line">🏆 Твої трофеї: <b>${fmt(myTrophies)}</b></div>
+      ${searching
+        ? `<button class="duel-random-btn searching" id="duel-toggle-btn" type="button">⏳ Пошук суперника… (натисни, щоб скасувати)</button>`
+        : `<button class="duel-random-btn" id="duel-toggle-btn" type="button">🎲 Випадкова дуель</button>`}
+      <div class="duel-rules">
+        <div class="duel-rules-title">⚔️ Хто кого перехитрить</div>
+        <div class="duel-rules-line">🗡️ Атака ⟶ перемагає ⟶ 💨 Ухилення</div>
+        <div class="duel-rules-line">💨 Ухилення ⟶ перемагає ⟶ 🛡️ Захист</div>
+        <div class="duel-rules-line">🛡️ Захист ⟶ перемагає ⟶ 🗡️ Атаку</div>
+        <div class="duel-rules-foot">Перший до 5 очок перемагає й забирає 70% трофеїв суперника.</div>
+      </div>
+      <div class="duel-hint">Можна також викликати конкретного гравця кнопкою ⚔ прямо у списку «🏆 Топ».</div>
+    </div>`;
+    $('duel-toggle-btn').addEventListener('click', async () => {
+      haptic('light');
+      if (curDuelStatus === 'searching') {
+        applyDuelState(await duelRpc('duel_queue_cancel', { p_me: telegramId }));
+      } else {
+        applyDuelState(await duelRpc('duel_queue_join', { p_me: telegramId, p_name: playerName, p_photo: myPhotoUrl, p_skin: state.skin }));
+      }
+    });
+  }
+
+  function moveEmoji(m) { return m === 'attack' ? '🗡️' : m === 'defense' ? '🛡️' : m === 'dodge' ? '💨' : '❔'; }
+
+  function duelFighterHtml(name, skin, score, cls) {
+    const pips = Array.from({ length: 5 }, (_, i) => `<span class="duel-pip${i < score ? ' on' : ''}"></span>`).join('');
+    return `<div class="duel-fighter ${cls}">
+      <img src="${skinPreviewUrl(skin || 'default')}" alt="">
+      <div class="duel-fighter-name">${escapeHtml(name || 'Анонім')}</div>
+      <div class="duel-pips">${pips}</div>
+    </div>`;
+  }
+
+  function renderDuelModalContent() {
+    const box = $('duel-box');
+    if (!curDuel) { box.innerHTML = ''; return; }
+    const me = telegramId;
+    const iAmP1 = Number(curDuel.p1_id) === Number(me);
+    const myName = iAmP1 ? curDuel.p1_name : curDuel.p2_name, oppName = iAmP1 ? curDuel.p2_name : curDuel.p1_name;
+    const mySkin = iAmP1 ? curDuel.p1_skin : curDuel.p2_skin, oppSkin = iAmP1 ? curDuel.p2_skin : curDuel.p1_skin;
+    const myScore = iAmP1 ? curDuel.score1 : curDuel.score2, oppScore = iAmP1 ? curDuel.score2 : curDuel.score1;
+    const myMoved = iAmP1 ? curDuel.p1_moved : curDuel.p2_moved;
+    const arenaHtml = `<div class="duel-arena">${duelFighterHtml(myName, mySkin, myScore, 'me')}<div class="duel-vs">⚔</div>${duelFighterHtml(oppName, oppSkin, oppScore, 'opp')}</div>`;
+
+    if (curDuel.status === 'pending_accept') {
+      if (Number(curDuel.p2_id) === Number(me) && !iAmP1) {
+        box.innerHTML = `<div class="duel-title">Виклик на дуель!</div>${arenaHtml}
+          <div class="duel-status-line"><b>${escapeHtml(curDuel.p1_name)}</b> викликає тебе на дуель. Приймаєш?</div>
+          <div class="duel-accept-row"><button class="duel-btn-decline" id="duel-decline-btn" type="button">❌ Відхилити</button><button class="duel-btn-accept" id="duel-accept-btn" type="button">✅ Прийняти</button></div>`;
+        $('duel-accept-btn').addEventListener('click', () => respondDuel(true));
+        $('duel-decline-btn').addEventListener('click', () => respondDuel(false));
+      } else {
+        box.innerHTML = `<div class="duel-title">Очікування відповіді…</div>${arenaHtml}
+          <div class="duel-status-line">Чекаємо, поки <b>${escapeHtml(oppName)}</b> прийме виклик.</div>
+          <div class="duel-end-row"><button class="duel-btn-forfeit" id="duel-cancel-inv-btn" type="button">✕ Скасувати виклик</button></div>`;
+        $('duel-cancel-inv-btn').addEventListener('click', forfeitDuel);
+      }
+      return;
+    }
+
+    if (curDuel.status === 'active') {
+      let movesHtml;
+      if (myMoved) {
+        movesHtml = `<div class="duel-status-line">⏳ Хід зроблено. Чекаємо суперника…</div>`;
+      } else {
+        movesHtml = `<div class="duel-moves">
+          <button class="duel-move-btn" data-move="attack">🗡️<span>Атака</span></button>
+          <button class="duel-move-btn" data-move="defense">🛡️<span>Захист</span></button>
+          <button class="duel-move-btn" data-move="dodge">💨<span>Ухилення</span></button>
+        </div>`;
+      }
+      const hist = curDuel.history && curDuel.history.length ? curDuel.history[curDuel.history.length - 1] : null;
+      const histHtml = hist ? `<div class="duel-history">Раунд ${hist.round}: ${moveEmoji(hist.p1)} проти ${moveEmoji(hist.p2)} — ${hist.winner === 'draw' ? 'нічия' : (hist.winner === (iAmP1 ? 'p1' : 'p2') ? 'твоя перемога' : 'перемога суперника')}</div>` : '';
+      box.innerHTML = `<div class="duel-title">Раунд ${curDuel.round} · до 5 перемог</div>${arenaHtml}${histHtml}${movesHtml}
+        <div class="duel-end-row"><button class="duel-btn-forfeit" id="duel-forfeit-btn" type="button">🏳️ Здатися</button></div>`;
+      if (!myMoved) box.querySelectorAll('.duel-move-btn').forEach(b => b.addEventListener('click', () => sendDuelMove(b.dataset.move)));
+      $('duel-forfeit-btn').addEventListener('click', forfeitDuel);
+      return;
+    }
+
+    if (curDuel.status === 'finished') {
+      const iWon = Number(curDuel.winner_id) === Number(me);
+      box.innerHTML = `<div class="duel-result-icon">${iWon ? '🏆' : '💀'}</div>
+        <div class="duel-result-title ${iWon ? 'win' : 'lose'}">${iWon ? 'Перемога!' : 'Поразка'}</div>${arenaHtml}
+        <div class="duel-reward">${iWon ? '+' + fmt(curDuel.reward_winner) : '−' + fmt(curDuel.reward_loser)} 🏆 трофеїв</div>
+        <button class="duel-btn-ok" id="duel-ok-btn" type="button" style="width:100%">OK</button>`;
+      $('duel-ok-btn').addEventListener('click', ackDuel);
+      return;
+    }
+
+    box.innerHTML = `<div class="duel-title">${curDuel.status === 'declined' ? 'Гравець відхилив виклик.' : 'Дуель скасовано.'}</div>
+      <button class="duel-btn-ok" id="duel-ok-btn" type="button" style="width:100%">OK</button>`;
+    $('duel-ok-btn').addEventListener('click', ackDuel);
+  }
+
+  async function sendDuelMove(move) {
+    if (!curDuel) return;
+    haptic('medium');
+    const res = await duelRpc('duel_move', { p_me: telegramId, p_duel_id: curDuel.id, p_move: move });
+    if (res && res.id) { curDuel = res; renderDuelModalContent(); }
+    else if (res && res.error) duelToast(DUEL_ERR_UK[res.error] || 'Не вдалося зробити хід.');
+  }
+  async function respondDuel(accept) {
+    haptic(accept ? 'medium' : 'light');
+    applyDuelState(await duelRpc('duel_invite_respond', { p_me: telegramId, p_duel_id: curDuel.id, p_accept: accept, p_skin: state.skin }));
+  }
+  async function forfeitDuel() {
+    if (!curDuel) return;
+    haptic('heavy');
+    applyDuelState(await duelRpc('duel_forfeit', { p_me: telegramId, p_duel_id: curDuel.id }));
+  }
+  async function ackDuel() {
+    applyDuelState(await duelRpc('duel_ack', { p_me: telegramId }));
+  }
+  async function inviteDuelPlayer(tid) {
+    haptic('light');
+    applyDuelState(await duelRpc('duel_invite', { p_from: telegramId, p_from_name: playerName, p_from_photo: myPhotoUrl, p_from_skin: state.skin, p_to: Number(tid) }));
+  }
+
+  const _rlWithDuel = renderLeaderboard;
+  renderLeaderboard = async function () {
+    await _rlWithDuel();
+    panelLb.querySelectorAll('[data-duel-invite]').forEach(b => {
+      b.addEventListener('click', e => { e.stopPropagation(); inviteDuelPlayer(b.dataset.duelInvite); });
+    });
+  };
+})();
 
 })();
 
