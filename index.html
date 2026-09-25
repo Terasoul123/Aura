@@ -389,12 +389,12 @@
     box-shadow:inset 0 0 0 2px var(--edge),inset 0 -4px 0 0 var(--edge-dark)}
   .ref-ok:active{transform:translateY(1px)}
 
-  #panel-wpn,#panel-arm,#panel-skn,#panel-qst,#panel-lb,#panel-duel{
+  #panel-wpn,#panel-arm,#panel-skn,#panel-bnr,#panel-qst,#panel-lb,#panel-duel{
     flex:0 0 auto;max-height:34vh;overflow-y:auto;
     padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));
     background:var(--ink);border-top:4px solid #4b3a8f;display:flex;flex-direction:column;gap:8px;
   }
-  #panel-wpn.off,#panel-arm.off,#panel-skn.off,#panel-qst.off,#panel-lb.off,#panel-duel.off{display:none}
+  #panel-wpn.off,#panel-arm.off,#panel-skn.off,#panel-bnr.off,#panel-qst.off,#panel-lb.off,#panel-duel.off{display:none}
   #panel-don{display:flex;flex-direction:column;gap:8px;max-height:56vh;overflow-y:auto;padding:2px 2px 4px}
 
   /* ---------- таблиця лідерів ---------- */
@@ -450,7 +450,7 @@
   .lb-online b{color:#3ddc6e;font-weight:normal}
   .lb-avatar{width:30px;height:30px;flex:none;border-radius:7px;image-rendering:pixelated;box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 2px 7px rgba(0,0,0,.3);background:#2c1f5c;object-fit:cover}
   .lb-name{flex:1 1 auto;min-width:0;font-size:10px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
-  .lb-score{flex:none;font-size:10px;color:var(--gold);text-shadow:var(--o2);min-width:58px;text-align:right;font-weight:700}
+  .lb-score{flex:none;font-size:10px;color:var(--gold);text-shadow:var(--o2);min-width:58px;text-align:right;font-weight:700;white-space:nowrap}
   .lb-empty{font-size:8px;color:var(--dim);text-align:center;line-height:1.8;padding:20px 8px}
   .referral-info{padding:8px 12px;margin-bottom:1px;border-radius:11px;background:linear-gradient(135deg,#302060,#1d3568);box-shadow:inset 0 0 0 2px #6f59c8,inset 0 -3px 0 0 #21164b,0 3px 10px rgba(70,55,150,.2);text-align:center}
   .referral-info-title{font-size:9px;color:var(--gold);line-height:1.3;text-shadow:var(--o2);margin-bottom:3px}
@@ -573,6 +573,31 @@
   .lk-txt i{font-style:normal;font-size:8px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .lang-btn.active{box-shadow:inset 0 0 0 2px var(--gold),inset 0 -3px 0 0 #8a5a0a;color:var(--gold)}
 
+
+  /* ---------- 🎫 Банери ---------- */
+  .bnr-card{position:relative;display:flex;flex-direction:column;gap:6px;padding:8px;border-radius:10px;background:#241a4a;box-shadow:inset 0 0 0 2px #453385}
+  .bnr-card.eq{box-shadow:inset 0 0 0 2px #7be0a4}
+  .bnr-strip{position:relative;height:46px;border-radius:7px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+  .bnr-strip .bnr-name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:9px/1 var(--pixel);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);padding:0 6px;text-align:center}
+  .bnr-strip.r0{background:linear-gradient(120deg,#4a5568,#2d3748)}
+  .bnr-strip.r1{background:linear-gradient(120deg,#7b3fe4,#3a1d8f,#a44bff);background-size:220% 220%}
+  .bnr-strip.r2{background:linear-gradient(120deg,#ff3d4d,#7a0d17,#ff6a3d);background-size:220% 220%}
+  .bnr-strip.r3{background:linear-gradient(115deg,#ffd23f,#a44bff,#3fa7ff,#ff3d4d,#ffd23f);background-size:400% 400%}
+  .bnr-strip.anim{animation:bnr-move 3.5s ease-in-out infinite}
+  .bnr-strip.r3.anim{animation:bnr-move 3s linear infinite}
+  @keyframes bnr-move{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .bnr-strip::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.10) 0 2px,transparent 2px 10px)}
+  .bnr-strip.r3::before{content:'';position:absolute;inset:0;background:radial-gradient(1.4px 1.4px at 12% 30%,#fff,transparent),radial-gradient(1.2px 1.2px at 34% 62%,#fff,transparent),radial-gradient(1.6px 1.6px at 58% 22%,#fff,transparent),radial-gradient(1.2px 1.2px at 78% 70%,#fff,transparent),radial-gradient(1.4px 1.4px at 92% 40%,#fff,transparent);animation:nw-tw 2.4s ease-in-out infinite}
+  .bnr-foot{display:flex;align-items:center;justify-content:space-between;gap:6px}
+  .bnr-rname{font-size:8px;color:#b9c8ff}
+  .bnr-r0-tx{color:#c6ccd8}.bnr-r1-tx{color:#c9a0ff}.bnr-r2-tx{color:#ff8f8f}.bnr-r3-tx{color:#ffd76a}
+  .bnr-road-tag{font-size:7px;padding:2px 5px;border-radius:5px;background:#1a1240;color:#8fe9ff;box-shadow:inset 0 0 0 1px #3fa7ff}
+  /* мініатюрний банер у рядку топу */
+  .lb-bnr-bg{position:absolute;inset:0;border-radius:inherit;opacity:.55;pointer-events:none;z-index:0}
+  .lb-bnr-bg .bnr-strip{height:100%;border-radius:inherit}
+  .lb-bnr-bg .bnr-name{display:none}
+  .lb-row{position:relative;isolation:isolate}
+  .lb-row>*{position:relative;z-index:1}
   /* ---------- НОВИНИ (космічне вікно) ---------- */
   #btn-news{position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 112px);left:10px;width:40px;height:40px;border:0;border-radius:11px;pointer-events:auto;cursor:pointer;z-index:6;
     background:linear-gradient(135deg,#3a1d8f,#0b2a6b,#5b2bb8,#0b6b8f);background-size:300% 300%;animation:nw-btn 5s linear infinite;
@@ -661,6 +686,7 @@
     color:#ffe3e3;font:10px var(--pixel);box-shadow:inset 0 0 0 1px #ff8a8a;cursor:pointer;touch-action:manipulation}
   .duel-inv-btn:active{transform:translateY(1px)}
   .lb-trophy{flex:none;font-size:8px;color:var(--gold);text-shadow:var(--o2);white-space:nowrap}
+  .lb-row-extra{flex:1 0 100%;display:flex;align-items:center;justify-content:flex-end;gap:8px;padding-top:4px}
 
   /* ---------- ⚔ Дуель: вкладка-хаб ---------- */
   .duel-hub{display:flex;flex-direction:column;gap:10px}
@@ -677,6 +703,41 @@
   .duel-rules-foot{font-size:7px;color:var(--dim);margin-top:8px;line-height:1.6}
   .duel-hint{font-size:7px;color:var(--dim);text-align:center;line-height:1.6}
 
+  /* ---------- ⚔ Дуель: 🌌 Дорога слави (сезонний магазин нагород за трофеї) ---------- */
+  .road-wrap{position:relative;overflow:hidden;border-radius:14px;padding:12px 10px 14px;
+    background:radial-gradient(ellipse at 15% 0%,rgba(150,90,255,.5),transparent 55%),radial-gradient(ellipse at 92% 100%,rgba(0,210,255,.45),transparent 55%),radial-gradient(ellipse at 50% 50%,rgba(255,70,190,.16),transparent 60%),linear-gradient(160deg,#0a0730,#170b46 55%,#070420);
+    background-size:220% 220%,220% 220%,160% 160%,100% 100%;animation:nw-nebula 11s ease-in-out infinite,nw-glow 7s linear infinite;
+    box-shadow:inset 0 0 0 2px #6f59d8}
+  .road-wrap::before,.road-wrap::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background-repeat:no-repeat}
+  .road-wrap::before{background-image:radial-gradient(1.4px 1.4px at 8% 18%,#fff,transparent),radial-gradient(1.2px 1.2px at 24% 55%,#bfe6ff,transparent),radial-gradient(1.6px 1.6px at 46% 12%,#fff,transparent),radial-gradient(1.2px 1.2px at 64% 40%,#ffd6ff,transparent),radial-gradient(1.6px 1.6px at 82% 20%,#fff,transparent),radial-gradient(1.2px 1.2px at 93% 65%,#bfe6ff,transparent);animation:nw-tw 2.8s ease-in-out infinite}
+  .road-wrap::after{background-image:radial-gradient(1.4px 1.4px at 14% 75%,#fff,transparent),radial-gradient(1.8px 1.8px at 38% 88%,#ffe9a8,transparent),radial-gradient(1.2px 1.2px at 58% 70%,#fff,transparent),radial-gradient(1.6px 1.6px at 78% 85%,#bfe6ff,transparent);animation:nw-tw 3.6s ease-in-out infinite reverse}
+  .road-wrap>*{position:relative;z-index:1}
+  .road-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+  .road-title{font-size:11px;line-height:1.4;background:linear-gradient(90deg,#8fe9ff,#c9a8ff,#ff9be6,#8fe9ff);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:nw-shine 4s linear infinite}
+  .road-season{font-size:7px;color:#b9c8ff}
+  .road-progress-line{font-size:7px;color:#eef1ff;text-align:center;margin:4px 0 8px;line-height:1.5}
+  .road-progress-line b{color:var(--gold)}
+  .road-track{position:relative;display:flex;gap:9px;overflow-x:auto;overflow-y:hidden;padding:10px 6px 12px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .road-track::-webkit-scrollbar{height:5px}
+  .road-track::-webkit-scrollbar-thumb{background:#6f59d8;border-radius:3px}
+  .road-track::before{content:"";position:absolute;left:16px;right:16px;top:31px;height:3px;z-index:0;border-radius:2px;
+    background:linear-gradient(90deg,#7be0a4 0%,#7be0a4 var(--road-pct,0%),rgba(150,130,230,.32) var(--road-pct,0%),rgba(150,130,230,.32) 100%)}
+  .road-node{position:relative;z-index:1;flex:none;width:58px;display:flex;flex-direction:column;align-items:center;gap:3px;scroll-snap-align:center}
+  .road-node-ic{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;
+    background:#241a52;box-shadow:inset 0 0 0 2px #4b3a8f;transition:transform .15s ease}
+  .road-node.ready .road-node-ic{background:linear-gradient(180deg,#ffe27a,var(--gold));box-shadow:inset 0 0 0 2px #fff2b8,0 0 12px rgba(255,210,63,.75);color:#1b1035;animation:nw-pulse 1.3s ease-in-out infinite}
+  .road-node.done .road-node-ic{background:linear-gradient(180deg,#8fe9c0,#3fae74);box-shadow:inset 0 0 0 2px #d3f7e2}
+  .road-node.big .road-node-ic{width:40px;height:40px;font-size:18px;box-shadow:inset 0 0 0 2px #ff9be6,0 0 14px rgba(255,155,230,.65)}
+  .road-node.big.ready .road-node-ic{animation:nw-pulse 1.3s ease-in-out infinite,nw-glow 3s linear infinite}
+  .road-node-amt{font-size:7px;color:var(--gold);text-shadow:2px 2px 0 #120a2e;white-space:nowrap}
+  .road-node-th{font-size:6px;color:#b9c8ff;white-space:nowrap}
+  .road-node-chk{font-size:12px;color:#7be0a4}
+  .road-node-lock{font-size:10px;opacity:.55}
+  .road-claim-btn{border:0;border-radius:6px;padding:4px 7px;font:6px var(--pixel);color:#1b1035;cursor:pointer;touch-action:manipulation;
+    background:linear-gradient(180deg,#ffe27a,var(--gold));box-shadow:inset 0 0 0 1px #fff2b8}
+  .road-claim-btn:active{transform:translateY(1px)}
+  @media (prefers-reduced-motion:reduce){.road-wrap,.road-wrap::before,.road-wrap::after,.road-title,.road-node.ready .road-node-ic{animation:none}}
+
   /* ---------- ⚔ Дуель: арена (модалка) ---------- */
   #duel-modal{position:fixed;inset:0;z-index:100060;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,1,14,.86)}
   #duel-modal.off{display:none}
@@ -684,17 +745,62 @@
     border-radius:18px 18px 0 0;box-shadow:0 0 0 2px #ff6b6b,0 -8px 28px -6px rgba(255,107,107,.35);
     padding:18px 14px calc(16px + env(safe-area-inset-bottom,0px));text-align:center}
   .duel-title{font-size:12px;color:var(--gold);text-shadow:var(--o2);margin-bottom:14px}
-  .duel-arena{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px}
-  .duel-fighter{display:flex;flex-direction:column;align-items:center;gap:6px;width:42%;min-width:0}
-  .duel-fighter img{width:100%;max-width:96px;height:auto;image-rendering:pixelated;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}
-  .duel-fighter.opp img{transform:scaleX(-1)}
-  .duel-fighter-name{font-size:8px;color:var(--paper);text-shadow:var(--o2);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ---------- 🏟 Арена дуелі: окрема "кімната" — підземелля з двома платформами ---------- */
+  .duel-scene{position:relative;overflow:hidden;border-radius:14px;margin-bottom:12px;padding:14px 8px 12px;
+    background:
+      radial-gradient(ellipse 140px 90px at 18% 100%,rgba(255,150,60,.16),transparent 60%),
+      radial-gradient(ellipse 140px 90px at 82% 100%,rgba(255,150,60,.16),transparent 60%),
+      linear-gradient(180deg,#0c0a16 0%,#171225 55%,#1f1830 100%);
+    box-shadow:inset 0 0 0 2px #4b3a8f,inset 0 30px 40px -20px rgba(0,0,0,.7)}
+  .duel-scene::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:
+      repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 2px,transparent 2px 22px),
+      repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0 2px,transparent 2px 34px);
+    mask-image:linear-gradient(180deg,#000 0%,#000 62%,transparent 100%)}
+  .duel-scene::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 100% 70% at 50% 100%,transparent 40%,rgba(3,1,14,.55) 100%)}
+  .duel-torch{position:absolute;top:10px;width:5px;height:12px;border-radius:2px;background:linear-gradient(180deg,#ffcf6b,#ff7a2f);
+    box-shadow:0 0 10px 3px rgba(255,150,50,.85),0 0 26px 10px rgba(255,120,40,.35);animation:duelTorch 1.6s ease-in-out infinite}
+  .duel-torch.l{left:12px}.duel-torch.r{right:12px;animation-delay:.5s}
+  @keyframes duelTorch{0%,100%{opacity:.85;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.15)}}
+  .duel-arena{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:6px;padding:0 6px}
+  .duel-vs-badge{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);z-index:2;font-size:16px;color:#ff6b6b;
+    text-shadow:0 0 10px rgba(255,107,107,.8),var(--o2)}
+  .duel-fighter{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;width:46%;min-width:0}
+  .duel-platform{position:relative;width:86px;height:26px;max-width:100%;border-radius:50%;
+    background:radial-gradient(ellipse at 50% 30%,#6a5aa8,#372a68 55%,#221a44 100%);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.18),inset 0 -6px 10px rgba(0,0,0,.5),0 6px 10px -4px rgba(0,0,0,.6)}
+  .duel-fighter-img-wrap{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);width:81px;height:81px;
+    display:flex;align-items:flex-end;justify-content:center;transition:transform .18s ease}
+  .duel-fighter-img-wrap img{width:81px;height:81px;object-fit:contain;object-position:bottom;image-rendering:pixelated;
+    filter:drop-shadow(0 6px 8px rgba(0,0,0,.55))}
+  .duel-fighter.opp .duel-fighter-img-wrap img{transform:scaleX(-1)}
+  .duel-fighter-img-wrap.act-attack{animation:duelAtkMe .45s ease}
+  .duel-fighter.opp .duel-fighter-img-wrap.act-attack{animation:duelAtkOpp .45s ease}
+  @keyframes duelAtkMe{0%{transform:translateX(-50%)}40%{transform:translate(calc(-50% + 14px),0)}100%{transform:translateX(-50%)}}
+  @keyframes duelAtkOpp{0%{transform:translateX(-50%)}40%{transform:translate(calc(-50% - 14px),0)}100%{transform:translateX(-50%)}}
+  .duel-fighter-img-wrap.act-defense::after{content:"🛡️";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:34px;opacity:0;animation:duelShield .7s ease}
+  @keyframes duelShield{0%{opacity:0;transform:scale(.5)}30%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1.3)}}
+  .duel-fighter-img-wrap.act-dodge{animation:duelDodge .4s ease}
+  @keyframes duelDodge{0%{transform:translateX(-50%)}25%{transform:translate(calc(-50% - 10px),-4px);opacity:.55}
+    50%{transform:translate(calc(-50% + 10px),-4px);opacity:.55}75%{transform:translateX(-50%);opacity:1}100%{transform:translateX(-50%)}}
+  .duel-fighter-name{font-size:8px;color:var(--paper);text-shadow:var(--o2);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
   .duel-vs{font-size:15px;color:#ff6b6b;text-shadow:var(--o2);flex:none}
   .duel-pips{display:flex;gap:4px;justify-content:center;margin-top:2px}
   .duel-pip{width:9px;height:9px;border-radius:2px;background:#2c1f5c;box-shadow:inset 0 0 0 1px #4b3a8f}
   .duel-pip.on{background:#ff6b6b;box-shadow:inset 0 0 0 1px #ff9a9a}
   .duel-status-line{font-size:9px;color:var(--paper);line-height:1.7;margin-bottom:14px}
   .duel-history{font-size:7px;color:var(--dim);line-height:1.6;margin-bottom:10px}
+  .duel-timer-wrap{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px}
+  .duel-timer{--p:0;position:relative;width:30px;height:30px;border-radius:50%;flex:none;
+    background:conic-gradient(var(--gold) calc(var(--p) * 1%),rgba(255,255,255,.12) 0);
+    box-shadow:inset 0 0 0 2px #241a52}
+  .duel-timer::after{content:attr(data-s);position:absolute;inset:2px;border-radius:50%;background:var(--ink);
+    display:flex;align-items:center;justify-content:center;font:9px var(--pixel);color:var(--paper)}
+  .duel-timer.low{--p:100}
+  .duel-timer.low::before{content:"";position:absolute;inset:-3px;border-radius:50%;box-shadow:0 0 10px 2px rgba(255,107,107,.7);animation:duelPulse .7s ease-in-out infinite}
+  .duel-timer-line{font-size:8px;color:var(--dim)}
   .duel-moves{display:flex;gap:8px;margin-bottom:12px}
   .duel-move-btn{flex:1;border:0;border-radius:12px;padding:12px 4px;background:linear-gradient(180deg,#3d2a7a,#2c1f5c);color:var(--paper);
     font-family:var(--pixel);font-size:8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;
@@ -948,6 +1054,7 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
     <button class="subtab" id="sub-wpn" type="button"><span class="subtab-ic">⚔</span>Зброя</button>
     <button class="subtab" id="sub-arm" type="button"><span class="subtab-ic">🛡</span>Броня</button>
     <button class="subtab" id="sub-skn" type="button"><span class="subtab-ic">🎭</span>Образи</button>
+    <button class="subtab" id="sub-bnr" type="button"><span class="subtab-ic">🎫</span>Банери</button>
   </div>
 
   <div id="ref-modal" class="off">
@@ -992,6 +1099,7 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
   <div id="panel-wpn" class="off"></div>
   <div id="panel-arm" class="off"></div>
   <div id="panel-skn" class="off"></div>
+  <div id="panel-bnr" class="off"></div>
   <div id="panel-qst" class="off"></div>
   <div id="panel-lb" class="off"></div>
   <div id="panel-duel" class="off"></div>
@@ -1198,6 +1306,7 @@ const I18N = {
     'sub-wpn': '⚔Зброя',
     'sub-arm': '🛡Броня',
     'sub-skn': '🎭Образи',
+    'sub-bnr': '🎫Банери',
     'up-power-name': 'Сила кліку',
     'up-auto-name': 'Автоклік',
     'music-title': '🎵 Плейлист',
@@ -1207,7 +1316,30 @@ const I18N = {
     'music-now-title-empty': 'Трек не обрано',
     'ref-modal-ok': 'OK',
     'referral-title': '👥 Реферальна система',
-    'referral-desc': 'Друг дійшов до 3-го поверху → +20💎 тобі!',
+    'referral-desc': 'За кожного друга, який приєднається за твоїм посиланням і дійде до 3-го поверху → +20💎 тобі, назавжди!',
+    duelSearchLine: '{name} шукає суперника на дуель…',
+    duelInviteTitle: 'Викликати на дуель',
+    duelPickMove: 'Обери хід, поки не скінчився час',
+    trophiesTitle: 'Трофеї дуелей',
+    roadTitle: '🌌 Дорога слави',
+    roadSeason: 'Сезон {n} дуелей',
+    roadClaim: 'Забрати',
+    duelChallengeTitle: 'Виклик на дуель!',
+    duelChallengesRest: 'викликає тебе на дуель. Приймаєш?',
+    duelDecline: '❌ Відхилити',
+    duelAccept: '✅ Прийняти',
+    duelWaitingTitle: 'Очікування відповіді…',
+    duelWaitingPrefix: 'Чекаємо, поки',
+    duelWaitingSuffix: 'прийме виклик.',
+    duelCancelInvite: '✕ Скасувати виклик',
+    duelMoveMade: '⏳ Хід зроблено. Чекаємо суперника…',
+    moveAttack: 'Атака', moveDefense: 'Захист', moveDodge: 'Ухилення',
+    duelRoundTitle: 'Раунд {round} · до 5 перемог',
+    duelForfeit: '🏳️ Здатися',
+    duelHistoryLine: 'Раунд {round}: {m1} проти {m2} — {result}',
+    duelDraw: 'нічия', duelYouWon: 'твоя перемога', duelOppWon: 'перемога суперника',
+    duelWinTitle: 'Перемога!', duelLoseTitle: 'Поразка', duelTrophySuffix: 'трофеїв',
+    duelDeclinedMsg: 'Гравець відхилив виклик.', duelCancelledMsg: 'Дуель скасовано.',
     perClick: 'за клік', autoSuffix: 'авто', perSec: '/с',
     lvl: 'рів.', click: 'Клік', auto: 'Авто',
     floor: 'Поверх', top: 'Вершина вежі'
@@ -1238,7 +1370,30 @@ const I18N = {
     'music-now-title-empty': 'No track selected',
     'ref-modal-ok': 'OK',
     'referral-title': '👥 Referral system',
-    'referral-desc': 'Friend reaches the 3rd floor → you get +20💎!',
+    'referral-desc': 'For every friend who joins with your link and reaches the 3rd floor → you get +20💎, forever!',
+    duelSearchLine: '{name} is looking for a duel opponent…',
+    duelInviteTitle: 'Challenge to a duel',
+    duelPickMove: 'Pick a move before time runs out',
+    trophiesTitle: 'Duel trophies',
+    roadTitle: '🌌 Road of Glory',
+    roadSeason: 'Duel Season {n}',
+    roadClaim: 'Claim',
+    duelChallengeTitle: 'Duel challenge!',
+    duelChallengesRest: 'is challenging you to a duel. Accept?',
+    duelDecline: '❌ Decline',
+    duelAccept: '✅ Accept',
+    duelWaitingTitle: 'Waiting for response…',
+    duelWaitingPrefix: 'Waiting for',
+    duelWaitingSuffix: 'to accept the challenge.',
+    duelCancelInvite: '✕ Cancel challenge',
+    duelMoveMade: '⏳ Move made. Waiting for opponent…',
+    moveAttack: 'Attack', moveDefense: 'Defense', moveDodge: 'Dodge',
+    duelRoundTitle: 'Round {round} · first to 5 wins',
+    duelForfeit: '🏳️ Forfeit',
+    duelHistoryLine: 'Round {round}: {m1} vs {m2} — {result}',
+    duelDraw: 'draw', duelYouWon: 'you won', duelOppWon: 'opponent won',
+    duelWinTitle: 'Victory!', duelLoseTitle: 'Defeat', duelTrophySuffix: 'trophies',
+    duelDeclinedMsg: 'The player declined the challenge.', duelCancelledMsg: 'Duel cancelled.',
     perClick: 'per tap', autoSuffix: 'auto', perSec: '/s',
     lvl: 'lvl', click: 'Click', auto: 'Auto',
     floor: 'Floor', top: 'Top of the tower'
@@ -1255,7 +1410,30 @@ const I18N = {
     'shop-title': '🛒 Магазин', 'settings-title': '⚙️ Настройки', 'settings-lang-label': 'ЯЗЫК / LANGUAGE',
     'music-now-title-empty': 'Трек не выбран', 'ref-modal-ok': 'OK',
     'referral-title': '👥 Реферальная система',
-    'referral-desc': 'Друг дойдёт до 3-го этажа → тебе +20💎!',
+    'referral-desc': 'За каждого друга, который присоединится по твоей ссылке и дойдёт до 3-го этажа → тебе +20💎, навсегда!',
+    duelSearchLine: '{name} ищет соперника на дуэль…',
+    duelInviteTitle: 'Вызвать на дуэль',
+    duelPickMove: 'Выбери ход, пока не закончилось время',
+    trophiesTitle: 'Трофеи дуэлей',
+    roadTitle: '🌌 Дорога славы',
+    roadSeason: 'Сезон {n} дуэлей',
+    roadClaim: 'Забрать',
+    duelChallengeTitle: 'Вызов на дуэль!',
+    duelChallengesRest: 'вызывает тебя на дуэль. Принимаешь?',
+    duelDecline: '❌ Отклонить',
+    duelAccept: '✅ Принять',
+    duelWaitingTitle: 'Ожидание ответа…',
+    duelWaitingPrefix: 'Ждём, пока',
+    duelWaitingSuffix: 'примет вызов.',
+    duelCancelInvite: '✕ Отменить вызов',
+    duelMoveMade: '⏳ Ход сделан. Ждём соперника…',
+    moveAttack: 'Атака', moveDefense: 'Защита', moveDodge: 'Уклонение',
+    duelRoundTitle: 'Раунд {round} · до 5 побед',
+    duelForfeit: '🏳️ Сдаться',
+    duelHistoryLine: 'Раунд {round}: {m1} против {m2} — {result}',
+    duelDraw: 'ничья', duelYouWon: 'твоя победа', duelOppWon: 'победа соперника',
+    duelWinTitle: 'Победа!', duelLoseTitle: 'Поражение', duelTrophySuffix: 'трофеев',
+    duelDeclinedMsg: 'Игрок отклонил вызов.', duelCancelledMsg: 'Дуэль отменена.',
     perClick: 'за клик', autoSuffix: 'авто', perSec: '/с', lvl: 'ур.', click: 'Клик', auto: 'Авто',
     floor: 'Этаж', top: 'Вершина башни'
   }
@@ -1542,6 +1720,7 @@ function applyStaticI18n() {
   $('sub-wpn')      && ($('sub-wpn').innerHTML = '<span class="subtab-ic">⚔</span>' + t('sub-wpn').replace('⚔',''));
   $('sub-arm')      && ($('sub-arm').innerHTML = '<span class="subtab-ic">🛡</span>' + t('sub-arm').replace('🛡',''));
   $('sub-skn')      && ($('sub-skn').innerHTML = '<span class="subtab-ic">🎭</span>' + t('sub-skn').replace('🎭',''));
+  $('sub-bnr')      && ($('sub-bnr').innerHTML = '<span class="subtab-ic">🎫</span>' + t('sub-bnr').replace('🎫',''));
   document.querySelectorAll('#up-power .up-name')[0] && (document.querySelectorAll('#up-power .up-name')[0].textContent = t('up-power-name'));
   document.querySelectorAll('#up-auto .up-name')[0]  && (document.querySelectorAll('#up-auto .up-name')[0].textContent = t('up-auto-name'));
   document.querySelectorAll('#music-modal .shop-title')[0] && (document.querySelectorAll('#music-modal .shop-title')[0].textContent = t('music-title'));
@@ -2219,6 +2398,73 @@ const SKINS = [
     fx:{ back:rzBack(-3, 9, 6, 21, '#f2f0fa', '#b8b4d4'),
          front:[...rzSkirt('#1a1424', '#0c0810', '#8a5cd0'), ...rzFly(2, 0, '#b878ff', '#f0d8ff')] } },
 ];
+
+/* ===== 🎫 Банери (кастомізація, видно в топі гравців) =====
+   rarity: 0 звичайний · 1 фіолетовий (епічний) · 2 червоний · 3 зірковий.
+   cost — ціна в 💎 у магазині; road:true — банер НЕ продається, лише нагорода
+   «Дороги слави» за трофеї (див. duelRoadReward). anim:true — переливається. */
+const BANNERS = [
+  { id:'bn_steel',   name:'Сталь',        rarity:0, cost:100,  anim:false },
+  { id:'bn_forest',  name:'Ліс',          rarity:0, cost:100,  anim:false },
+  { id:'bn_sand',    name:'Пустеля',      rarity:0, cost:100,  anim:false },
+  { id:'bn_aurora',  name:'Аврора',       rarity:1, cost:300,  anim:true },
+  { id:'bn_portal',  name:'Портал',       rarity:1, cost:300,  anim:true },
+  { id:'bn_nebula',  name:'Туманність',   rarity:1, cost:300,  anim:true },
+  { id:'bn_volcano', name:'Вулкан',       rarity:2, cost:700,  anim:true },
+  { id:'bn_dragon',  name:'Кров дракона', rarity:2, cost:700,  anim:true },
+  { id:'bn_galaxy',  name:'Галактика',    rarity:3, cost:2500, anim:true },
+  { id:'bn_nova',    name:'Наднова',      rarity:3, cost:2500, anim:true },
+  /* нагороди «Дороги слави» (не продаються) */
+  { id:'bn_road1200', name:'Претендент',   rarity:0, cost:0, anim:false, road:true },
+  { id:'bn_road5200', name:'Чемпіон арени', rarity:0, cost:0, anim:false, road:true },
+  { id:'bn_road10k',  name:'Легенда арени', rarity:2, cost:0, anim:true,  road:true }
+];
+const BNR_RNAME = ['Звичайний','Епічний','Червоний','Зірковий'];
+function bannerStripHtml(id, extraCls) {
+  const b = BANNERS.find(x => x.id === id);
+  if (!b) return '';
+  return `<div class="bnr-strip r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-name">${uiText(b.name)}</span></div>`;
+}
+function renderBanners() {
+  panelBnr.innerHTML = BANNERS.map(b => {
+    const owned = state.banners.owned.includes(b.id);
+    const eq = state.banners.equipped === b.id;
+    const can = !owned && !b.road && state.diamonds >= b.cost;
+    let btn;
+    if (eq) btn = `<button class="wpn-btn owned" disabled>★ ${uiText('Одягнено')}</button>`;
+    else if (owned) btn = `<button class="wpn-btn" data-eq-bnr="${b.id}">${uiText('Одягнути')}</button>`;
+    else if (b.road) btn = `<button class="wpn-btn" disabled>${uiText('Дорога слави')}</button>`;
+    else btn = priceBtn('diamond', b.cost, can, 'data-buy-bnr', b.id);
+    return `<div class="bnr-card${eq ? ' eq' : ''}">${bannerStripHtml(b.id)}<div class="bnr-foot"><span class="bnr-rname bnr-r${b.rarity}-tx">${uiText(BNR_RNAME[b.rarity])}${b.road ? ' <span class="bnr-road-tag">🌌</span>' : ''}</span>${btn}</div></div>`;
+  }).join('');
+  if (!panelBnr.querySelector('.bnr-clear')) {
+    panelBnr.insertAdjacentHTML('afterbegin', `<button class="wpn-btn bnr-clear" data-eq-bnr="" style="align-self:flex-start">${uiText('Без банера')}</button>`);
+  }
+  panelBnr.querySelectorAll('[data-buy-bnr]').forEach(el => el.addEventListener('click', () => buyBanner(el.dataset.buyBnr)));
+  panelBnr.querySelectorAll('[data-eq-bnr]').forEach(el => el.addEventListener('click', () => equipBanner(el.dataset.eqBnr || null)));
+}
+function buyBanner(id) {
+  const b = BANNERS.find(x => x.id === id);
+  if (!b || b.road || state.banners.owned.includes(id) || state.diamonds < b.cost) { hapticNote('error'); return; }
+  state.diamonds -= b.cost;
+  state.banners.owned.push(id);
+  state.banners.equipped = id;
+  dirty = true; uiDirty = true; shopSig = '';
+  hapticNote('success'); save();
+  burst(cx, cy - 10, 20, 80, SPARK);
+}
+function equipBanner(id) {
+  if (id && !state.banners.owned.includes(id)) return;
+  state.banners.equipped = id || null;
+  dirty = true; uiDirty = true; shopSig = '';
+  haptic('light'); save();
+}
+function grantBanner(id) {   // видає банер (кейс/дорога слави); повертає true якщо новий, false якщо вже був (компенсація)
+  if (state.banners.owned.includes(id)) return false;
+  state.banners.owned.push(id);
+  if (!state.banners.equipped) state.banners.equipped = id;
+  return true;
+}
 /* ===== Баланс скінів: бонус залежить від ЦІНИ =====
    Цінність скіна V у ★: зірки — як є, діаманти — за курсом обмінника (1 💎 = 300 ★).
    Загальний бюджет бонусів росте з V, а скіни за 💎 сильніші за скіни за ★ тієї ж цінності
@@ -2310,7 +2556,7 @@ const UPGRADES = [
   { id:'regen',   name:'Регенерація',        ic:'💚', cur:'star', base:3500,  g:1.30, max:40, show:l => `ХП +${(l * 0.5).toFixed(1)}/с` },
   { id:'tough',   name:'Стійкість',          ic:'🧱', cur:'star', base:10000, g:1.50, max:15, show:l => `−${l} урону` },
   { id:'hunter',  name:'Мисливець',          ic:'🏹', cur:'star', base:5000,  g:1.30, max:30, show:l => `Монстр кожні ${Math.max(30, 120 - l * 2)}с` },
-  { id:'diaLuck', name:'Нюх на діаманти',    ic:'🔍', cur:'star', base:20000, g:1.30, max:40, show:l => `Шанс 💎: ${18 + l}%` },
+  { id:'diaLuck', name:'Нюх на діаманти',    ic:'🔍', cur:'star', base:20000, g:1.30, max:40, show:l => `Шанс 💎: ${10 + l}%` },
   { id:'goldrush',name:'Золота лихоманка',   ic:'🪙', cur:'star', base:8000,  g:1.30, max:30, show:l => `Здобич з монстрів +${l * 3}%` },
   { id:'ironwill',name:'Залізна воля',       ic:'🦾', cur:'star', base:6500,  g:1.35, max:25, show:l => `Макс. ХП +${l * 10} (плоско)` },
   { id:'swift',   name:'Прудкість',          ic:'🌀', cur:'star', base:9000,  g:1.30, max:20, show:l => `Швидкість автокліку +${l * 2}%` },
@@ -2337,7 +2583,7 @@ const luckChance  = () => upLvl('lucky') * 0.01;
 const regenPerSec = () => upLvl('regen') * 0.5 + upLvl('dregen') * 0.3;
 const encTime     = () => Math.max(30, CFG.ENC_TIME_SEC - upLvl('hunter') * 2);
 const diaMul      = () => 1 + upLvl('dmagnet') * 0.08 + skinBuff('dia');
-const diaChance   = () => 0.18 + upLvl('diaLuck') * 0.01;
+const diaChance   = () => 0.10 + upLvl('diaLuck') * 0.01;
 
 /* --- Максимум ХП з урахуванням прокачки здоров'я --- */
 function hpMax() { return Math.round((CFG.HP_MAX + state.hpLvl * CFG.HP_PER_LEVEL) * (1 + hpBonus()) + upLvl('ironwill') * 10); }
@@ -2802,7 +3048,9 @@ function defaultState() {
     monstersKilled: 0, questsClaimed: [], kills: { slime: 0, goblin: 0, skeleton: 0, bat: 0, spider: 0, lava: 0, ghost: 0, demon: 0, boss: 0 },
     referredBy: null, refRewardGiven: false, invitesCount: 0, botWarns: 0,   // реферальна система
     cases: 0,   // невідкриті кейси (куплені за Telegram Stars або 💎)
-    daily: { n: 0, day: '' }   // щоденні нагороди: n — скільки з 7 забрано, day — дата останнього забирання
+    daily: { n: 0, day: '' },   // щоденні нагороди: n — скільки з 7 забрано, day — дата останнього забирання
+    duelRoad: { claimed: [] },   // дорога слави дуелей: пороги трофеїв, за які вже забрано нагороду
+    banners: { owned: [], equipped: null }   // банери: колекція + який зараз одягнено (видно в топі)
   };
 }
 /* Перетворює довільний "сирий" об'єкт збереження (з localStorage або з хмари)
@@ -2823,6 +3071,9 @@ function sanitizeState(s) {
     const n = Math.floor(Number(s.daily.n));
     if (Number.isFinite(n)) d.daily.n = Math.max(0, Math.min(7, n));
     if (typeof s.daily.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s.daily.day)) d.daily.day = s.daily.day;
+  }
+  if (s.duelRoad && typeof s.duelRoad === 'object' && Array.isArray(s.duelRoad.claimed)) {
+    d.duelRoad.claimed = [...new Set(s.duelRoad.claimed.map(Number).filter(x => Number.isFinite(x) && x > 0))];
   }
   if (Array.isArray(s.questsClaimed)) d.questsClaimed = s.questsClaimed.filter(id => typeof id === 'string');
   if (s.kills && typeof s.kills === 'object') {
@@ -2853,6 +3104,12 @@ function sanitizeState(s) {
     }
   }
   if (typeof s.skin === 'string' && d.skins.includes(s.skin)) d.skin = s.skin;
+  if (s.banners && typeof s.banners === 'object') {
+    const bids = new Set(BANNERS.map(b => b.id));
+    if (Array.isArray(s.banners.owned)) d.banners.owned = [...new Set(s.banners.owned.filter(id => bids.has(id)))];
+    if (typeof s.banners.equipped === 'string' && (s.banners.equipped === null || d.banners.owned.includes(s.banners.equipped))) d.banners.equipped = s.banners.equipped;
+    else if (s.banners.equipped && d.banners.owned.includes(s.banners.equipped)) d.banners.equipped = s.banners.equipped;
+  }
   if (s.viewMode === 'walls' || s.viewMode === 'sky') d.viewMode = s.viewMode;
   if (d.powerLvl < 1) d.powerLvl = 1;
   d.floorTier = TIERS.filter(x => d.totalStars > x.at).length;   // поверх рахується від загальної кількості зірок
@@ -3104,7 +3361,7 @@ async function fetchLeaderboard(limit) {
       const rp = await fetch(`${SUPABASE_URL}/rest/v1/rpc/leaderboard_top`, { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: JSON.stringify({ lim: limit }) });
       if (rp.ok) return await rp.json();
     } catch (e) {}
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score,photo_url&order=score.desc&limit=${limit}`, { headers: H });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score,photo_url,equipped_banner&order=score.desc&limit=${limit}`, { headers: H });
     if (!r.ok) return [];
     return await r.json();
   } catch (e) { return []; }
@@ -3473,10 +3730,13 @@ async function renderLeaderboard() {
     const isMePlayer = !!(telegramId && tid && Number(tid) === Number(telegramId));
     const isSearching = p.duel_status === 'searching';
     const canDuel = keyReady() && telegramId && tid && !isMePlayer && p.online && p.duel_status !== 'busy';
-    const searchLine = isSearching ? `<div class="duel-search-line">⚔ ${name} жде суперника в дуель…</div>` : '';
-    const duelBtn = canDuel ? `<button class="duel-inv-btn" type="button" data-duel-invite="${escapeHtml(String(tid))}" title="Викликати на дуель">⚔</button>` : '';
-    const trophyBadge = p.trophies ? `<span class="lb-trophy" title="Трофеї дуелей">🏆${fmt(p.trophies)}</span>` : '';
-    return `<div class="${cls.join(' ')}"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span>${creatorName}${trophyBadge}<span class="lb-score">${fmt(p.score || 0)}</span>${duelBtn}${searchLine}</div>`;
+    const searchLine = isSearching ? `<div class="duel-search-line">⚔ ${t('duelSearchLine').replace('{name}', name)}</div>` : '';
+    const duelBtn = canDuel ? `<button class="duel-inv-btn" type="button" data-duel-invite="${escapeHtml(String(tid))}" title="${t('duelInviteTitle')}">⚔</button>` : '';
+    const trophyBadge = p.trophies ? `<span class="lb-trophy" title="${t('trophiesTitle')}">🏆${fmt(p.trophies)}</span>` : '';
+    const extraLine = (trophyBadge || duelBtn) ? `<div class="lb-row-extra">${trophyBadge}${duelBtn}</div>` : '';
+    const eqBnrId = p.equipped_banner || (p.progress && p.progress.banners && p.progress.banners.equipped) || null;
+    const bnrBg = eqBnrId && BANNERS.find(x => x.id === eqBnrId) ? `<div class="lb-bnr-bg">${bannerStripHtml(eqBnrId)}</div>` : '';
+    return `<div class="${cls.join(' ')}">${bnrBg}<span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span>${creatorName}<span class="lb-score">${fmt(p.score || 0)}</span>${extraLine}${searchLine}</div>`;
   }).join('');
   panelLb.innerHTML = inviteBtnHtml() + onlineHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
   bindInviteBtn();
@@ -4077,12 +4337,11 @@ function hitMonster() {
   uiDirty = true;
   if (combat.hp <= 0) onMonsterDefeated();
 }
-const MONSTER_DIA_RANGE = [[0,1],[2,3],[5,10],[10,20],[18,32],[30,55],[50,90],[85,150],[150,260]];
+const MONSTER_DIA_MIN = 1, MONSTER_DIA_MAX = 2; // завжди 1-2 алмази, незалежно від поверху — алмази тепер цінні
 function monsterDiaReward(tier) {
-  const r = MONSTER_DIA_RANGE[Math.min(tier, MONSTER_DIA_RANGE.length - 1)];
-  const base = r[0] + Math.floor(Math.random() * (r[1] - r[0] + 1));
-  const bonus = Math.floor(upLvl('diaLuck') * 0.1);
-  return Math.max(0, Math.round((base + bonus) * diaMul()));
+  if (Math.random() >= diaChance()) return 0;   // базово 10%, +1% за рівень «Нюх на діаманти»
+  const base = MONSTER_DIA_MIN + Math.floor(Math.random() * (MONSTER_DIA_MAX - MONSTER_DIA_MIN + 1));
+  return Math.max(1, Math.round(base * diaMul()));
 }
 function onMonsterDefeated() {
   const reward = Math.round(combat.reward * rewardMul());
@@ -4201,12 +4460,12 @@ btnAuto.addEventListener('click', () => {
    а всередині "Прокачки" — свої підвкладки: основне / зброя / броня / образи */
 const tabsBar = $('tabs');
 const tabUpg = $('tab-upg'), tabQst = $('tab-qst'), tabLb = $('tab-lb');
-const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelQst = $('panel-qst'), panelLb = $('panel-lb'), panelDon = $('panel-don');
+const panelUpg = $('panel'), panelWpn = $('panel-wpn'), panelArm = $('panel-arm'), panelSkn = $('panel-skn'), panelBnr = $('panel-bnr'), panelQst = $('panel-qst'), panelLb = $('panel-lb'), panelDon = $('panel-don');
 const subtabsBar = $('subtabs');
-const subUps = $('sub-ups'), subWpn = $('sub-wpn'), subArm = $('sub-arm'), subSkn = $('sub-skn');
+const subUps = $('sub-ups'), subWpn = $('sub-wpn'), subArm = $('sub-arm'), subSkn = $('sub-skn'), subBnr = $('sub-bnr');
 
 const mainTabs = [['upg', tabUpg], ['qst', tabQst], ['lb', tabLb]];
-const subTabs  = [['ups', subUps, panelUpg], ['wpn', subWpn, panelWpn], ['arm', subArm, panelArm], ['skn', subSkn, panelSkn]];
+const subTabs  = [['ups', subUps, panelUpg], ['wpn', subWpn, panelWpn], ['arm', subArm, panelArm], ['skn', subSkn, panelSkn], ['bnr', subBnr, panelBnr]];
 let curSub = 'ups';
 let tabsCollapsed = false;   // сховані всі панелі — лишаються тільки 3 кнопки внизу
 
@@ -4269,6 +4528,13 @@ document.querySelectorAll('#settings-modal [data-link]').forEach(b => b.addEvent
 /* ================= НОВИНИ / ВЕРСІЯ ================= */
 /* Щоб показати нову новину всім: додай новий обʼєкт ПЕРШИМ у масив NEWS (з новою ver/date/time) — вікно зʼявиться знову при запуску. */
 const NEWS = [
+  { ver: '1.4.0', date: '25.09.2026', time: '10:28',
+    title: { uk: 'Дуелі, Дорога слави та банери', en: 'Duels, Road of Glory & banners', ru: 'Дуэли, Дорога славы и баннеры' },
+    items: {
+      uk: ['⚔️ Додали дуелі 1 на 1: викликай гравця з топу або шукай випадкового суперника', '🏟 Нова арена дуелей: окрема сцена-підземелля, однаковий розмір персонажів у обох бійців і таймер на вибір ходу', '🌌 Додали «Дорогу слави» — сезонні нагороди за трофеї дуелей', '💎 Алмази тепер цінуються значно більше — з монстрів вони випадають набагато рідше', '🎫 Додали банери (вкладка «Кастомізація»): 4 рідкості, показуються в топі гравців, можна отримати з кейса, у магазині або на «Дорозі слави»'],
+      en: ['⚔️ Added 1v1 duels: challenge a player from the leaderboard or search for a random opponent', '🏟 New duel arena: a separate dungeon scene, both fighters now the same size, plus a move-choice timer', '🌌 Added the "Road of Glory" — seasonal rewards for duel trophies', '💎 Diamonds are now worth a lot more — they drop from monsters much more rarely', '🎫 Added banners (Customization tab): 4 rarities, shown on the leaderboard, obtainable from the case, the shop, or the Road of Glory'],
+      ru: ['⚔️ Добавили дуэли 1 на 1: вызови игрока из топа или найди случайного соперника', '🏟 Новая арена дуэлей: отдельная сцена-подземелье, одинаковый размер персонажей у обоих бойцов и таймер на выбор хода', '🌌 Добавили «Дорогу славы» — сезонные награды за трофеи дуэлей', '💎 Алмазы теперь ценятся намного больше — с монстров они выпадают куда реже', '🎫 Добавили баннеры (вкладка «Кастомизация»): 4 редкости, отображаются в топе игроков, можно получить из кейса, в магазине или на «Дороге славы»']
+    } },
   { ver: '1.3.0', date: '24.09.2026', time: '21:46',
     title: { uk: 'Велике оновлення: Топ, реферали та баланс', en: 'Big update: Leaderboard, referrals & balance', ru: 'Большое обновление: Топ, рефералы и баланс' },
     items: {
@@ -4298,7 +4564,7 @@ const NEWS = [
       ru: ['🏰 Башня с этажами и монстрами', '⚔️ Оружие и броня', '🎭 Образы героя с бафами (за звёзды и алмазы)']
     } }
 ];
-const GAME_VERSION = '1.3.0';
+const GAME_VERSION = '1.4.0';
 const NEWS_UI = {
   uk: { title: '📰 Новини та оновлення', ver: 'Версія гри', upd: 'Оновлено', nw: 'НОВЕ', tt: 'TikTok канал', sup: 'Підтримка (Telegram)', news: 'Новини каналу Telegram' },
   en: { title: '📰 News & updates', ver: 'Game version', upd: 'Updated', nw: 'NEW', tt: 'TikTok channel', sup: 'Support (Telegram)', news: 'Telegram channel news' },
@@ -4647,14 +4913,14 @@ function shopSignature() {
   const can = list => list.map(x => (balanceOf(x.cur) >= x.cost ? 1 : 0)).join('');
   return [curTab, state.weapons.join(), state.armor.join(), state.skins.join(), state.skin, state.hpLvl, hpMax(),
     can(WEAPONS), can(ARMOR), can(SKINS), UPGRADES.map(u => upLvl(u.id) + (upLvl(u.id) < u.max && balanceOf(u.cur) >= upCost(u) ? 'y' : 'n')).join(''), state.score >= costHp() ? 1 : 0, state.diamonds >= CASE_DIAMONDS ? 1 : 0, state.cases,
-    state.questsClaimed.join(), Math.floor(state.steps/25), state.floorTier, state.monstersKilled, state.autoLvl, state.powerLvl,
+    state.questsClaimed.join(), state.banners.owned.join(), state.banners.equipped, Math.floor(state.steps/25), state.floorTier, state.monstersKilled, state.autoLvl, state.powerLvl,
     state.kills.slime, state.kills.goblin, state.kills.skeleton, state.kills.bat, state.kills.spider, state.kills.lava, state.kills.ghost, state.kills.demon, state.kills.boss, state.hpLvl, Math.floor(state.diamonds/5)].join('|');
 }
 function renderShops() {
   const sig = shopSignature();
   if (sig === shopSig) return;
   shopSig = sig;
-  renderWeapons(); renderArmor(); renderSkins(); renderDonate(); renderMoreUps(); renderQuests();
+  renderWeapons(); renderArmor(); renderSkins(); renderBanners(); renderDonate(); renderMoreUps(); renderQuests();
 }
 
 /* --- Завдання --- */
@@ -4880,10 +5146,10 @@ function caseCardHtml() {
 const CASE_DIAMONDS = 150;   // ціна кейса в 💎; за справжні Telegram Stars — 50 ⭐ (тариф 'case' на сервері)
 const CS_COL = ['#9aa0ac', '#a44bff', '#ff3d4d', '#3fa7ff'];
 const CS_ITEMS = [
-  { r:0, s:5000,  w:35 }, { r:0, s:10000, w:27 },
-  { r:1, d:100, w:7 }, { r:1, d:200, w:4 }, { r:1, s:60000, w:8 }, { r:1, skin:'mage', w:5 }, { r:1, skin:'shadow', w:3 },
-  { r:2, d:300, w:2.5 }, { r:2, d:500, w:1.5 }, { r:2, s:120000, w:3 }, { r:2, skin:'phoenix', w:1.2 }, { r:2, skin:'crystal', w:.8 },
-  { r:3, skin:'starlord', w:1.4 }, { r:3, skin:'dragon', w:.6 }
+  { r:0, s:5000,  w:32 }, { r:0, s:10000, w:24 }, { r:0, bn:'bn_steel', w:4 }, { r:0, bn:'bn_forest', w:4 }, { r:0, bn:'bn_sand', w:4 },
+  { r:1, d:100, w:7 }, { r:1, d:200, w:4 }, { r:1, s:60000, w:7 }, { r:1, skin:'mage', w:5 }, { r:1, skin:'shadow', w:3 }, { r:1, bn:'bn_aurora', w:2 }, { r:1, bn:'bn_portal', w:2 },
+  { r:2, d:300, w:2.2 }, { r:2, d:500, w:1.3 }, { r:2, s:120000, w:2.5 }, { r:2, skin:'phoenix', w:1.2 }, { r:2, skin:'crystal', w:.8 }, { r:2, bn:'bn_volcano', w:1 },
+  { r:3, skin:'starlord', w:1.3 }, { r:3, skin:'dragon', w:.5 }, { r:3, bn:'bn_galaxy', w:.7 }
 ];
 let csBusy = false;
 document.body.insertAdjacentHTML('beforeend', '<div id="case-modal" class="off"></div>');
@@ -4893,18 +5159,24 @@ const CS_DROP = [[80, 17, 3, 0], [40, 45, 13, 2], [15, 40, 38, 7], [0, 20, 50, 3
 function csPick(w) { let x = Math.random() * w.reduce((a, b) => a + b, 0); for (let i = 0; i < w.length; i++) { if ((x -= w[i]) < 0) return i; } return w.length - 1; }
 function csRollFrom(tier) { const r = csPick(CS_DROP[tier]), pool = CS_ITEMS.filter(i => i.r === r); return pool[csPick(pool.map(i => i.w))]; }
 function csLabel(it) {
+  if (it.bn)   return ['🎫', uiText(BANNERS.find(x => x.id === it.bn).name)];
   if (it.skin) return ['🎭', uiText(SKINS.find(x => x.id === it.skin).name)];
   return it.d ? ['💎', '+' + fmt(it.d)] : ['★', '+' + fmt(it.s)];
 }
 function csCard(it, win) {
   let pic, tx;
-  if (it.skin) { pic = `<img class="cs-pv" src="${skinPreviewUrl(it.skin)}" alt="">`; tx = uiText(SKINS.find(x => x.id === it.skin).name); }
+  if (it.bn) { pic = `<span class="cs-pv" style="display:flex;align-items:center;justify-content:center;font-size:20px">🎫</span>`; tx = uiText(BANNERS.find(x => x.id === it.bn).name); }
+  else if (it.skin) { pic = `<img class="cs-pv" src="${skinPreviewUrl(it.skin)}" alt="">`; tx = uiText(SKINS.find(x => x.id === it.skin).name); }
   else { pic = `<b>${it.d ? '💎' : '★'}</b>`; tx = '+' + fmt(it.d || it.s); }
   return `<div class="cs-it r${it.r}${win ? ' win' : ''}" style="--rc:${CS_COL[it.r]}">${pic}<span>${escapeHtml(tx)}</span></div>`;
 }
 function csGrant(it) {
   if (it.s) { state.score += it.s; return ''; }
   if (it.d) { state.diamonds += it.d; return ''; }
+  if (it.bn) {
+    if (!grantBanner(it.bn)) { const b = BANNERS.find(x => x.id === it.bn); const c = Math.floor(b.cost / 2); state.diamonds += c; return '+' + fmt(c) + '💎'; }
+    return '';
+  }
   if (state.skins.includes(it.skin)) { const c = Math.floor(SKINS.find(x => x.id === it.skin).cost / 2); state.diamonds += c; return '+' + fmt(c) + '💎'; }
   state.skins.push(it.skin); return '';
 }
@@ -5566,6 +5838,9 @@ renderLeaderboard = async function(){
   };
 
   let myTrophies = 0, curDuel = null, curDuelStatus = 'idle';
+  let duelAnimatedRound = 0;                                    // останній раунд, для якого вже показали анімацію ходів
+  let duelTimerInt = null, duelTimerLeft = 0, duelTimerKey = '';  // клієнтський таймер вибору ходу (косметичний, з авто-ходом по нулю)
+  const DUEL_MOVE_SECONDS = 20;
 
   async function duelRpc(fn, body) {
     if (!keyReady()) return { error: 'no_key' };
@@ -5603,7 +5878,7 @@ renderLeaderboard = async function(){
   }
 
   function openDuelModal() { $('duel-modal').classList.remove('off'); }
-  function closeDuelModal() { $('duel-modal').classList.add('off'); }
+  function closeDuelModal() { $('duel-modal').classList.add('off'); duelStopTimer(); }
 
   function applyDuelState(res) {
     if (!res || res.error) { if (res && res.error) duelToast(DUEL_ERR_UK[res.error] || 'Дуель: щось пішло не так.'); return; }
@@ -5633,6 +5908,94 @@ renderLeaderboard = async function(){
   setInterval(duelPoll, 2200);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) duelPoll(); });
 
+  /* ---------- 🌌 Дорога слави: сезонний магазин нагород за трофеї дуелей ----------
+     Пороги кожні DUEL_ROAD_STEP трофеїв. Нагороди рахуються функцією duelRoadReward —
+     щоб поміняти нагороди наступного сезону, досить відредагувати цю функцію й підняти
+     DUEL_SEASON_NUM. Забрані пороги зберігаються в state.duelRoad.claimed (синхронізується
+     в хмару разом з рештою прогресу, як і щоденні нагороди). */
+  const DUEL_SEASON_NUM = 1;
+  const DUEL_ROAD_STEP  = 100;
+  const DUEL_ROAD_MAX   = 10000;
+  function duelRoadReward(th) {
+    if (th === 300)  return { type: 'case',    amount: 1 };
+    if (th === 1200) return { type: 'banner',  id: 'bn_road1200' };
+    if (th === 2500) return { type: 'skin',    id: 'rz_beatrice' };
+    if (th === 5000) return { type: 'diamond', amount: 700 };
+    if (th === 5200) return { type: 'banner',  id: 'bn_road5200' };
+    if (th === 10000) return { type: 'banner', id: 'bn_road10k' };
+    if (th % 1000 === 0) return { type: 'diamond', amount: 40 };
+    if (th % 500 === 0)  return { type: 'diamond', amount: 15 };
+    return { type: 'star', amount: th };
+  }
+  function duelRoadRewardMeta(r) {
+    if (!r) return null;
+    if (r.type === 'diamond') return { ic: '💎', tx: '+' + fmt(r.amount) };
+    if (r.type === 'star')    return { ic: '★', tx: '+' + fmt(r.amount) };
+    if (r.type === 'case')    return { ic: '🎁', tx: '×' + r.amount };
+    if (r.type === 'skin')    { const sk = SKINS.find(x => x.id === r.id); return { ic: '🎭', tx: sk ? uiText(sk.name) : '' }; }
+    if (r.type === 'banner')  { const bn = BANNERS.find(x => x.id === r.id); return { ic: '🎫', tx: bn ? uiText(bn.name) : '' }; }
+    return null;
+  }
+  function duelRoadGrant(r) {
+    if (r.type === 'diamond') { state.diamonds += r.amount; return '+' + fmt(r.amount) + '💎'; }
+    if (r.type === 'star')    { state.score    += r.amount; return '+' + fmt(r.amount) + '★'; }
+    if (r.type === 'case')    { state.cases    += r.amount; return '🎁 ×' + r.amount; }
+    if (r.type === 'banner') {
+      const bn = BANNERS.find(x => x.id === r.id);
+      if (!grantBanner(r.id)) { const c = Math.floor((bn ? bn.cost : 300) / 2) || 150; state.diamonds += c; return '+' + fmt(c) + '💎'; }
+      return '🎫 ' + (bn ? uiText(bn.name) : r.id);
+    }
+    if (r.type === 'skin') {
+      if (state.skins.includes(r.id)) { state.diamonds += 150; return '+150💎'; }
+      state.skins.push(r.id);
+      const sk = SKINS.find(x => x.id === r.id);
+      return '🎭 ' + (sk ? uiText(sk.name) : r.id);
+    }
+    return '';
+  }
+  function duelRoadClaim(thRaw) {
+    const th = Math.floor(Number(thRaw));
+    if (!Number.isFinite(th) || th <= 0 || myTrophies < th) return;
+    state.duelRoad = state.duelRoad || { claimed: [] };
+    if (state.duelRoad.claimed.includes(th)) return;
+    const r = duelRoadReward(th);
+    if (!r) return;
+    const txt = duelRoadGrant(r);
+    state.duelRoad.claimed.push(th);
+    dirty = true; uiDirty = true; shopSig = ''; save();
+    hapticNote('success');
+    floater('🌌 ' + txt, cx * S, (cy - 70) * S);
+    renderDuelTab();
+  }
+  function duelRoadHtml() {
+    const claimed = (state.duelRoad && state.duelRoad.claimed) || [];
+    const pct = Math.max(0, Math.min(100, (myTrophies / DUEL_ROAD_MAX) * 100));
+    let nodes = '';
+    for (let th = DUEL_ROAD_STEP; th <= DUEL_ROAD_MAX; th += DUEL_ROAD_STEP) {
+      const r = duelRoadReward(th), meta = duelRoadRewardMeta(r);
+      const isDone = claimed.includes(th);
+      const isReady = !isDone && myTrophies >= th;
+      const isBig = th === 300 || th === 2500 || th === 5000 || th === 10000;
+      const cls = ['road-node']; if (isBig) cls.push('big'); if (isDone) cls.push('done'); else if (isReady) cls.push('ready'); else cls.push('locked');
+      nodes += `<div class="${cls.join(' ')}">
+        <div class="road-node-ic">${meta.ic}</div>
+        <div class="road-node-amt">${escapeHtml(meta.tx)}</div>
+        <div class="road-node-th">🏆${fmt(th)}</div>
+        ${isDone ? `<div class="road-node-chk">✔</div>` : isReady ? `<button class="road-claim-btn" type="button" data-road-claim="${th}">${t('roadClaim')}</button>` : `<div class="road-node-lock">🔒</div>`}
+      </div>`;
+    }
+    return `<div class="road-wrap" style="--road-pct:${pct.toFixed(2)}%">
+      <div class="road-head"><span class="road-title">${t('roadTitle')}</span><span class="road-season">${t('roadSeason').replace('{n}', DUEL_SEASON_NUM)}</span></div>
+      <div class="road-track">${nodes}</div>
+    </div>`;
+  }
+  panelDuel.addEventListener('click', e => {
+    const b = e.target.closest('[data-road-claim]');
+    if (!b) return;
+    haptic('light');
+    duelRoadClaim(b.dataset.roadClaim);
+  });
+
   function renderDuelTab() {
     const searching = curDuelStatus === 'searching';
     panelDuel.innerHTML = `<div class="duel-hub">
@@ -5648,6 +6011,7 @@ renderLeaderboard = async function(){
         <div class="duel-rules-foot">Перший до 5 очок перемагає й забирає 70% трофеїв суперника.</div>
       </div>
       <div class="duel-hint">Можна також викликати конкретного гравця кнопкою ⚔ прямо у списку «🏆 Топ».</div>
+      ${duelRoadHtml()}
     </div>`;
     $('duel-toggle-btn').addEventListener('click', async () => {
       haptic('light');
@@ -5661,75 +6025,129 @@ renderLeaderboard = async function(){
 
   function moveEmoji(m) { return m === 'attack' ? '🗡️' : m === 'defense' ? '🛡️' : m === 'dodge' ? '💨' : '❔'; }
 
-  function duelFighterHtml(name, skin, score, cls) {
+  function duelFighterHtml(name, skin, score, cls, actionCls) {
     const pips = Array.from({ length: 5 }, (_, i) => `<span class="duel-pip${i < score ? ' on' : ''}"></span>`).join('');
     return `<div class="duel-fighter ${cls}">
-      <img src="${skinPreviewUrl(skin || 'default')}" alt="">
+      <div class="duel-platform">
+        <div class="duel-fighter-img-wrap${actionCls ? ' act-' + actionCls : ''}"><img src="${skinPreviewUrl(skin || 'default')}" alt=""></div>
+      </div>
       <div class="duel-fighter-name">${escapeHtml(name || 'Анонім')}</div>
       <div class="duel-pips">${pips}</div>
     </div>`;
   }
 
+  function duelStopTimer() { clearInterval(duelTimerInt); duelTimerInt = null; duelTimerKey = ''; }
+
+  function duelSceneHtml(myFighterHtml, oppFighterHtml) {
+    return `<div class="duel-scene"><span class="duel-torch l"></span><span class="duel-torch r"></span>
+      <div class="duel-vs-badge">⚔</div>
+      <div class="duel-arena">${myFighterHtml}${oppFighterHtml}</div>
+    </div>`;
+  }
+
   function renderDuelModalContent() {
     const box = $('duel-box');
-    if (!curDuel) { box.innerHTML = ''; return; }
+    if (!curDuel) { box.innerHTML = ''; duelStopTimer(); duelAnimatedRound = 0; return; }
     const me = telegramId;
     const iAmP1 = Number(curDuel.p1_id) === Number(me);
     const myName = iAmP1 ? curDuel.p1_name : curDuel.p2_name, oppName = iAmP1 ? curDuel.p2_name : curDuel.p1_name;
     const mySkin = iAmP1 ? curDuel.p1_skin : curDuel.p2_skin, oppSkin = iAmP1 ? curDuel.p2_skin : curDuel.p1_skin;
     const myScore = iAmP1 ? curDuel.score1 : curDuel.score2, oppScore = iAmP1 ? curDuel.score2 : curDuel.score1;
     const myMoved = iAmP1 ? curDuel.p1_moved : curDuel.p2_moved;
-    const arenaHtml = `<div class="duel-arena">${duelFighterHtml(myName, mySkin, myScore, 'me')}<div class="duel-vs">⚔</div>${duelFighterHtml(oppName, oppSkin, oppScore, 'opp')}</div>`;
+
+    // якщо в історії з'явився щойно завершений раунд — на мить показуємо анімацію дії кожного бійця
+    const lastHist = curDuel.history && curDuel.history.length ? curDuel.history[curDuel.history.length - 1] : null;
+    let myAct = null, oppAct = null;
+    if (lastHist && lastHist.round !== duelAnimatedRound) {
+      myAct = iAmP1 ? lastHist.p1 : lastHist.p2;
+      oppAct = iAmP1 ? lastHist.p2 : lastHist.p1;
+      duelAnimatedRound = lastHist.round;
+    }
+    const arenaHtml = duelSceneHtml(
+      duelFighterHtml(myName, mySkin, myScore, 'me', myAct),
+      duelFighterHtml(oppName, oppSkin, oppScore, 'opp', oppAct)
+    );
 
     if (curDuel.status === 'pending_accept') {
+      duelStopTimer();
       if (Number(curDuel.p2_id) === Number(me) && !iAmP1) {
-        box.innerHTML = `<div class="duel-title">Виклик на дуель!</div>${arenaHtml}
-          <div class="duel-status-line"><b>${escapeHtml(curDuel.p1_name)}</b> викликає тебе на дуель. Приймаєш?</div>
-          <div class="duel-accept-row"><button class="duel-btn-decline" id="duel-decline-btn" type="button">❌ Відхилити</button><button class="duel-btn-accept" id="duel-accept-btn" type="button">✅ Прийняти</button></div>`;
+        box.innerHTML = `<div class="duel-title">${t('duelChallengeTitle')}</div>${arenaHtml}
+          <div class="duel-status-line"><b>${escapeHtml(curDuel.p1_name)}</b> ${t('duelChallengesRest')}</div>
+          <div class="duel-accept-row"><button class="duel-btn-decline" id="duel-decline-btn" type="button">${t('duelDecline')}</button><button class="duel-btn-accept" id="duel-accept-btn" type="button">${t('duelAccept')}</button></div>`;
         $('duel-accept-btn').addEventListener('click', () => respondDuel(true));
         $('duel-decline-btn').addEventListener('click', () => respondDuel(false));
       } else {
-        box.innerHTML = `<div class="duel-title">Очікування відповіді…</div>${arenaHtml}
-          <div class="duel-status-line">Чекаємо, поки <b>${escapeHtml(oppName)}</b> прийме виклик.</div>
-          <div class="duel-end-row"><button class="duel-btn-forfeit" id="duel-cancel-inv-btn" type="button">✕ Скасувати виклик</button></div>`;
+        box.innerHTML = `<div class="duel-title">${t('duelWaitingTitle')}</div>${arenaHtml}
+          <div class="duel-status-line">${t('duelWaitingPrefix')} <b>${escapeHtml(oppName)}</b> ${t('duelWaitingSuffix')}</div>
+          <div class="duel-end-row"><button class="duel-btn-forfeit" id="duel-cancel-inv-btn" type="button">${t('duelCancelInvite')}</button></div>`;
         $('duel-cancel-inv-btn').addEventListener('click', forfeitDuel);
       }
       return;
     }
 
     if (curDuel.status === 'active') {
-      let movesHtml;
+      let movesHtml, timerHtml = '';
+      const roundKey = curDuel.id + ':' + curDuel.round;
       if (myMoved) {
-        movesHtml = `<div class="duel-status-line">⏳ Хід зроблено. Чекаємо суперника…</div>`;
+        duelStopTimer();
+        movesHtml = `<div class="duel-status-line">${t('duelMoveMade')}</div>`;
       } else {
         movesHtml = `<div class="duel-moves">
-          <button class="duel-move-btn" data-move="attack">🗡️<span>Атака</span></button>
-          <button class="duel-move-btn" data-move="defense">🛡️<span>Захист</span></button>
-          <button class="duel-move-btn" data-move="dodge">💨<span>Ухилення</span></button>
+          <button class="duel-move-btn" data-move="attack">🗡️<span>${t('moveAttack')}</span></button>
+          <button class="duel-move-btn" data-move="defense">🛡️<span>${t('moveDefense')}</span></button>
+          <button class="duel-move-btn" data-move="dodge">💨<span>${t('moveDodge')}</span></button>
         </div>`;
+        timerHtml = `<div class="duel-timer-wrap"><div class="duel-timer" id="duel-timer-ring" data-s="${DUEL_MOVE_SECONDS}"></div><span class="duel-timer-line">${t('duelPickMove')}</span></div>`;
+        if (duelTimerKey !== roundKey) { duelTimerKey = roundKey; duelTimerLeft = DUEL_MOVE_SECONDS; duelStartTimer(); }
       }
-      const hist = curDuel.history && curDuel.history.length ? curDuel.history[curDuel.history.length - 1] : null;
-      const histHtml = hist ? `<div class="duel-history">Раунд ${hist.round}: ${moveEmoji(hist.p1)} проти ${moveEmoji(hist.p2)} — ${hist.winner === 'draw' ? 'нічия' : (hist.winner === (iAmP1 ? 'p1' : 'p2') ? 'твоя перемога' : 'перемога суперника')}</div>` : '';
-      box.innerHTML = `<div class="duel-title">Раунд ${curDuel.round} · до 5 перемог</div>${arenaHtml}${histHtml}${movesHtml}
-        <div class="duel-end-row"><button class="duel-btn-forfeit" id="duel-forfeit-btn" type="button">🏳️ Здатися</button></div>`;
-      if (!myMoved) box.querySelectorAll('.duel-move-btn').forEach(b => b.addEventListener('click', () => sendDuelMove(b.dataset.move)));
+      const hist = lastHist;
+      const histResult = hist ? (hist.winner === 'draw' ? t('duelDraw') : (hist.winner === (iAmP1 ? 'p1' : 'p2') ? t('duelYouWon') : t('duelOppWon'))) : '';
+      const histHtml = hist ? `<div class="duel-history">${t('duelHistoryLine').replace('{round}', hist.round).replace('{m1}', moveEmoji(hist.p1)).replace('{m2}', moveEmoji(hist.p2)).replace('{result}', histResult)}</div>` : '';
+      box.innerHTML = `<div class="duel-title">${t('duelRoundTitle').replace('{round}', curDuel.round)}</div>${arenaHtml}${histHtml}${timerHtml}${movesHtml}
+        <div class="duel-end-row"><button class="duel-btn-forfeit" id="duel-forfeit-btn" type="button">${t('duelForfeit')}</button></div>`;
+      if (!myMoved) {
+        box.querySelectorAll('.duel-move-btn').forEach(b => b.addEventListener('click', () => { duelStopTimer(); sendDuelMove(b.dataset.move); }));
+        duelUpdateTimerDom();
+      }
       $('duel-forfeit-btn').addEventListener('click', forfeitDuel);
       return;
     }
 
+    duelStopTimer();
     if (curDuel.status === 'finished') {
       const iWon = Number(curDuel.winner_id) === Number(me);
       box.innerHTML = `<div class="duel-result-icon">${iWon ? '🏆' : '💀'}</div>
-        <div class="duel-result-title ${iWon ? 'win' : 'lose'}">${iWon ? 'Перемога!' : 'Поразка'}</div>${arenaHtml}
-        <div class="duel-reward">${iWon ? '+' + fmt(curDuel.reward_winner) : '−' + fmt(curDuel.reward_loser)} 🏆 трофеїв</div>
-        <button class="duel-btn-ok" id="duel-ok-btn" type="button" style="width:100%">OK</button>`;
+        <div class="duel-result-title ${iWon ? 'win' : 'lose'}">${iWon ? t('duelWinTitle') : t('duelLoseTitle')}</div>${arenaHtml}
+        <div class="duel-reward">${iWon ? '+' + fmt(curDuel.reward_winner) : '−' + fmt(curDuel.reward_loser)} 🏆 ${t('duelTrophySuffix')}</div>
+        <button class="duel-btn-ok" id="duel-ok-btn" type="button" style="width:100%">${t('ref-modal-ok')}</button>`;
       $('duel-ok-btn').addEventListener('click', ackDuel);
       return;
     }
 
-    box.innerHTML = `<div class="duel-title">${curDuel.status === 'declined' ? 'Гравець відхилив виклик.' : 'Дуель скасовано.'}</div>
-      <button class="duel-btn-ok" id="duel-ok-btn" type="button" style="width:100%">OK</button>`;
+    box.innerHTML = `<div class="duel-title">${curDuel.status === 'declined' ? t('duelDeclinedMsg') : t('duelCancelledMsg')}</div>
+      <button class="duel-btn-ok" id="duel-ok-btn" type="button" style="width:100%">${t('ref-modal-ok')}</button>`;
     $('duel-ok-btn').addEventListener('click', ackDuel);
+  }
+
+  function duelUpdateTimerDom() {
+    const ring = $('duel-timer-ring');
+    if (!ring) return;
+    ring.style.setProperty('--p', Math.round((duelTimerLeft / DUEL_MOVE_SECONDS) * 100));
+    ring.dataset.s = duelTimerLeft;
+    ring.classList.toggle('low', duelTimerLeft <= 5);
+  }
+  function duelStartTimer() {
+    clearInterval(duelTimerInt);
+    duelUpdateTimerDom();
+    duelTimerInt = setInterval(() => {
+      duelTimerLeft--;
+      duelUpdateTimerDom();
+      if (duelTimerLeft <= 0) {
+        duelStopTimer();
+        const box = $('duel-box');
+        if (box && box.querySelector('.duel-move-btn')) sendDuelMove('dodge');   // час вийшов — автохід (ухилення, найбезпечніший)
+      }
+    }, 1000);
   }
 
   async function sendDuelMove(move) {
