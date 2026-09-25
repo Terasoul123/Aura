@@ -406,10 +406,13 @@
   }
   .lb-refresh:active{transform:translateY(1px)}
   .lb-row{
-    position:relative;display:flex;align-items:center;gap:9px;min-height:64px;padding:18px 13px;border-radius:13px;background:linear-gradient(135deg,#29204c,#171328 70%,#241946);
+    position:relative;display:flex;flex-direction:column;gap:5px;min-height:64px;padding:13px 13px 12px;border-radius:13px;background:linear-gradient(135deg,#29204c,#171328 70%,#241946);
     box-shadow:inset 0 0 0 2px #5a478f,inset 0 -4px 0 0 #0d091a,0 5px 12px rgba(0,0,0,.24);
     overflow:hidden;isolation:isolate;transition:transform .15s ease,box-shadow .2s ease;
   }
+  .lb-row-top{display:grid;grid-template-columns:24px 22px 30px 1fr auto;align-items:center;gap:9px}
+  .lb-row-bottom{display:grid;grid-template-columns:24px 22px 30px 1fr auto;align-items:center}
+  .lb-row-stats{grid-column:4 / span 2;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .lb-row:active{transform:scale(.992)}
   .lb-row::after{content:'';position:absolute;left:10%;right:10%;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);pointer-events:none}
   .lb-row.top1{background:linear-gradient(135deg,#4a3513,#2d2110,#4a3210);box-shadow:inset 0 0 0 2px #f5c95b,inset 0 -4px 0 0 #76500b,0 5px 14px rgba(245,201,91,.16)}
@@ -438,7 +441,7 @@
   .lb-online b{color:#3ddc6e;font-weight:normal}
   .lb-avatar{width:30px;height:30px;flex:none;border-radius:7px;image-rendering:pixelated;box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 2px 7px rgba(0,0,0,.3);background:#2c1f5c;object-fit:cover}
   .lb-name{flex:1 1 auto;min-width:0;font-size:10px;color:var(--paper);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
-  .lb-score{flex:none;font-size:10px;color:var(--gold);text-shadow:var(--o2);min-width:58px;text-align:right;font-weight:700;white-space:nowrap}
+  .lb-score{flex:none;font-size:10px;color:var(--gold);text-shadow:var(--o2);font-weight:700;white-space:nowrap}
   .lb-empty{font-size:8px;color:var(--dim);text-align:center;line-height:1.8;padding:20px 8px}
   .referral-info{padding:8px 12px;margin-bottom:1px;border-radius:11px;background:linear-gradient(135deg,#302060,#1d3568);box-shadow:inset 0 0 0 2px #6f59c8,inset 0 -3px 0 0 #21164b,0 3px 10px rgba(70,55,150,.2);text-align:center}
   .referral-info-title{font-size:9px;color:var(--gold);line-height:1.3;text-shadow:var(--o2);margin-bottom:3px}
@@ -712,7 +715,7 @@
   .bnr-road-tag{font-size:8px;padding:3px 6px;border-radius:6px;background:#1a1240;color:#8fe9ff;box-shadow:inset 0 0 0 1px #3fa7ff}
   .bnr-card .wpn-btn{min-height:34px}
   /* У топі фон банера реально заповнює всю картку */
-  .lb-bnr-bg{position:absolute;inset:0;border-radius:inherit;opacity:.62;pointer-events:none;z-index:0;overflow:hidden}
+  .lb-bnr-bg{position:absolute;inset:0;border-radius:inherit;opacity:.7;pointer-events:none;z-index:0;overflow:hidden}
   .lb-bnr-bg .bnr-strip{width:100%;height:100%;min-height:100%;border-radius:inherit;box-shadow:none}
   .lb-bnr-bg .bnr-name{display:none}
   .lb-row{position:relative;isolation:isolate}
@@ -798,14 +801,12 @@
   .lb-row .admin-lb-btn{margin-left:4px}
 
   /* ---------- ⚔ Дуель: доповнення до рядків «Топ» ---------- */
-  .lb-row{flex-wrap:wrap}
-  .duel-search-line{flex:1 0 100%;font-size:8px;color:var(--gold);text-shadow:var(--o2);padding-top:4px;animation:duelPulse 1.4s ease-in-out infinite}
+  .duel-search-line{width:100%;font-size:8px;color:var(--gold);text-shadow:var(--o2);padding-top:2px;animation:duelPulse 1.4s ease-in-out infinite}
   @keyframes duelPulse{0%,100%{opacity:.55}50%{opacity:1}}
-  .duel-inv-btn{flex:none;border:0;border-radius:7px;padding:6px 9px;background:linear-gradient(180deg,#a33a3a,#5c1f1f);
-    color:#ffe3e3;font:10px var(--pixel);box-shadow:inset 0 0 0 1px #ff8a8a;cursor:pointer;touch-action:manipulation}
+  .duel-inv-btn{flex:none;border:0;border-radius:8px;padding:7px 10px;background:linear-gradient(180deg,#a33a3a,#5c1f1f);
+    color:#ffe3e3;font:11px var(--pixel);box-shadow:inset 0 0 0 1px #ff8a8a;cursor:pointer;touch-action:manipulation}
   .duel-inv-btn:active{transform:translateY(1px)}
-  .lb-trophy{flex:none;font-size:8px;color:var(--gold);text-shadow:var(--o2);white-space:nowrap}
-  .lb-row-extra{flex:1 0 100%;display:flex;align-items:center;justify-content:flex-end;gap:8px;padding-top:4px}
+  .lb-trophy{flex:none;font-size:9px;color:var(--gold);text-shadow:var(--o2);white-space:nowrap}
 
   /* ---------- ⚔ Дуель: вкладка-хаб ---------- */
   .duel-hub{display:flex;flex-direction:column;gap:10px}
@@ -841,7 +842,7 @@
   .road-season{font-size:7px;color:#b9c8ff}
   .road-progress-line{font-size:7px;color:#eef1ff;text-align:center;margin:4px 0 8px;line-height:1.5}
   .road-progress-line b{color:var(--gold)}
-  .road-track{position:relative;display:flex;gap:9px;overflow-x:auto;overflow-y:hidden;padding:10px 6px 12px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .road-track{position:relative;display:flex;gap:9px;overflow-x:auto;overflow-y:hidden;padding:10px 6px 12px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;touch-action:pan-x}
   .road-track::-webkit-scrollbar{height:5px}
   .road-track::-webkit-scrollbar-thumb{background:#6f59d8;border-radius:3px}
   .road-track::before{content:"";position:absolute;left:16px;right:16px;top:31px;height:3px;z-index:0;border-radius:2px;
@@ -2592,7 +2593,7 @@ function renderBanners() {
     return `<div class="bnr-card${eq ? ' eq' : ''}">${bannerStripHtml(b.id)}<div class="bnr-foot"><span class="bnr-rname bnr-r${b.rarity}-tx">${uiText(BNR_RNAME[b.rarity])}${b.road ? ' <span class="bnr-road-tag">🌌</span>' : ''}</span>${btn}</div></div>`;
   }).join('');
   if (!panelBnr.querySelector('.bnr-clear')) {
-    panelBnr.insertAdjacentHTML('afterbegin', `<button class="wpn-btn bnr-clear" data-eq-bnr="" style="align-self:flex-start">${uiText('Без банера')}</button>`);
+    panelBnr.insertAdjacentHTML('afterbegin', `<button class="wpn-btn bnr-clear${!state.banners.equipped ? ' owned' : ''}" data-eq-bnr="" style="width:100%">${!state.banners.equipped ? '★ ' : ''}${uiText('Без банера')}</button>`);
   }
   panelBnr.querySelectorAll('[data-buy-bnr]').forEach(el => el.addEventListener('click', () => buyBanner(el.dataset.buyBnr)));
   panelBnr.querySelectorAll('[data-eq-bnr]').forEach(el => el.addEventListener('click', () => equipBanner(el.dataset.eqBnr || null)));
@@ -2606,12 +2607,14 @@ function buyBanner(id) {
   dirty = true; uiDirty = true; shopSig = '';
   hapticNote('success'); save();
   burst(cx, cy - 10, 20, 80, SPARK);
+  renderBanners();
 }
 function equipBanner(id) {
   if (id && !state.banners.owned.includes(id)) return;
   state.banners.equipped = id || null;
   dirty = true; uiDirty = true; shopSig = '';
   haptic('light'); save();
+  renderBanners();
 }
 function grantBanner(id) {   // видає банер (кейс/дорога слави); повертає true якщо новий, false якщо вже був (компенсація)
   if (state.banners.owned.includes(id)) return false;
@@ -3886,11 +3889,11 @@ async function renderLeaderboard() {
     const canDuel = keyReady() && telegramId && tid && !isMePlayer && p.duel_status !== 'busy';
     const searchLine = isSearching ? `<div class="duel-search-line">⚔ ${t('duelSearchLine').replace('{name}', name)}</div>` : '';
     const duelBtn = canDuel ? `<button class="duel-inv-btn" type="button" data-duel-invite="${escapeHtml(String(tid))}" title="${t('duelInviteTitle')}">⚔</button>` : '';
-    const trophyBadge = p.trophies ? `<span class="lb-trophy" title="${t('trophiesTitle')}">🏆${fmt(p.trophies)}</span>` : '';
-    const extraLine = (trophyBadge || duelBtn) ? `<div class="lb-row-extra">${trophyBadge}${duelBtn}</div>` : '';
+    const trophyBadge = `<span class="lb-trophy" title="${t('trophiesTitle')}">🏆 ${fmt(p.trophies || 0)}</span>`;
     const eqBnrId = p.equipped_banner || (p.progress && p.progress.banners && p.progress.banners.equipped) || null;
     const bnrBg = eqBnrId && BANNERS.find(x => x.id === eqBnrId) ? `<div class="lb-bnr-bg">${bannerStripHtml(eqBnrId)}</div>` : '';
-    return `<div class="${cls.join(' ')}">${bnrBg}<span class="lb-rank">${rank}</span><span class="lb-award">${award}</span><span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span>${creatorName}<span class="lb-score">${fmt(p.score || 0)}</span>${extraLine}${searchLine}</div>`;
+    const avHtml = `<span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span>`;
+    return `<div class="${cls.join(' ')}">${bnrBg}<div class="lb-row-top"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span>${avHtml}${creatorName}${duelBtn}</div><div class="lb-row-bottom"><div class="lb-row-stats"><span class="lb-score">★ ${fmt(p.score || 0)}</span>${trophyBadge}</div></div>${searchLine}</div>`;
   }).join('');
   panelLb.innerHTML = inviteBtnHtml() + onlineHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
   bindInviteBtn();
@@ -6165,6 +6168,11 @@ renderLeaderboard = async function(){
   });
 
   function renderDuelTab() {
+    // Зберігаємо позицію горизонтального скролу «Дороги слави» — інакше вона щоразу
+    // скидається на початок при кожному повторному рендері (напр. периодичний duelPoll),
+    // тому створюється враження, що трек взагалі не гортається.
+    const prevRoadTrack = panelDuel.querySelector('.road-track');
+    const prevRoadScroll = prevRoadTrack ? prevRoadTrack.scrollLeft : null;
     const searching = curDuelStatus === 'searching';
     const searchFeedHtml = searchingPlayers.length
       ? `<div class="duel-searching-feed">${searchingPlayers.map(p => {
@@ -6188,6 +6196,10 @@ renderLeaderboard = async function(){
       <div class="duel-hint">${t('duelHintInviteFromTop')}</div>
       ${duelRoadHtml()}
     </div>`;
+    if (prevRoadScroll !== null) {
+      const newRoadTrack = panelDuel.querySelector('.road-track');
+      if (newRoadTrack) newRoadTrack.scrollLeft = prevRoadScroll;
+    }
     $('duel-toggle-btn').addEventListener('click', async () => {
       haptic('light');
       if (curDuelStatus === 'searching') {
