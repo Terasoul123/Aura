@@ -2661,12 +2661,14 @@ function bannerStripHtml(id, extraCls) {
   if (!b) return '';
   return `<div class="bnr-strip banner-${b.id} r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-name">${uiText(b.name)}</span></div>`;
 }
+const BNR_DEBUG_TAG = 'BUILD-BNR-FIX-3';   // якщо цей рядок не з'явився у грі — вантажиться старий файл (кеш/деплой), а не новий код
 function renderBanners() {
   if (!panelBnr) { console.error('renderBanners: #panel-bnr не знайдено в DOM'); return; }
   if (!state.banners || typeof state.banners !== 'object') state.banners = { owned: [], equipped: null };
   if (!Array.isArray(state.banners.owned)) state.banners.owned = [];
+  const debugLine = `<div style="padding:6px 8px;font-size:8px;color:#7ee3ff;text-align:center;opacity:.85">${BNR_DEBUG_TAG} · BANNERS=${Array.isArray(BANNERS) ? BANNERS.length : 'N/A'}</div>`;
   try {
-    panelBnr.innerHTML = BANNERS.map(b => {
+    panelBnr.innerHTML = debugLine + BANNERS.map(b => {
       const owned = state.banners.owned.includes(b.id);
       const eq = state.banners.equipped === b.id;
       const can = !owned && !b.road && state.diamonds >= b.cost;
@@ -2684,7 +2686,7 @@ function renderBanners() {
     panelBnr.querySelectorAll('[data-eq-bnr]').forEach(el => el.addEventListener('click', () => equipBanner(el.dataset.eqBnr || null)));
   } catch (e) {
     console.error('renderBanners error', e);
-    panelBnr.innerHTML = `<div style="padding:16px 10px;font-size:9px;line-height:1.6;color:#ff9a8f;text-align:center">⚠ Помилка банерів (покажи це в підтримку):<br>${(e && e.message) ? String(e.message).replace(/</g,'&lt;') : String(e)}</div>`;
+    panelBnr.innerHTML = debugLine + `<div style="padding:16px 10px;font-size:9px;line-height:1.6;color:#ff9a8f;text-align:center">⚠ Помилка банерів (покажи це в підтримку):<br>${(e && e.message) ? String(e.message).replace(/</g,'&lt;') : String(e)}</div>`;
   }
 }
 function buyBanner(id) {
