@@ -3628,7 +3628,25 @@ async function fetchLeaderboard(limit) {
     const H = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
     try {   // основний шлях: сервер сам рахує «онлайн» (за своїм часом)
       const rp = await fetch(`${SUPABASE_URL}/rest/v1/rpc/leaderboard_top`, { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: JSON.stringify({ lim: limit }) });
-      if (rp.ok) return await rp.json();
+      if (rp.ok) {
+        const rows = await rp.json();
+        // RPC leaderboard_top може бути старою версією й не повертати equipped_banner —
+        // підтягуємо банери окремо по telegram_id і домішуємо, щоб фон в Топі оновлювався завжди.
+        if (Array.isArray(rows) && rows.length && rows.every(x => x && x.equipped_banner === undefined)) {
+          try {
+            const ids = rows.map(x => x.telegram_id).filter(id => id !== undefined && id !== null);
+            if (ids.length) {
+              const br = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?telegram_id=in.(${ids.join(',')})&select=telegram_id,equipped_banner`, { headers: H });
+              if (br.ok) {
+                const bmap = {};
+                (await br.json()).forEach(x => { bmap[x.telegram_id] = x.equipped_banner; });
+                rows.forEach(x => { x.equipped_banner = bmap[x.telegram_id] ?? null; });
+              }
+            }
+          } catch (e) {}
+        }
+        return rows;
+      }
     } catch (e) {}
     const r = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score,photo_url,equipped_banner&order=score.desc&limit=${limit}`, { headers: H });
     if (!r.ok) return [];
