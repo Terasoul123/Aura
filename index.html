@@ -966,7 +966,7 @@
   .duel-arena{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:6px;padding:0 6px}
   .duel-vs-badge{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);z-index:2;font-size:16px;color:#ff6b6b;
     text-shadow:0 0 10px rgba(255,107,107,.8),var(--o2)}
-  .duel-fighter{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;width:46%;min-width:0}
+  .duel-fighter{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;width:46%;min-width:0;min-height:104px;justify-content:flex-end}
   .duel-platform{position:relative;width:86px;height:26px;max-width:100%;border-radius:50%;
     background:radial-gradient(ellipse at 50% 30%,#6a5aa8,#372a68 55%,#221a44 100%);
     box-shadow:inset 0 2px 0 rgba(255,255,255,.18),inset 0 -6px 10px rgba(0,0,0,.5),0 6px 10px -4px rgba(0,0,0,.6)}
@@ -4055,7 +4055,7 @@ function awardFor(rank) {
   return '';
 }
 
-const referralInfoHtml = () => '<div class="referral-info"><div class="referral-info-title">' + uiText('referral-title') + '</div><div class="referral-info-desc">' + uiText('referral-desc') + '</div></div>';
+const referralInfoHtml = () => '<div class="referral-info"><div class="referral-info-title">' + t('referral-title') + '</div><div class="referral-info-desc">' + t('referral-desc') + '</div></div>';
 const inviteBtnHtml = () => referralInfoHtml() + '<button class="lb-refresh" id="lb-invite-btn" type="button">👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')</button>';
 function bindInviteBtn() { const b = $('lb-invite-btn'); if (b) b.addEventListener('click', shareReferralLink); }
 function refreshInviteBtn() { const b = $('lb-invite-btn'); if (b) b.textContent = '👥 ' + uiText('Запросити друга') + ' (' + fmt(state.invitesCount || 0) + ')'; }
