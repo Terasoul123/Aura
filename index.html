@@ -2662,22 +2662,30 @@ function bannerStripHtml(id, extraCls) {
   return `<div class="bnr-strip banner-${b.id} r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-name">${uiText(b.name)}</span></div>`;
 }
 function renderBanners() {
-  panelBnr.innerHTML = BANNERS.map(b => {
-    const owned = state.banners.owned.includes(b.id);
-    const eq = state.banners.equipped === b.id;
-    const can = !owned && !b.road && state.diamonds >= b.cost;
-    let btn;
-    if (eq) btn = `<button class="wpn-btn owned" disabled>★ ${uiText('Одягнено')}</button>`;
-    else if (owned) btn = `<button class="wpn-btn" data-eq-bnr="${b.id}">${uiText('Одягнути')}</button>`;
-    else if (b.road) btn = `<button class="wpn-btn" disabled>${uiText('Дорога слави')}</button>`;
-    else btn = priceBtn('diamond', b.cost, can, 'data-buy-bnr', b.id);
-    return `<div class="bnr-card${eq ? ' eq' : ''}">${bannerStripHtml(b.id)}<div class="bnr-foot"><span class="bnr-rname bnr-r${b.rarity}-tx">${uiText(BNR_RNAME[b.rarity])}${b.road ? ' <span class="bnr-road-tag">🌌</span>' : ''}</span>${btn}</div></div>`;
-  }).join('');
-  if (!panelBnr.querySelector('.bnr-clear')) {
-    panelBnr.insertAdjacentHTML('afterbegin', `<button class="wpn-btn bnr-clear${!state.banners.equipped ? ' owned' : ''}" data-eq-bnr="" style="width:100%">${!state.banners.equipped ? '★ ' : ''}${uiText('Без банера')}</button>`);
+  if (!panelBnr) { console.error('renderBanners: #panel-bnr не знайдено в DOM'); return; }
+  if (!state.banners || typeof state.banners !== 'object') state.banners = { owned: [], equipped: null };
+  if (!Array.isArray(state.banners.owned)) state.banners.owned = [];
+  try {
+    panelBnr.innerHTML = BANNERS.map(b => {
+      const owned = state.banners.owned.includes(b.id);
+      const eq = state.banners.equipped === b.id;
+      const can = !owned && !b.road && state.diamonds >= b.cost;
+      let btn;
+      if (eq) btn = `<button class="wpn-btn owned" disabled>★ ${uiText('Одягнено')}</button>`;
+      else if (owned) btn = `<button class="wpn-btn" data-eq-bnr="${b.id}">${uiText('Одягнути')}</button>`;
+      else if (b.road) btn = `<button class="wpn-btn" disabled>${uiText('Дорога слави')}</button>`;
+      else btn = priceBtn('diamond', b.cost, can, 'data-buy-bnr', b.id);
+      return `<div class="bnr-card${eq ? ' eq' : ''}">${bannerStripHtml(b.id)}<div class="bnr-foot"><span class="bnr-rname bnr-r${b.rarity}-tx">${uiText(BNR_RNAME[b.rarity])}${b.road ? ' <span class="bnr-road-tag">🌌</span>' : ''}</span>${btn}</div></div>`;
+    }).join('');
+    if (!panelBnr.querySelector('.bnr-clear')) {
+      panelBnr.insertAdjacentHTML('afterbegin', `<button class="wpn-btn bnr-clear${!state.banners.equipped ? ' owned' : ''}" data-eq-bnr="" style="width:100%">${!state.banners.equipped ? '★ ' : ''}${uiText('Без банера')}</button>`);
+    }
+    panelBnr.querySelectorAll('[data-buy-bnr]').forEach(el => el.addEventListener('click', () => buyBanner(el.dataset.buyBnr)));
+    panelBnr.querySelectorAll('[data-eq-bnr]').forEach(el => el.addEventListener('click', () => equipBanner(el.dataset.eqBnr || null)));
+  } catch (e) {
+    console.error('renderBanners error', e);
+    panelBnr.innerHTML = `<div style="padding:16px 10px;font-size:9px;line-height:1.6;color:#ff9a8f;text-align:center">⚠ Помилка банерів (покажи це в підтримку):<br>${(e && e.message) ? String(e.message).replace(/</g,'&lt;') : String(e)}</div>`;
   }
-  panelBnr.querySelectorAll('[data-buy-bnr]').forEach(el => el.addEventListener('click', () => buyBanner(el.dataset.buyBnr)));
-  panelBnr.querySelectorAll('[data-eq-bnr]').forEach(el => el.addEventListener('click', () => equipBanner(el.dataset.eqBnr || null)));
 }
 function buyBanner(id) {
   const b = BANNERS.find(x => x.id === id);
@@ -5281,7 +5289,11 @@ function renderShops() {
   const sig = shopSignature();
   if (sig === shopSig) return;
   shopSig = sig;
-  renderWeapons(); renderArmor(); renderSkins(); renderBanners(); renderDonate(); renderMoreUps(); renderQuests();
+  // Кожен рендер — окремо в try/catch: якщо один паде (напр. зброя), інші (напр. банери)
+  // все одно намалюються, а не лишаться порожніми/старими без жодного видимого сліду помилки.
+  for (const fn of [renderWeapons, renderArmor, renderSkins, renderBanners, renderDonate, renderMoreUps, renderQuests]) {
+    try { fn(); } catch (e) { console.error('renderShops:' + fn.name, e); }
+  }
 }
 
 /* --- Завдання --- */
@@ -5943,11 +5955,15 @@ let regenAcc = 0;
 
 let last = performance.now();
 function frame(now) {
-  const dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now; time += dt;
-  update(dt);
-  draw();
-  if (uiDirty) renderUI();
-  if (dirty && now - lastSave > 1500) save();
+  try {
+    const dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now; time += dt;
+    update(dt);
+    draw();
+    if (uiDirty) renderUI();
+    if (dirty && now - lastSave > 1500) save();
+  } catch (e) {
+    console.error('frame loop error', e);   // одна помилка більше не зупиняє гру назавжди
+  }
   requestAnimationFrame(frame);
 }
 
