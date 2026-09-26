@@ -720,6 +720,41 @@
   .lb-bnr-bg .bnr-name{display:none}
   .lb-row{position:relative;isolation:isolate}
   .lb-row>*{position:relative;z-index:1}
+
+  /* ---------- ⚡ Буст x2 ★ за донат (атмосферний зелений ефект) ---------- */
+  #boost-fx{position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden}
+  #boost-fx.off{display:none}
+  .boost-vignette{position:absolute;inset:-6%;mix-blend-mode:screen;
+    background:radial-gradient(ellipse at 50% 45%,rgba(70,255,150,.14) 0%,rgba(30,255,120,.10) 35%,rgba(0,15,8,.6) 100%);
+    box-shadow:inset 0 0 70px 18px rgba(40,255,150,.45),inset 0 0 150px 46px rgba(0,0,0,.55);
+    animation:boostRing 2.6s ease-in-out infinite}
+  @keyframes boostRing{0%,100%{opacity:.75;box-shadow:inset 0 0 70px 18px rgba(40,255,150,.4),inset 0 0 150px 46px rgba(0,0,0,.55)}
+    50%{opacity:1;box-shadow:inset 0 0 100px 28px rgba(80,255,175,.7),inset 0 0 170px 56px rgba(0,0,0,.6)}}
+  .boost-scan{position:absolute;inset:-20px 0 0;mix-blend-mode:overlay;opacity:.5;
+    background:repeating-linear-gradient(0deg,rgba(90,255,160,.09) 0 1px,transparent 1px 3px);
+    animation:boostScan 5s linear infinite}
+  @keyframes boostScan{0%{transform:translateY(0)}100%{transform:translateY(24px)}}
+  #boost-aura{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;z-index:3;filter:blur(3px);
+    background:radial-gradient(circle,rgba(90,255,160,.6) 0%,rgba(60,255,140,.3) 40%,rgba(40,255,120,0) 72%);
+    mix-blend-mode:screen;animation:boostAura 1.8s ease-in-out infinite}
+  #boost-aura.off{display:none}
+  @keyframes boostAura{0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.14)}}
+  #boost-badge{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 8px);
+    transform:translateX(-50%);z-index:7;pointer-events:none;display:flex;align-items:center;gap:5px;
+    font:10px var(--pixel);color:#bdffd2;background:rgba(4,22,12,.68);border-radius:10px;padding:5px 10px;
+    box-shadow:0 0 0 1px #38d67f,0 0 14px 2px rgba(60,255,150,.6);text-shadow:0 0 6px #4dff9e;
+    animation:boostBadgeGlow 1.6s ease-in-out infinite}
+  #boost-badge.off{display:none}
+  @keyframes boostBadgeGlow{0%,100%{box-shadow:0 0 0 1px #38d67f,0 0 10px 2px rgba(60,255,150,.5)}
+    50%{box-shadow:0 0 0 1px #85ffb8,0 0 20px 6px rgba(110,255,175,.85)}}
+  .boost-shop-card{position:relative;display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;margin-bottom:8px;
+    background:linear-gradient(135deg,#0c2417,#152f1c);box-shadow:inset 0 0 0 2px #2fae6c}
+  .boost-shop-card.active{box-shadow:inset 0 0 0 2px #7dffb0,0 0 14px -2px rgba(90,255,160,.6)}
+  .boost-shop-ic{font-size:22px;flex:none}
+  .boost-shop-mid{flex:1;min-width:0}
+  .boost-shop-name{font-size:9px;color:#bdffd2}
+  .boost-shop-desc{font-size:7px;color:#8fd6ac;margin-top:2px}
+  .boost-buy{flex:none}
   /* ---------- НОВИНИ (космічне вікно) ---------- */
   #btn-news{position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 112px);left:10px;width:40px;height:40px;border:0;border-radius:11px;pointer-events:auto;cursor:pointer;z-index:6;
     background:linear-gradient(135deg,#3a1d8f,#0b2a6b,#5b2bb8,#0b6b8f);background-size:300% 300%;animation:nw-btn 5s linear infinite;
@@ -1126,6 +1161,9 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
 <div id="app">
   <div id="stage">
     <canvas id="game"></canvas>
+    <div id="boost-fx" class="off"><div class="boost-vignette"></div><div class="boost-scan"></div></div>
+    <div id="boost-aura" class="off"></div>
+    <div id="boost-badge" class="off">⚡<span id="boost-badge-tx"></span> <b id="boost-time">10:00</b></div>
 
     <button id="btn-view" type="button" title="Небо / Стіни вежі">🏯</button>
     <button id="btn-shop" type="button" title="Магазин">🛒</button>
@@ -3209,7 +3247,8 @@ function defaultState() {
     cases: 0,   // невідкриті кейси (куплені за Telegram Stars або 💎)
     daily: { n: 0, day: '' },   // щоденні нагороди: n — скільки з 7 забрано, day — дата останнього забирання
     duelRoad: { claimed: [] },   // дорога слави дуелей: пороги трофеїв, за які вже забрано нагороду
-    banners: { owned: [], equipped: null }   // банери: колекція + який зараз одягнено (видно в топі)
+    banners: { owned: [], equipped: null },  // банери: колекція + який зараз одягнено (видно в топі)
+    boostUntil: 0   // мітка часу (мс), до якої діє буст x2 ★ за донат (0 — бусту нема)
   };
 }
 /* Перетворює довільний "сирий" об'єкт збереження (з localStorage або з хмари)
@@ -3797,6 +3836,67 @@ setInterval(claimReferralBonus, 25000);
    Ціни/кількості мають ЗБІГАТИСЯ з тим, що прописано на сервері
    (supabase/functions/create-invoice) — той список є авторитетним,
    цей лише для показу картки гравцю ДО оплати. */
+
+/* ===== ⚡ Буст x2 ★ за 1 Telegram Star (10 хв) =====
+   Клієнтський таймер (state.boostUntil — мітка часу в мс). Помножує лише
+   "живий" прихід зірок (клік/автоклік/убивство монстра) — усе інше в грі
+   (алмази, кейси, донат-нагороди, дуелі, дорога слави) буком не чіпається. */
+const BOOST_TIER_ID = 'boost2x10', BOOST_STARS_PRICE = 1, BOOST_MINUTES = 10, BOOST_MULT = 2;
+const BOOST_UI = {
+  uk: { name: 'x2 ⭐ на 10 хвилин', desc: 'Подвоює всі отримані зірки', activeDesc: 'Активний — залишилось', fx: 'x2 ★' },
+  en: { name: 'x2 ⭐ for 10 minutes', desc: 'Doubles all stars you earn', activeDesc: 'Active — time left', fx: 'x2 ★' },
+  ru: { name: 'x2 ⭐ на 10 минут', desc: 'Удваивает все получаемые звёзды', activeDesc: 'Активен — осталось', fx: 'x2 ★' }
+};
+function boostT(key) { return (BOOST_UI[curLang] || BOOST_UI.uk)[key]; }
+function boostActive() { return Date.now() < (state.boostUntil || 0); }
+function boostMul() { return boostActive() ? BOOST_MULT : 1; }
+function boostFmtTime(ms) {
+  ms = Math.max(0, ms);
+  const m = Math.floor(ms / 60000), sSec = Math.floor((ms % 60000) / 1000);
+  return String(m).padStart(2, '0') + ':' + String(sSec).padStart(2, '0');
+}
+let boostTickInt = null;
+function updateBoostFx() {
+  const fx = $('boost-fx'), aura = $('boost-aura'), badge = $('boost-badge');
+  const active = boostActive();
+  if (fx) fx.classList.toggle('off', !active);
+  if (aura) aura.classList.toggle('off', !active);
+  if (badge) {
+    badge.classList.toggle('off', !active);
+    if (active) {
+      const txEl = $('boost-badge-tx'), timeEl = $('boost-time');
+      if (txEl) txEl.textContent = boostT('fx');
+      if (timeEl) timeEl.textContent = boostFmtTime(state.boostUntil - Date.now());
+    }
+  }
+  if (!active && boostTickInt) { clearInterval(boostTickInt); boostTickInt = null; }
+  if (shopSig !== '') shopSig = '';   // щоб картка бусту в магазині оновила напис/таймер при наступному відкритті
+}
+function startBoostVisual() {
+  updateBoostFx();
+  if (!boostTickInt) boostTickInt = setInterval(updateBoostFx, 1000);
+}
+function activateBoost() {
+  const now = Date.now();
+  state.boostUntil = Math.max(state.boostUntil || 0, now) + BOOST_MINUTES * 60000;
+  dirty = true; uiDirty = true; shopSig = '';
+  save(); syncProgressToCloud(true);
+  startBoostVisual();
+  hapticNote('success');
+  floater('⚡ ' + boostT('fx') + ' · ' + BOOST_MINUTES + ':00', cx * S, (cy - 70) * S);
+  burst(cx, cy - 10, 26, 90, SPARK);
+}
+if (boostActive()) startBoostVisual();
+function boostCardHtml() {
+  const active = boostActive();
+  return `<div class="boost-shop-card${active ? ' active' : ''}">
+    <div class="boost-shop-ic">☠️</div>
+    <div class="boost-shop-mid"><div class="boost-shop-name">⚡ ${escapeHtml(boostT('name'))}</div>
+    <div class="boost-shop-desc">${active ? escapeHtml(boostT('activeDesc')) + ' ' + boostFmtTime(state.boostUntil - Date.now()) : escapeHtml(boostT('desc'))}</div></div>
+    <button class="don-buy boost-buy" type="button" data-boost-buy>⭐ ${BOOST_STARS_PRICE}</button>
+  </div>`;
+}
+
 const DONATE_TIERS = [
   { id:'mini',    stars:10,   diamonds:50,      game:1000,   ic:'✨' },
   { id:'starter', stars:50,   diamonds:300,   game:5000,   ic:'🌱' },
@@ -3812,9 +3912,10 @@ function renderDonate() {
     <div class="don-get">${uiText('одноразова покупка')}</div></div>
     <button class="don-buy" type="button" data-tier="${t.id}">⭐ ${fmt(t.stars)}</button></div>`;
   const keepTop = panelDon.scrollTop;   // перемальовування не має скидати прокрутку
-  panelDon.innerHTML = caseCardHtml() + `<div class="don-note">${uiText('Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.')}</div>`
+  panelDon.innerHTML = caseCardHtml() + boostCardHtml() + `<div class="don-note">${uiText('Оплата — офіційними Telegram Stars. Нараховується миттєво на цей акаунт.')}</div>`
     + DONATE_TIERS.map(card).join('') + converterHtml() + (dnSeen ? '' : `<div class="dn-hint" id="dn-hint"><b>▼</b>${t('dnHint')}</div>`);
   panelDon.scrollTop = keepTop;
+  panelDon.querySelectorAll('[data-boost-buy]').forEach(b => b.addEventListener('click', () => buyTier(BOOST_TIER_ID, b)));
   panelDon.querySelectorAll('[data-conv]').forEach(b => b.addEventListener('click', () => convertDiamonds(Number(b.dataset.conv))));
   const dnHint = () => { if (dnSeen || !panelDon.clientHeight) return; if (panelDon.scrollTop + panelDon.clientHeight >= panelDon.scrollHeight - 12) { dnSeen = true; const h = $('dn-hint'); if (h) h.remove(); } };
   if (!panelDon._dn) { panelDon._dn = true; panelDon.addEventListener('scroll', dnHint, { passive: true }); }
@@ -3837,6 +3938,7 @@ async function buyTier(tierId, btn) {
     tg.openInvoice(data.url, status => {
       if (btn) btn.disabled = false;
       if (status === 'paid') {
+        if (tierId === BOOST_TIER_ID) { activateBoost(); return; }
         hapticNote('success');
         floater('⭐ Оплата пройшла!', cx * S, (cy - 70) * S);
         setTimeout(claimReferralBonus, 1500);
@@ -3976,6 +4078,11 @@ function resize() {
   ctx.imageSmoothingEnabled = false;
   cx = Math.round(W * 0.42);
   cy = Math.round(H * 0.62);
+  const auraEl = $('boost-aura');
+  if (auraEl) {
+    auraEl.style.width = (34 * S) + 'px'; auraEl.style.height = (46 * S) + 'px';
+    auraEl.style.left = (cx * S) + 'px'; auraEl.style.top = ((cy - 16) * S) + 'px';
+  }
 
   const r = rng(12345);
   stars = []; clouds = [];
@@ -4449,6 +4556,7 @@ function climbStep(auto) {
     clickCarry = Math.max(0, raw - gain);
     if (Math.random() < luckChance()) gain *= 2;
   }
+  gain = Math.round(gain * boostMul());
   state.score += gain;
   state.totalStars += gain;
   state.steps += 1;
@@ -4475,8 +4583,9 @@ function autoSteps(n) {
   if (n <= 6) { for (let i = 0; i < n; i++) climbStep(true); return; }
   const per = state.powerLvl * clickMul() * autoMul();
   const total = per * n * (1 + luckChance()) + clickCarry;
-  const gain = Math.max(n, Math.floor(total));
-  clickCarry = Math.max(0, total - gain);
+  const gainRaw = Math.max(n, Math.floor(total));
+  clickCarry = Math.max(0, total - gainRaw);
+  const gain = Math.round(gainRaw * boostMul());
   state.score += gain;
   state.totalStars += gain;
   state.steps += n;
@@ -4547,7 +4656,7 @@ function monsterDiaReward(tier) {
   return Math.max(1, Math.round(base * diaMul()));
 }
 function onMonsterDefeated() {
-  const reward = Math.round(combat.reward * rewardMul());
+  const reward = Math.round(combat.reward * rewardMul() * boostMul());
   const mp = monsterGroundPos();
   state.score += reward; state.totalStars += reward;
   const diaBonus = monsterDiaReward(state.floorTier);
