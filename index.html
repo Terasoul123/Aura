@@ -673,6 +673,20 @@
   @keyframes frostDrift{to{transform:translateX(50px)}}
   @keyframes frostShimmer{50%{transform:translate(6px,4px);opacity:.5}}
 
+  /* НОВИЙ: ГРОЗА — блискавки й спалахи */
+  .banner-bn_thunder{background:linear-gradient(180deg,#141a2e 0%,#232c4d 55%,#05070f 100%)}
+  .banner-bn_thunder::before{
+    content:'';position:absolute;inset:0;z-index:1;background:#dfe9ff;opacity:0;
+    animation:thunderFlash 3.4s ease-in-out infinite;
+  }
+  .banner-bn_thunder::after{
+    content:'⚡        ⚡     ⚡';position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;
+    font-size:26px;letter-spacing:6px;color:#ffe98a;text-shadow:0 0 10px #fff176,0 0 22px #7ea8ff;
+    animation:thunderBolt 2.6s ease-in-out infinite;
+  }
+  @keyframes thunderFlash{0%,84%,100%{opacity:0}86%{opacity:.55}88%{opacity:.08}90%{opacity:.32}}
+  @keyframes thunderBolt{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+
   /* 7. ЛАВА — вулканічний жар */
   .banner-bn_volcano{background:linear-gradient(#311018,#7d1d12 48%,#170408)}
   .banner-bn_volcano::before{
@@ -2631,6 +2645,7 @@ const BANNERS = [
   { id:'bn_portal',  name:'Портал',         rarity:1, cost:300,  anim:true },
   { id:'bn_nebula',  name:'Туманність',     rarity:1, cost:300,  anim:true },
   { id:'bn_frost',   name:'Мороз',          rarity:1, cost:300,  anim:true },
+  { id:'bn_thunder', name:'Гроза',          rarity:1, cost:300,  anim:true },
   { id:'bn_volcano', name:'Лава',           rarity:2, cost:700,  anim:true },
   { id:'bn_dragon',  name:'Кров дракона',   rarity:2, cost:700,  anim:true },
   { id:'bn_galaxy',  name:'Галактика',      rarity:3, cost:2500, anim:true },
