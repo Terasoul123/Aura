@@ -4099,6 +4099,7 @@ async function renderLeaderboard() {
     panelLb.querySelector('.lb-empty').innerHTML = uiText('Поки що тут порожньо.') + '<br>' + uiText('Зіграй і стань першим у рейтингу!');
     return;
   }
+  let __lbDebugMe = 'isMe not matched (no row with username===playerName)';
   const rowsHtml = top.map((p, i) => {
     const rank = i + 1;
     const award = awardFor(rank);
@@ -4117,10 +4118,14 @@ async function renderLeaderboard() {
     const trophyBadge = `<span class="lb-trophy" title="${t('trophiesTitle')}">🏆 ${fmt(p.trophies || 0)}</span>`;
     const eqBnrId = p.equipped_banner || (p.progress && p.progress.banners && p.progress.banners.equipped) || null;
     const bnrBg = eqBnrId && BANNERS.find(x => x.id === eqBnrId) ? `<div class="lb-bnr-bg">${bannerStripHtml(eqBnrId)}</div>` : '';
+    if (isMe || isMePlayer) {
+      __lbDebugMe = `row#${rank} raw_equipped_banner=${JSON.stringify(p.equipped_banner)} resolved_eqBnrId=${JSON.stringify(eqBnrId)} local_state.banners.equipped=${JSON.stringify(state.banners.equipped)} has_telegram_id_field=${p.telegram_id !== undefined} keys=${Object.keys(p).join(',')}`;
+    }
     const avHtml = `<span class="lb-av">${avatarImg(p.photo_url, 'lb-avatar')}${p.online === undefined ? '' : `<i class="lb-dot ${p.online ? 'on' : 'off'}"></i>`}</span>`;
     return `<div class="${cls.join(' ')}">${bnrBg}<div class="lb-row-top"><span class="lb-rank">${rank}</span><span class="lb-award">${award}</span>${avHtml}${creatorName}${duelBtn}</div><div class="lb-row-bottom"><div class="lb-row-stats"><span class="lb-score">★ ${fmt(p.score || 0)}</span>${trophyBadge}</div></div>${searchLine}</div>`;
   }).join('');
-  panelLb.innerHTML = inviteBtnHtml() + onlineHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
+  const __lbDebugHtml = `<div style="padding:6px 8px;font-size:8px;color:#7ee3ff;text-align:center;opacity:.9;word-break:break-word">LB-BNR-DEBUG: ${__lbDebugMe}</div>`;
+  panelLb.innerHTML = inviteBtnHtml() + onlineHtml + __lbDebugHtml + '<button class="lb-refresh" id="lb-refresh-btn" type="button">🔄 ' + uiText('Оновити') + '</button>' + rowsHtml;
   bindInviteBtn();
   $('lb-refresh-btn').addEventListener('click', renderLeaderboard);
 }
