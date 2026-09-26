@@ -796,6 +796,16 @@
   #nw-ok:active{transform:translateY(1px)}
   #settings-ver{color:var(--gold)}
   @media (prefers-reduced-motion:reduce){.nw-box,.nw-box::before,.nw-box::after,#btn-news,.nw-title,#nw-ok,.nw-badge{animation:none}}
+  #btn-boost{position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 160px);left:10px;
+    width:40px;height:40px;border:0;border-radius:11px;pointer-events:auto;cursor:pointer;z-index:6;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;touch-action:manipulation;
+    background:linear-gradient(160deg,#0c2417,#152f1c 60%,#0a1e12);
+    box-shadow:inset 0 0 0 2px #38d67f,inset 0 -4px 0 0 #0e3a22,0 0 12px -2px rgba(60,255,150,.6);
+    font-size:15px;animation:btnBoostGlow 2.2s ease-in-out infinite}
+  #btn-boost:active{transform:translateY(1px)}
+  #btn-boost.active{box-shadow:inset 0 0 0 2px #85ffb8,inset 0 -4px 0 0 #0e3a22,0 0 18px -1px rgba(110,255,175,.9)}
+  #btn-boost span{font:8px var(--pixel);color:#bdffd2;text-shadow:0 0 4px #4dff9e}
+  @keyframes btnBoostGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.25)}}
 
   /* ---------- прихована адмін-панель ---------- */
   #admin-modal{position:fixed;inset:0;z-index:100050;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,1,14,.86)}
@@ -1180,6 +1190,7 @@ root.style.setProperty('--p',0);requestAnimationFrame(tick);
 
     <button id="btn-settings" type="button" title="Налаштування">⚙️</button>
     <button id="btn-news" type="button" title="Новини">📰<span class="nw-dot off" id="btn-news-dot"></span></button>
+    <button id="btn-boost" type="button" title="x2 ⭐ на 10 хв">☠️<span id="btn-boost-tx">×2</span></button>
 
     <div id="hud">
       <div id="score-row">
@@ -3857,10 +3868,12 @@ function boostFmtTime(ms) {
 }
 let boostTickInt = null;
 function updateBoostFx() {
-  const fx = $('boost-fx'), aura = $('boost-aura'), badge = $('boost-badge');
+  const fx = $('boost-fx'), aura = $('boost-aura'), badge = $('boost-badge'), hudBtn = $('btn-boost'), hudTx = $('btn-boost-tx');
   const active = boostActive();
   if (fx) fx.classList.toggle('off', !active);
   if (aura) aura.classList.toggle('off', !active);
+  if (hudBtn) hudBtn.classList.toggle('active', active);
+  if (hudTx) hudTx.textContent = active ? boostFmtTime(state.boostUntil - Date.now()) : '×2';
   if (badge) {
     badge.classList.toggle('off', !active);
     if (active) {
@@ -3887,6 +3900,8 @@ function activateBoost() {
   burst(cx, cy - 10, 26, 90, SPARK);
 }
 if (boostActive()) startBoostVisual();
+updateBoostFx();   // виставити напис "×2" на кнопці головного меню одразу, ще до першого відкриття магазину
+$('btn-boost').addEventListener('click', () => buyTier(BOOST_TIER_ID, $('btn-boost')));
 function boostCardHtml() {
   const active = boostActive();
   return `<div class="boost-shop-card${active ? ' active' : ''}">
@@ -3949,6 +3964,8 @@ async function buyTier(tierId, btn) {
   } catch (e) {
     if (btn) btn.disabled = false;
     hapticNote('error');
+    floater('⚠ Оплата тимчасово недоступна', cx * S, (cy - 70) * S);
+    console.warn('buyTier failed:', tierId, e);
   }
 }
 
