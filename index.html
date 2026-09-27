@@ -614,19 +614,20 @@
   }
   @keyframes steelMove{50%{transform:translateX(30px)}}
 
-  /* 2. ЛІС — дерева, листя, туман */
+  /* 2. ЛІС — намальовані силуети ялин (SVG у .bnr-art), туман, іскри світла */
   .banner-bn_forest{background:linear-gradient(#173d2a 0%,#285d38 42%,#102719 100%)}
-  .banner-bn_forest::before{
-    content:'🌲  🌲    🌲  🌿   🌲    🌲';position:absolute;left:-20%;right:-20%;bottom:4px;
-    z-index:1;font-size:27px;letter-spacing:5px;white-space:nowrap;filter:saturate(.8) drop-shadow(0 3px 2px #07150d);
-    animation:forestMove 10s ease-in-out infinite;
-  }
+  .banner-bn_forest .tree-sway{animation:forestMove 10s ease-in-out infinite;transform-origin:50% 100%;transform-box:fill-box;filter:drop-shadow(0 4px 3px rgba(0,0,0,.35))}
   .banner-bn_forest::after{
-    content:'•  ✦   ·   •     ✦   ·   •';position:absolute;inset:8px;z-index:5;
-    color:rgba(196,255,193,.8);font-size:10px;letter-spacing:10px;animation:leafFloat 4s ease-in-out infinite;
+    content:'';position:absolute;inset:0;z-index:4;
+    background:
+      radial-gradient(2.4px 2.4px at 15% 30%,rgba(200,255,196,.9),transparent 70%),
+      radial-gradient(2px 2px at 40% 55%,rgba(200,255,196,.75),transparent 70%),
+      radial-gradient(2.2px 2.2px at 65% 25%,rgba(200,255,196,.85),transparent 70%),
+      radial-gradient(2px 2px at 85% 50%,rgba(200,255,196,.7),transparent 70%);
+    animation:leafFloat 4s ease-in-out infinite;
   }
-  @keyframes forestMove{50%{transform:translateX(22px)}}
-  @keyframes leafFloat{50%{transform:translate(8px,5px)}}
+  @keyframes forestMove{50%{transform:rotate(1.4deg)}}
+  @keyframes leafFloat{50%{transform:translate(6px,5px)}}
 
   /* 3. ПУСТЕЛЯ — сонце, дюни, гарячий вітер */
   .banner-bn_sand{background:linear-gradient(#f8c866 0%,#e98939 43%,#8f4325 100%)}
@@ -671,35 +672,30 @@
   @keyframes nebulaBg{50%{background-position:100% 20%}}
   @keyframes nebulaCloud{50%{transform:translate(12px,-5px) scale(1.12)}}
 
-  /* НОВИЙ: МОРОЗ — крижаний вітер, сніжинки, блиск льоду */
+  /* НОВИЙ: МОРОЗ — намальовані сніжинки (SVG у .bnr-art) + мерехтливий крижаний пил */
   .banner-bn_frost{background:linear-gradient(165deg,#0b2e44 0%,#1c7ea8 46%,#eafcff 100%)}
-  .banner-bn_frost::before{
-    content:'❄   ❆    ❄  ·  ❆   ❄    ❆  ·  ❄';position:absolute;left:-20%;right:-20%;top:10px;
-    z-index:1;font-size:15px;letter-spacing:7px;white-space:nowrap;color:#f2ffff;
-    text-shadow:0 0 6px #9fe8ff,0 2px 3px #04222f;
-    animation:frostDrift 8s ease-in-out infinite;
-  }
+  .banner-bn_frost .flake-drift{animation:frostDrift 8s ease-in-out infinite;filter:drop-shadow(0 0 3px #9fe8ff)}
   .banner-bn_frost::after{
-    content:'✦   ·   ✦    ·   ✦   ·   ✦';position:absolute;inset:8px;z-index:5;
-    color:rgba(220,250,255,.85);font-size:10px;letter-spacing:11px;
+    content:'';position:absolute;inset:0;z-index:5;
+    background:
+      radial-gradient(2px 2px at 20% 65%,rgba(220,250,255,.95),transparent 70%),
+      radial-gradient(2.2px 2.2px at 50% 40%,rgba(220,250,255,.85),transparent 70%),
+      radial-gradient(2px 2px at 75% 70%,rgba(220,250,255,.9),transparent 70%),
+      radial-gradient(1.8px 1.8px at 90% 35%,rgba(220,250,255,.8),transparent 70%);
     animation:frostShimmer 3.5s ease-in-out infinite;
   }
-  @keyframes frostDrift{50%{transform:translateX(24px)}}
+  @keyframes frostDrift{50%{transform:translate(10px,4px) rotate(8deg)}}
   @keyframes frostShimmer{50%{transform:translate(6px,4px);opacity:.5}}
 
-  /* НОВИЙ: ГРОЗА — блискавки й спалахи */
+  /* НОВИЙ: ГРОЗА — спалах неба + намальована блискавка (SVG у .bnr-art) */
   .banner-bn_thunder{background:linear-gradient(180deg,#141a2e 0%,#232c4d 55%,#05070f 100%)}
   .banner-bn_thunder::before{
     content:'';position:absolute;inset:0;z-index:1;background:#dfe9ff;opacity:0;
     animation:thunderFlash 3.4s ease-in-out infinite;
   }
-  .banner-bn_thunder::after{
-    content:'⚡        ⚡     ⚡';position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;
-    font-size:26px;letter-spacing:6px;color:#ffe98a;text-shadow:0 0 10px #fff176,0 0 22px #7ea8ff;
-    animation:thunderBolt 2.6s ease-in-out infinite;
-  }
+  .banner-bn_thunder .bolt-flash{animation:thunderBolt 2.6s ease-in-out infinite;transform-origin:50% 50%;transform-box:fill-box;filter:drop-shadow(0 0 6px #fff176) drop-shadow(0 0 16px #7ea8ff)}
   @keyframes thunderFlash{0%,84%,100%{opacity:0}86%{opacity:.55}88%{opacity:.08}90%{opacity:.32}}
-  @keyframes thunderBolt{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+  @keyframes thunderBolt{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
 
   /* 7. ЛАВА — вулканічний жар */
   .banner-bn_volcano{background:linear-gradient(#311018,#7d1d12 48%,#170408)}
@@ -710,19 +706,12 @@
   }
   @keyframes lavaFlow{50%{transform:translateX(20px) scaleY(1.06)}}
 
-  /* 8. КРОВ ДРАКОНА — полум'я + очі */
+  /* 8. КРОВ ДРАКОНА — намальоване полум'я + очі (SVG у .bnr-art) */
   .banner-bn_dragon{background:linear-gradient(145deg,#240308,#6d0a16,#160207)}
-  .banner-bn_dragon::before{
-    content:'🔥  🔥   🔥';position:absolute;left:5%;right:5%;bottom:0;z-index:1;
-    font-size:30px;letter-spacing:8px;animation:dragonFire 1.2s ease-in-out infinite alternate;
-    filter:drop-shadow(0 0 7px #ff5722);
-  }
-  .banner-bn_dragon::after{
-    content:'◉       ◉';position:absolute;left:0;right:0;top:20px;text-align:center;z-index:5;
-    color:#ffd447;font-size:17px;text-shadow:0 0 9px #ff2600;animation:dragonEyes 1.5s ease-in-out infinite;
-  }
-  @keyframes dragonFire{to{transform:translateY(-8px) scale(1.05)}}
-  @keyframes dragonEyes{50%{opacity:.55}}
+  .banner-bn_dragon .flame-flicker{animation:dragonFire 1.1s ease-in-out infinite alternate;transform-origin:50% 100%;transform-box:fill-box}
+  .banner-bn_dragon .eye-blink{animation:dragonEyes 2.8s ease-in-out infinite;transform-origin:50% 50%;transform-box:fill-box}
+  @keyframes dragonFire{0%{transform:scaleY(1) skewX(0deg)}100%{transform:scaleY(1.1) skewX(-3deg) translateY(-3px)}}
+  @keyframes dragonEyes{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(.12)}}
 
   /* 9. ГАЛАКТИКА — спіральна галактика */
   .banner-bn_galaxy{background:radial-gradient(circle at 50% 50%,#fff 0 2%,#78d8ff 4%,#5b36d0 12%,#130b42 34%,#030313 100%)}
@@ -743,13 +732,14 @@
   }
   @keyframes novaSpin{to{transform:rotate(360deg)}}
 
-  /* Нагородні банери дороги слави — окремі стилі */
+  /* Нагородні банери дороги слави — намальовані трофей / мечі / зорі (SVG у .bnr-art) */
   .banner-bn_road1200{background:linear-gradient(135deg,#25304a,#596b83,#1b2435)}
-  .banner-bn_road1200::before{content:'🏆   ✦   🏆   ✦';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:25px;opacity:.45;animation:roadFloat 3s ease-in-out infinite}
+  .banner-bn_road1200 .trophy-float{animation:roadFloat 3s ease-in-out infinite;transform-box:fill-box}
   .banner-bn_road5200{background:linear-gradient(120deg,#321a63,#b06cff,#263e9b,#321a63);background-size:300% 300%;animation:roadGradient 4s ease infinite}
-  .banner-bn_road5200::before{content:'⚔  ⚔  ⚔';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;opacity:.32}
   .banner-bn_road10k{background:radial-gradient(circle at 50% 45%,#fff5b0,#ffbd3c 9%,#d53dff 25%,#3822a2 55%,#070521 100%)}
-  .banner-bn_road10k::before{content:'✦  ✧  ★  ✧  ✦';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;letter-spacing:7px;animation:roadFloat 2s ease-in-out infinite}
+  .bnr-art{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
+  .star-twinkle{animation:starTwinkle 2.2s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+  @keyframes starTwinkle{50%{opacity:.35;transform:scale(.65)}}
   @keyframes roadFloat{50%{transform:translateY(-6px) rotate(2deg)}}
   @keyframes roadGradient{50%{background-position:100% 40%}}
 
@@ -2670,10 +2660,54 @@ const BANNERS = [
   { id:'bn_road10k',  name:'Легенда арени', rarity:2, cost:0, anim:true, road:true }
 ];
 const BNR_RNAME = ['Звичайний','Епічний','Червоний','Зірковий'];
+/* Намальована (SVG) графіка замість емодзі — однаково виглядає на будь-якому пристрої й плавно анімується */
+const BANNER_ART = {
+  bn_forest: `<svg class="bnr-art" viewBox="0 0 400 96" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <g class="tree-sway" fill="#1f4a2c"><polygon points="30,10 8,40 52,40"/><polygon points="30,26 2,58 58,58"/><polygon points="30,44 -4,80 64,80"/><rect x="24" y="76" width="12" height="14" fill="#2a1a10"/></g>
+    <g class="tree-sway" style="animation-delay:.4s" fill="#255a35"><polygon points="130,2 104,36 156,36"/><polygon points="130,20 96,56 164,56"/><polygon points="130,40 88,80 172,80"/><rect x="122" y="76" width="16" height="16" fill="#2a1a10"/></g>
+    <g class="tree-sway" style="animation-delay:.2s" fill="#1f4a2c"><polygon points="250,8 226,38 274,38"/><polygon points="250,24 218,58 282,58"/><polygon points="250,42 210,82 290,82"/><rect x="242" y="78" width="14" height="14" fill="#2a1a10"/></g>
+    <g class="tree-sway" style="animation-delay:.6s" fill="#255a35"><polygon points="350,0 322,38 378,38"/><polygon points="350,20 312,58 388,58"/><polygon points="350,40 302,82 398,82"/><rect x="342" y="78" width="16" height="16" fill="#2a1a10"/></g>
+  </svg>`,
+  bn_frost: `<svg class="bnr-art" viewBox="0 0 400 96" xmlns="http://www.w3.org/2000/svg"><g stroke="#eafcff" stroke-width="2" stroke-linecap="round">
+    <g class="flake-drift" transform="translate(40,20)"><line x1="-8" y1="0" x2="8" y2="0"/><line x1="0" y1="-8" x2="0" y2="8"/><line x1="-6" y1="-6" x2="6" y2="6"/><line x1="-6" y1="6" x2="6" y2="-6"/></g>
+    <g class="flake-drift" transform="translate(140,52) scale(.7)" style="animation-delay:.5s"><line x1="-8" y1="0" x2="8" y2="0"/><line x1="0" y1="-8" x2="0" y2="8"/><line x1="-6" y1="-6" x2="6" y2="6"/><line x1="-6" y1="6" x2="6" y2="-6"/></g>
+    <g class="flake-drift" transform="translate(230,16) scale(.9)" style="animation-delay:1s"><line x1="-8" y1="0" x2="8" y2="0"/><line x1="0" y1="-8" x2="0" y2="8"/><line x1="-6" y1="-6" x2="6" y2="6"/><line x1="-6" y1="6" x2="6" y2="-6"/></g>
+    <g class="flake-drift" transform="translate(315,56) scale(.6)" style="animation-delay:.3s"><line x1="-8" y1="0" x2="8" y2="0"/><line x1="0" y1="-8" x2="0" y2="8"/><line x1="-6" y1="-6" x2="6" y2="6"/><line x1="-6" y1="6" x2="6" y2="-6"/></g>
+    <g class="flake-drift" transform="translate(370,26) scale(.8)" style="animation-delay:.8s"><line x1="-8" y1="0" x2="8" y2="0"/><line x1="0" y1="-8" x2="0" y2="8"/><line x1="-6" y1="-6" x2="6" y2="6"/><line x1="-6" y1="6" x2="6" y2="-6"/></g>
+  </g></svg>`,
+  bn_thunder: `<svg class="bnr-art bolt-flash" viewBox="0 0 400 96" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="150,4 128,50 146,50 136,92 172,40 152,40" fill="#ffe98a"/>
+    <polygon points="280,10 262,48 276,48 268,86 298,44 282,44" fill="#ffe98a" opacity=".85" style="animation-delay:.35s"/>
+  </svg>`,
+  bn_dragon: `<svg class="bnr-art" viewBox="0 0 400 96" xmlns="http://www.w3.org/2000/svg">
+    <g class="flame-flicker" fill="#ff5722"><path d="M60 92 C40 74 42 52 56 34 C56 50 68 50 66 34 C78 46 84 62 76 80 C82 74 86 68 86 68 C90 84 78 92 60 92Z"/></g>
+    <g class="flame-flicker" style="animation-delay:.3s" fill="#ff7a3d" opacity=".92"><path d="M200 92 C180 74 182 52 196 34 C196 50 208 50 206 34 C218 46 224 62 216 80 C222 74 226 68 226 68 C230 84 218 92 200 92Z"/></g>
+    <g class="flame-flicker" style="animation-delay:.15s" fill="#ff5722"><path d="M340 92 C320 74 322 52 336 34 C336 50 348 50 346 34 C358 46 364 62 356 80 C362 74 366 68 366 68 C370 84 358 92 340 92Z"/></g>
+    <g class="eye-blink" fill="#ffd447"><ellipse cx="90" cy="26" rx="13" ry="6"/><rect x="86" y="21" width="4" height="11" rx="2" fill="#3a0508"/><ellipse cx="310" cy="26" rx="13" ry="6"/><rect x="306" y="21" width="4" height="11" rx="2" fill="#3a0508"/></g>
+  </svg>`,
+  bn_road1200: `<svg class="bnr-art" viewBox="0 0 400 96" xmlns="http://www.w3.org/2000/svg">
+    <g class="trophy-float" fill="#ffd76b"><path d="M182 10h32v10a16 16 0 0 1-32 0V10Z"/><rect x="194" y="30" width="8" height="14"/><rect x="186" y="44" width="24" height="8" rx="2"/><path d="M182 12h-10v6a12 12 0 0 0 10 12" fill="none" stroke="#ffd76b" stroke-width="4"/><path d="M214 12h10v6a12 12 0 0 1-10 12" fill="none" stroke="#ffd76b" stroke-width="4"/></g>
+    <polygon class="star-twinkle" fill="#fff5b0" points="120,20 123,27 130,30 123,33 120,40 117,33 110,30 117,27"/>
+    <polygon class="star-twinkle" style="animation-delay:.6s" fill="#fff5b0" points="278,50 281,57 288,60 281,63 278,70 275,63 268,60 275,57"/>
+  </svg>`,
+  bn_road5200: `<svg class="bnr-art" viewBox="0 0 400 96" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#e3e3f5" stroke-width="6" stroke-linecap="round"><line x1="150" y1="15" x2="250" y2="80"/><line x1="250" y1="15" x2="150" y2="80"/></g>
+    <circle cx="200" cy="47" r="7" fill="#b06cff"/>
+    <g stroke="#e3e3f5" stroke-width="5" stroke-linecap="round" opacity=".5"><line x1="30" y1="30" x2="70" y2="66"/><line x1="70" y1="30" x2="30" y2="66"/></g>
+    <g stroke="#e3e3f5" stroke-width="5" stroke-linecap="round" opacity=".5"><line x1="330" y1="30" x2="370" y2="66"/><line x1="370" y1="30" x2="330" y2="66"/></g>
+  </svg>`,
+  bn_road10k: `<svg class="bnr-art" viewBox="0 0 400 96" xmlns="http://www.w3.org/2000/svg"><g fill="#fff5b0">
+    <polygon class="star-twinkle" points="200,8 206,40 238,46 206,52 200,84 194,52 162,46 194,40"/>
+    <polygon class="star-twinkle" style="animation-delay:.4s" points="90,20 93,34 107,37 93,40 90,54 87,40 73,37 87,34"/>
+    <polygon class="star-twinkle" style="animation-delay:.8s" points="310,26 313,38 325,41 313,44 310,56 307,44 295,41 307,38"/>
+    <polygon class="star-twinkle" style="animation-delay:1.2s" points="150,60 152,68 160,70 152,72 150,80 148,72 140,70 148,68"/>
+    <polygon class="star-twinkle" style="animation-delay:1.6s" points="280,66 282,73 289,75 282,77 280,84 278,77 271,75 278,73"/>
+  </g></svg>`
+};
 function bannerStripHtml(id, extraCls) {
   const b = BANNERS.find(x => x.id === id);
   if (!b) return '';
-  return `<div class="bnr-strip banner-${b.id} r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-shine"></span><span class="bnr-name">${uiText(b.name)}</span></div>`;
+  return `<div class="bnr-strip banner-${b.id} r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}">${BANNER_ART[b.id] || ''}<span class="bnr-shine"></span><span class="bnr-name">${uiText(b.name)}</span></div>`;
 }
 const BNR_DEBUG_TAG = 'BUILD-BNR-FIX-3';   // якщо цей рядок не з'явився у грі — вантажиться старий файл (кеш/деплой), а не новий код
 function renderBanners() {
