@@ -578,40 +578,54 @@
     box-shadow:inset 0 0 0 2px rgba(255,255,255,.30);
     isolation:isolate;background:#222;
   }
+  /* Рамка підсвічена кольором рідкості — одразу видно цінність банера, навіть згорнутого */
+  .bnr-strip.r0{box-shadow:inset 0 0 0 2px rgba(214,220,232,.55)}
+  .bnr-strip.r1{box-shadow:inset 0 0 0 2px rgba(207,167,255,.7),0 0 14px -4px rgba(150,90,255,.55)}
+  .bnr-strip.r2{box-shadow:inset 0 0 0 2px rgba(255,154,143,.75),0 0 14px -4px rgba(255,90,60,.55)}
+  .bnr-strip.r3{box-shadow:inset 0 0 0 2px rgba(255,228,119,.85),0 0 18px -3px rgba(255,200,60,.65)}
   .bnr-strip .bnr-name{
     position:absolute;left:0;right:0;top:9px;z-index:6;display:flex;align-items:center;justify-content:center;
     font:12px/1 var(--pixel);letter-spacing:.3px;color:#fff;text-shadow:0 2px 3px #000,0 0 8px rgba(0,0,0,.8);
     padding:0 10px;text-align:center;
   }
-  .bnr-strip::after{
+  /* Легка затемнена підкладка під назвою — читабельність тексту не залежить від того, наскільки яскрава тема під ним */
+  .bnr-strip .bnr-name::before{
+    content:'';position:absolute;inset:-6px -10px;z-index:-1;
+    background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,0));
+  }
+  /* Діагональний відблиск — окремий елемент (не ::after), тому жодна тематика його більше не "з'їдає" —
+     усі банери однаково "живі" й преміальні на вигляд, незалежно від того, скільки шарів у власній анімації. */
+  .bnr-strip .bnr-shine{
     content:'';position:absolute;inset:0;z-index:5;pointer-events:none;
-    background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.20) 45%,transparent 62%);
-    transform:translateX(-130%);animation:bannerShine 4s linear infinite;
+    background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.22) 45%,transparent 62%);
+    transform:translateX(-130%);animation:bannerShine 4.5s linear infinite;
   }
   @keyframes bannerShine{to{transform:translateX(130%)}}
+  /* Банери без анімації (anim:false, напр. стартова «Сталь») — статична тема, без руху шарів під нею;
+     відблиск лишається, щоб картка не виглядала «мертвою» */
+  .bnr-strip:not(.anim)::before,.bnr-strip:not(.anim)::after{animation:none}
 
   /* 1. СТАЛЬ — холодний метал, рухомі діагональні пластини */
   .banner-bn_steel{background:linear-gradient(135deg,#aeb8c7 0%,#4e5a6d 26%,#202836 58%,#687587 100%)}
   .banner-bn_steel::before{
     content:'';position:absolute;inset:-30%;z-index:1;
     background:repeating-linear-gradient(125deg,transparent 0 16px,rgba(255,255,255,.16) 17px 21px,transparent 22px 38px);
-    animation:steelMove 4s linear infinite;
+    animation:steelMove 5s ease-in-out infinite;
   }
-  @keyframes steelMove{to{transform:translateX(48px)}}
+  @keyframes steelMove{50%{transform:translateX(30px)}}
 
   /* 2. ЛІС — дерева, листя, туман */
   .banner-bn_forest{background:linear-gradient(#173d2a 0%,#285d38 42%,#102719 100%)}
   .banner-bn_forest::before{
     content:'🌲  🌲    🌲  🌿   🌲    🌲';position:absolute;left:-20%;right:-20%;bottom:4px;
     z-index:1;font-size:27px;letter-spacing:5px;white-space:nowrap;filter:saturate(.8) drop-shadow(0 3px 2px #07150d);
-    animation:forestMove 9s linear infinite;
+    animation:forestMove 10s ease-in-out infinite;
   }
   .banner-bn_forest::after{
     content:'•  ✦   ·   •     ✦   ·   •';position:absolute;inset:8px;z-index:5;
     color:rgba(196,255,193,.8);font-size:10px;letter-spacing:10px;animation:leafFloat 4s ease-in-out infinite;
-    background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.16) 45%,transparent 62%);
   }
-  @keyframes forestMove{to{transform:translateX(55px)}}
+  @keyframes forestMove{50%{transform:translateX(22px)}}
   @keyframes leafFloat{50%{transform:translate(8px,5px)}}
 
   /* 3. ПУСТЕЛЯ — сонце, дюни, гарячий вітер */
@@ -663,14 +677,14 @@
     content:'❄   ❆    ❄  ·  ❆   ❄    ❆  ·  ❄';position:absolute;left:-20%;right:-20%;top:10px;
     z-index:1;font-size:15px;letter-spacing:7px;white-space:nowrap;color:#f2ffff;
     text-shadow:0 0 6px #9fe8ff,0 2px 3px #04222f;
-    animation:frostDrift 8s linear infinite;
+    animation:frostDrift 8s ease-in-out infinite;
   }
   .banner-bn_frost::after{
     content:'✦   ·   ✦    ·   ✦   ·   ✦';position:absolute;inset:8px;z-index:5;
     color:rgba(220,250,255,.85);font-size:10px;letter-spacing:11px;
     animation:frostShimmer 3.5s ease-in-out infinite;
   }
-  @keyframes frostDrift{to{transform:translateX(50px)}}
+  @keyframes frostDrift{50%{transform:translateX(24px)}}
   @keyframes frostShimmer{50%{transform:translate(6px,4px);opacity:.5}}
 
   /* НОВИЙ: ГРОЗА — блискавки й спалахи */
@@ -692,9 +706,9 @@
   .banner-bn_volcano::before{
     content:'';position:absolute;left:-10%;right:-10%;bottom:-12px;height:62px;
     background:repeating-radial-gradient(ellipse at 20% 100%,#ffed62 0 7%,#ff5a21 8% 15%,#8e170e 16% 25%);
-    filter:blur(1px);animation:lavaFlow 2.4s linear infinite;
+    filter:blur(1px);animation:lavaFlow 3.2s ease-in-out infinite;
   }
-  @keyframes lavaFlow{to{transform:translateX(38px)}}
+  @keyframes lavaFlow{50%{transform:translateX(20px) scaleY(1.06)}}
 
   /* 8. КРОВ ДРАКОНА — полум'я + очі */
   .banner-bn_dragon{background:linear-gradient(145deg,#240308,#6d0a16,#160207)}
@@ -2659,7 +2673,7 @@ const BNR_RNAME = ['Звичайний','Епічний','Червоний','З�
 function bannerStripHtml(id, extraCls) {
   const b = BANNERS.find(x => x.id === id);
   if (!b) return '';
-  return `<div class="bnr-strip banner-${b.id} r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-name">${uiText(b.name)}</span></div>`;
+  return `<div class="bnr-strip banner-${b.id} r${b.rarity}${b.anim ? ' anim' : ''}${extraCls ? ' ' + extraCls : ''}"><span class="bnr-shine"></span><span class="bnr-name">${uiText(b.name)}</span></div>`;
 }
 const BNR_DEBUG_TAG = 'BUILD-BNR-FIX-3';   // якщо цей рядок не з'явився у грі — вантажиться старий файл (кеш/деплой), а не новий код
 function renderBanners() {
