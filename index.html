@@ -350,43 +350,12 @@ const CUSTOM = {
 /* ==========================================================================
    3. TELEGRAM
    ========================================================================== */
-/* ==========================================================================
-   3. TELEGRAM — СУВОРИЙ ГЕЙТ MINI APP
-   Гра дозволена тільки якщо вона реально запущена всередині Telegram
-   Mini App і Telegram передав непорожній підписаний initData.
-
-   ВАЖЛИВО:
-   - звичайний браузер не має справжнього Telegram WebApp-контексту;
-   - одного User-Agent недостатньо, тому браузер визначаємо через
-     наявність Telegram WebApp + initData;
-   - initData передається на сервер і там має перевірятися криптографічно.
-   ========================================================================== */
-const tg = window.Telegram && window.Telegram.WebApp
-  ? window.Telegram.WebApp
-  : null;
-
-const tgInitData =
-  (tg && typeof tg.initData === 'string') ? tg.initData.trim() : '';
-
-/* У звичайному браузері Telegram.WebApp зазвичай відсутній.
-   Навіть якщо хтось підставить фальшивий JS-об'єкт, без справжнього
-   initData така сесія не проходить цей гейт. */
-const telegramMiniApp =
-  !!tg &&
-  !!tgInitData &&
-  typeof tg.ready === 'function';
-
-if (!telegramMiniApp) {
-  /* Не запускаємо гру взагалі. */
-  document.documentElement.classList.add('not-telegram');
-}
-
+const tg = window.Telegram && window.Telegram.WebApp;
 if (tg) {
   try { tg.ready(); tg.expand(); } catch (e) {}
   try { tg.setHeaderColor('#1b1035'); tg.setBackgroundColor('#1b1035'); } catch (e) {}
   try { tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch (e) {}
 }
-
 const haptic     = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(k || 'light'); } catch (e) {} };
 const hapticNote = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k); } catch (e) {} };
 
@@ -396,36 +365,12 @@ const hapticNote = k => { try { tg && tg.HapticFeedback && tg.HapticFeedback.not
 const $   = id => document.getElementById(id);
 
 /* ==========================================================================
-   4b. ГЕЙТ АВТОРИЗАЦІЇ TELEGRAM
-   window.Telegram.WebApp.initData — рядок, підписаний Telegram, що
-   з'являється ТІЛЬКИ коли сторінку відкрито як Mini App всередині
-   Telegram-клієнта. Якщо його нема (звичайний браузер, автоматизований
-   бот, самописний "клон" сторінки без реального Telegram) — гра взагалі
-   не запускається.
-   Це відсікає найпростіший спосіб накрутки (відкрити сайт напряму і
-   слати запити з консолі), АЛЕ саме по собі не є криптографічним
-   доказом: остаточну перевірку підпису initData робить сервер (Supabase
-   Edge Function) перед кожним записом у таблицю лідерів — див. окремий
-   файл supabase-verify-function.ts, який я підготував поруч.
+   4b. TELEGRAM / БРАУЗЕР
+   Гра більше не блокується при відкритті у звичайному браузері.
+   Telegram WebApp використовується, якщо він доступний, але відсутність
+   Telegram initData не показує жодного повідомлення і не зупиняє гру.
    ========================================================================== */
-function showAuthBlock(text) {
-  const blockEl = $('auth-block');
-  const textEl = $('auth-text');
-  if (textEl && text) textEl.innerHTML = text;
-  if (blockEl) blockEl.classList.remove('off');
-  document.title = 'Доступ заблоковано';
-}
-
-/* ==========================================================================
-   4b. ГЕЙТ АВТОРИЗАЦІЇ TELEGRAM
-   ========================================================================== */
-if (!telegramMiniApp) {
-  showAuthBlock(
-    'Цю гру можна проходити лише через Telegram.<br><br>' +
-    'Відкрий гру з офіційного Telegram-бота.'
-  );
-  return; // НІЯКОГО запуску гри у звичайному браузері.
-}
+const tgInitData = (tg && typeof tg.initData === 'string') ? tg.initData : '';
 
 const mk  = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
 const mod = (a, n) => ((a % n) + n) % n;
