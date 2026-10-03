@@ -72,16 +72,6 @@
   }
   #btn-view:active{transform:translateY(1px)}
 
-  /* ---------- тимчасова кнопка чіту (+1 000 000 за клік +10 000 💎) ---------- */
-  #btn-cheat{
-    position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 10px);
-    left:10px;width:26px;height:26px;border:0;pointer-events:auto;cursor:pointer;
-    background:#2c1f5c;box-shadow:inset 0 0 0 2px #5b47b0,inset 0 -3px 0 0 #241a52;
-    font-size:12px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;opacity:.55;
-  }
-  #btn-cheat.on{background:#8a5a0a;box-shadow:inset 0 0 0 2px var(--gold),inset 0 -3px 0 0 #5c3c06;opacity:1}
-  #btn-cheat:active{transform:translateY(1px)}
-
   /* ---------- бій: підпис монстра ---------- */
   #mons-name{font-size:9px;color:var(--paper);text-shadow:var(--o2);text-align:center}
 
@@ -241,8 +231,7 @@
     <canvas id="game"></canvas>
 
     <button id="btn-view" type="button" title="Небо / Стіни вежі">🏯</button>
-    <button id="btn-cheat" type="button" title="Чіт: +1 000 000 за клік + 10 000 💎 (тимчасово)">🐞</button>
-
+    
     <div id="hud">
       <div id="score-row">
         <img id="score-star" data-icon="star" alt=""><span id="score">0</span>
@@ -2044,14 +2033,10 @@ function floater(text, x, y) {
 
 /* Один «крок» — і від кліку, і від автокліку: +бали, +сходинка */
 let clickCarry = 0;
-let cheatOn = false; // тимчасовий чіт: +1 000 000 зірок і +10 000 💎 за ручний клік; не зберігається
 function climbStep(auto) {
   if (combat) return;
   let gain;
-  if (cheatOn && !auto) {
-    gain = 1000000;
-    state.diamonds += 10000;
-  } else {
+  {
     const raw = state.powerLvl * clickMul() * (auto ? autoMul() : 1) + clickCarry;
     gain = Math.max(1, Math.floor(raw));
     clickCarry = Math.max(0, raw - gain);
@@ -2431,13 +2416,6 @@ $('btn-view').addEventListener('click', () => {
   $('btn-view').textContent = state.viewMode === 'walls' ? '☁' : '🏯';
   dirty = true;
   haptic('light');
-});
-
-/* --- тимчасова кнопка чіту: +1 000 000 за клік +10 000 💎 --- */
-$('btn-cheat').addEventListener('click', () => {
-  cheatOn = !cheatOn;
-  $('btn-cheat').classList.toggle('on', cheatOn);
-  haptic(cheatOn ? 'rigid' : 'light');
 });
 
 /* --- інтерфейс --- */
